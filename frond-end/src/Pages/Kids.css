@@ -79,3 +79,38 @@
 .add-btn:active {
   transform: scale(0.95);
 }
+
+
+.snackbar {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+
+  padding: 14px 18px;
+  border-radius: 8px;
+  color: white;
+  font-weight: 600;
+  z-index: 9999;
+
+  animation: toastPop 0.25s ease;
+}
+
+.snackbar-success {
+  background: #2e7d32;
+}
+
+.snackbar-error {
+  background: #c62828;
+}
+
+@keyframes toastPop {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -40%) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
