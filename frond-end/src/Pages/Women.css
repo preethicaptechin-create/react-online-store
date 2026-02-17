@@ -1,0 +1,89 @@
+.women-page {
+  padding: 40px;
+  text-align: center;
+}
+
+/* GRID */
+
+.women-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 50px;
+}
+
+/* CARD */
+
+.women-card {
+  width: 240px;
+  height: 330px;
+  border-radius: 12px;
+  padding: 12px;
+  background: white;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+
+  transition: transform 0.2s ease;
+}
+
+.women-card:hover {
+  transform: translateY(-6px);
+}
+
+/* IMAGE */
+
+.women-card img {
+  width: 100%;
+  height: 170px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+.women-card a {
+  display: block;
+  width: 100%;
+}
+
+
+/* TEXT */
+
+.women-card h3 {
+  margin: 8px 0 4px;
+  font-size: 16px;
+  text-align: center;
+}
+
+.women-card p {
+  font-weight: bold;
+}
+
+.add-btn {
+  width: 100%;
+  margin-top: 10px;
+  padding: 10px;
+
+  border: none;
+  border-radius: 8px;
+
+  background: linear-gradient(135deg, #ff2f92, #2f6bff);
+  color: white;
+
+  font-size: 14px;
+  font-weight: bold;
+
+  cursor: pointer;
+
+  transition: all 0.2s ease;
+}
+
+.add-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+}
+
+.add-btn:active {
+  transform: scale(0.95);
+}

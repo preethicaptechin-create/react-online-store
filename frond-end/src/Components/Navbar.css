@@ -1,0 +1,35 @@
+.navbar {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+
+  background: white;
+  padding: 12px 0;
+
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+.nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  text-decoration: none;
+  color: #333;
+
+  transition: 0.25s;
+}
+
+.nav-item svg {
+  font-size: 26px;
+}
+
+.nav-item span {
+  margin-top: 5px;
+  font-size: 14px;
+}
+
+.nav-item:hover {
+  transform: translateY(-3px);
+  color: #ff4081;
+}
