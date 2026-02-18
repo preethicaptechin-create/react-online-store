@@ -1,85 +1,3 @@
-// import React, { useState } from "react";
-// import { products } from "../Services/Product";
-// import { Link } from "react-router-dom";
-// import "./Kids.css";
-
-// const Kids = () => {
-
-//   // filter kids products
-//  const kidsProducts = products.filter(
-//   product => product.category === "kids"
-// );
-
-//   // quantity state
-//   const [counts, setCounts] = useState({});
-
-//   const addItem = id => {
-//     setCounts(prev => ({
-//       ...prev,
-//       [id]: (prev[id] || 0) + 1
-//     }));
-//   };
-
-//   const removeItem = id => {
-//     setCounts(prev => ({
-//       ...prev,
-//       [id]: Math.max((prev[id] || 0) - 1, 0)
-//     }));
-//   };
-
-//   return (
-//     <div className="kids-page">
-
-//       <h1>Kids Collection</h1>
-
-//       <div className="kids-grid">
-
-//         {kidsProducts.map(product => {
-
-//           const qty = counts[product.id] || 0;
-
-//           return (
-//             <div key={product.id} className="kids-card">
-
-//               {/* <img src={product.image} alt={product.name} /> */}
-//                            <Link to={`/product/${product.id}`}>
-//                 <img src={product.image} alt={product.name} />
-//               </Link>
-
-//               <h3>{product.name}</h3>
-//               <p>₹ {product.price}</p>
-
-//               <div className="cart-controls">
-
-//                 <button
-//                   className="cart-btn"
-//                   onClick={() => removeItem(product.id)}
-//                 >
-//                   −
-//                 </button>
-
-//                 <span>{qty}</span>
-
-//                 <button
-//                   className="cart-btn"
-//                   onClick={() => addItem(product.id)}
-//                 >
-//                   +
-//                 </button>
-
-//               </div>
-
-//             </div>
-//           );
-//         })}
-
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default Kids;
-
 
 
 
@@ -92,6 +10,16 @@ const Kids = () => {
 
   // store selected sizes per product
   const [sizes, setSizes] = useState({});
+
+  // ✅ toast state (added)
+  const [toast, setToast] = useState(null);
+
+  // ✅ toast helper (added)
+  const showToast = (message, type = "success") => {
+    setToast(null);
+    setTimeout(() => setToast({ message, type }), 100);
+    setTimeout(() => setToast(null), 2800);
+  };
 
   // filter kids products
   const kidsProducts = products.filter(
@@ -109,42 +37,53 @@ const Kids = () => {
   // add to cart
   const handleAddToCart = (product) => {
 
-    const selectedSize = sizes[product.id];
+  const selectedSize = sizes[product.id];
 
-    if (!selectedSize) {
-      alert("Please select size");
-      return;
-    }
+  if (!selectedSize) {
+    showToast("Please select size", "error");
+    return;
+  }
 
-    const existingCart =
-      JSON.parse(localStorage.getItem("cart")) || [];
+  const existingCart =
+    JSON.parse(localStorage.getItem("cart")) || [];
 
-    const item = existingCart.find(
-      i =>
-        i.id === product.id &&
-        i.size === selectedSize
-    );
+  const item = existingCart.find(
+    i =>
+      i.id === product.id &&
+      i.size === selectedSize
+  );
 
-    if (item) {
-      item.qty += 1;
-    } else {
-      existingCart.push({
-        ...product,
-        size: selectedSize,
-        qty: 1
-      });
-    }
+  if (item) {
+    item.qty += 1;
+  } else {
+    existingCart.push({
+      ...product,
+      size: selectedSize,
+      qty: 1
+    });
+  }
 
-    localStorage.setItem(
-      "cart",
-      JSON.stringify(existingCart)
-    );
+  localStorage.setItem(
+    "cart",
+    JSON.stringify(existingCart)
+  );
 
-    alert("Item added to cart 🛒");
-  };
+  // ⭐ sync header/cart badge
+  window.dispatchEvent(new Event("cartUpdated"));
+
+  showToast("Item added to cart ✓", "success");
+};
+
 
   return (
     <div className="kids-page">
+
+      {/* ✅ toast display (added) */}
+      {toast && (
+        <div className={`snackbar snackbar-${toast.type}`}>
+          {toast.message}
+        </div>
+      )}
 
       <h1>Kids Collection</h1>
 
@@ -168,14 +107,12 @@ const Kids = () => {
               <h3>{product.name}</h3>
               <p>₹ {product.price}</p>
 
-              {/* selected size */}
               {selectedSize && (
                 <p className="selected-size">
                   Size: {selectedSize}
                 </p>
               )}
 
-              {/* size buttons */}
               <div className="size-preview">
                 {[6, 7, 8, 9, 10].map(s => (
                   <button
