@@ -4,8 +4,8 @@ const Order = require("../models/Order");
 // Insert test user
 exports.createUser = async (req, res) => {
   const user = new User({
-    name: "Preethi",
-    email: "preethi@gmail.com",
+    name: "riya",
+    email: "riya@gmail.com",
     password: "1234"
   });
 

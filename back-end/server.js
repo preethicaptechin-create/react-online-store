@@ -46,6 +46,10 @@ app.use("/api/test", testRoutes);
 
 // connect MongoDB → then start server
 mongoose.connect("mongodb://127.0.0.1:27017/onlinestore")
+// mongoose.connect("mongodb://mongodb:27017/onlinestore")
+
+
+
   .then(() => {
     console.log("MongoDB Connected ✅");
 
