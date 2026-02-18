@@ -1,0 +1,26 @@
+# dependencies
+node_modules/
+
+# environment secrets
+.env
+.env.*
+
+# logs
+logs/
+*.log
+npm-debug.log*
+
+# temp/runtime
+tmp/
+*.pid
+
+# coverage
+coverage/
+
+# editor folders
+.vscode/
+.idea/
+
+# OS junk
+.DS_Store
+Thumbs.db
