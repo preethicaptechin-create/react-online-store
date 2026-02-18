@@ -49,6 +49,11 @@ body,
 #root {
   height : 100%;
 }
+body {
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
 
 .app {
   display: flex;
@@ -60,4 +65,11 @@ body,
 
 .content {
   flex: 1;
+}
+.app-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 16px;
+  width: 100%;
+  box-sizing: border-box;
 }
