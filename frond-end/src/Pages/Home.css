@@ -1,0 +1,532 @@
+/* .home{
+    display: flex;
+    flex-direction: column;
+    height : 100vh;
+}
+.image-container{
+    display: flex;
+    flex-direction: row;
+    height : 400px;
+    width : 500px;
+    margin-top : 100px;
+
+} */
+
+  /* .home {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height : 100vh;
+  gap: 40px;
+  padding: 20px;
+} */
+
+/* Slider */
+
+
+/* .home {
+  display: flex;
+  flex-direction: column;
+  gap: 50px;
+  padding: 20px;
+}
+
+.slider {
+  width : 95%;
+  overflow: hidden;
+}
+
+.slide-track {
+  display: flex;
+  animation: scroll 20s linear infinite;
+}
+
+.slide-track img {
+  width : 420px;
+  height : 280px;
+  object-fit: cover;
+  margin-right : 20px;
+  border-radius: 10px;
+  margin-top: 100px;
+  transition: transform 0.4s ease;
+}
+
+.slide-track img:hover {
+  transform: scale(1.08);
+}
+
+@keyframes scroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+
+.cards-row {
+  display: flex;
+  gap: 30px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+
+
+.offer-card {
+  width: 450px;
+  text-align: center;
+}
+
+.offer-card img {
+  width: 100%;
+  border-radius: 12px;
+}
+
+.offer-card h2 {
+  margin-top: 15px;
+  font-family: "Roboto", sans-serif;
+  font-size: 20px;
+}
+
+
+
+.arrival-card {
+  position: relative;
+  width: 450px;
+  height: 320px;
+  border-radius: 12px;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.arrival-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.arrival-overlay {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  padding: 20px;
+
+  background: linear-gradient(
+    to top,
+    rgba(0,0,0,0.7),
+    rgba(0,0,0,0)
+  );
+
+  color: white;
+}
+
+.arrival-overlay button {
+  margin-top: 10px;
+  padding: 10px 18px;
+  border: none;
+  border-radius: 6px;
+  background: white;
+  cursor: pointer;
+}
+
+
+
+.sale-banner {
+  text-align: center;
+}
+
+.sale-banner img {
+  width: 100%;
+  max-width: 900px;
+  border-radius: 12px;
+}
+
+.sale-banner h2 {
+  margin-top: 15px;
+  font-size: 26px;
+}
+
+
+
+
+
+
+
+
+
+
+
+.arrival-card {
+  flex: 1;
+  min-width: 320px;
+  max-width: 500px;
+  height: 320px;
+  position: relative;
+  border-radius: 12px;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.arrival-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.arrival-overlay {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  padding: 20px;
+  background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);
+  color: white;
+}
+
+.arrival-overlay button {
+  margin-top: 10px;
+  padding: 10px 18px;
+  border: none;
+  border-radius: 6px;
+  background: white;
+  cursor: pointer;
+}
+
+
+
+.sale-banner {
+  flex: 1;
+  min-width: 320px;
+  max-width: 500px;
+  text-align: center;
+}
+
+.sale-banner img {
+  width: 100%;
+  height: 320px;
+  object-fit: cover;
+  border-radius: 12px;
+}
+
+.sale-banner h2 {
+  margin-top: 12px;
+  font-size: 22px;
+}
+
+
+
+
+.features {
+  display: flex;
+  justify-content: space-around;
+  background: #fafafa;
+  padding: 20px;
+  border-radius: 10px;
+  font-size: 18px;
+  margin-top: 30px;
+}
+
+
+
+@media (max-width: 768px) {
+
+  .cards-row {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .arrival-card,
+  .sale-banner {
+    width: 95%;
+  }
+
+  .features {
+    flex-direction: column;
+    gap: 10px;
+    text-align: center;
+  }
+} */
+/* .home {
+  display: flex;
+  flex-direction: column;
+  gap: 50px;
+  padding: 20px;
+} */
+
+/* ======================
+   SLIDER — untouched
+====================== */
+
+/* .slider {
+  width: 95%;
+  margin: auto;   
+} */
+
+
+/* .slide-track {
+  display: flex;
+  animation: scroll 20s linear infinite;
+}
+
+.slide-track img {
+  width: 420px;
+  height: 280px;
+  object-fit: cover;
+  margin-right: 20px;
+  border-radius: 10px;
+  margin-top: 100px;
+  transition: transform 0.4s ease;
+}
+
+.slide-track img:hover {
+  transform: scale(1.08);
+}
+
+@keyframes scroll {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+/* ======================
+   ARRIVAL + SALE ROW
+====================== */
+
+/* .cards-row {
+  display: flex;
+  gap: 30px;
+  justify-content: center;
+  align-items: stretch;
+  flex-wrap: wrap;
+} */
+
+/* arrival card */
+
+/* .arrival-card {
+  flex: 1;
+  min-width: 320px;
+  max-width: 500px;
+  height: 320px;
+  position: relative;
+  border-radius: 12px;
+  overflow: hidden;
+  cursor: pointer;
+} */
+
+/* .arrival-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.arrival-overlay {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  padding: 20px;
+  background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);
+  color: white;
+}
+
+.arrival-overlay button {
+  margin-top: 10px;
+  padding: 10px 18px;
+  border: none;
+  border-radius: 6px;
+  background: white;
+  cursor: pointer;
+} */ 
+
+/* sale card */
+
+/* .sale-banner {
+  flex: 1;
+  min-width: 320px;
+  max-width: 500px;
+  text-align: center;
+}
+
+.sale-banner img {
+  width: 100%;
+  height: 320px;
+  object-fit: cover;
+  border-radius: 12px;
+}
+
+.sale-banner h2 {
+  margin-top: 12px;
+  font-size: 22px;
+} */
+
+/* ======================
+   RESPONSIVE
+====================== */
+
+/* @media (max-width: 768px) {
+
+  .home {
+    padding: 10px;
+  }
+
+  .slider {
+    width: 100%;
+  }
+
+  .slide-track img {
+    width: 85%;
+    margin-right: 12px;
+  }
+
+} */
+
+
+.home {
+  display: flex;
+  flex-direction: column;
+  gap: 50px;
+  padding: 20px;
+}
+
+/* ======================
+   SLIDER
+====================== */
+
+.slider {
+  width: 100%;
+  margin: auto;
+  overflow: hidden;
+}
+
+.slide-track {
+  display: flex;
+  animation: scroll 20s linear infinite;
+}
+
+.slide-track img {
+  width: 420px;
+  height: 280px;
+  object-fit: cover;
+  margin-right: 20px;
+  border-radius: 10px;
+  margin-top: 40px;
+  transition: transform 0.4s ease;
+}
+
+.slide-track img:hover {
+  transform: scale(1.05);
+}
+
+@keyframes scroll {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+/* ======================
+   ARRIVAL + SALE
+====================== */
+
+.cards-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 30px;
+  align-items: stretch;
+}
+
+/* arrival */
+
+.arrival-card {
+  height: 320px;
+  position: relative;
+  border-radius: 12px;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.arrival-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.arrival-overlay {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  padding: 20px;
+  background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);
+  color: white;
+}
+
+.arrival-overlay button {
+  margin-top: 10px;
+  padding: 10px 18px;
+  border: none;
+  border-radius: 6px;
+  background: white;
+  cursor: pointer;
+}
+
+/* sale */
+
+.sale-banner {
+  text-align: center;
+}
+
+.sale-banner img {
+  width: 100%;
+  height: 320px;
+  object-fit: cover;
+  border-radius: 12px;
+}
+
+.sale-banner h2 {
+  margin-top: 12px;
+  font-size: 22px;
+}
+
+/* ======================
+   TABLET
+====================== */
+
+@media (max-width: 1024px) {
+
+  .cards-row {
+    grid-template-columns: 1fr;
+  }
+
+}
+
+/* ======================
+   MOBILE
+====================== */
+
+@media (max-width: 768px) {
+
+  .home {
+    padding: 12px;
+    gap: 30px;
+  }
+
+  .slide-track img {
+    width: 85vw;
+    height: auto;
+    margin-top: 20px;
+  }
+
+}
+
+/* ======================
+   SMALL MOBILE
+====================== */
+
+@media (max-width: 480px) {
+
+  .home {
+    padding: 8px;
+  }
+
+  .sale-banner h2 {
+    font-size: 16px;
+  }
+
+}

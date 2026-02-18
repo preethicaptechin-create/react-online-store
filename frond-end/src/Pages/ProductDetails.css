@@ -1,0 +1,271 @@
+
+
+.details-card img {
+  width: 350px;
+  border-radius: 10px;
+}
+
+.details-info {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.price {
+  font-size: 24px;
+  font-weight: bold;
+  color: #ff2f92;
+}
+
+.add-cart-btn {
+  padding: 12px;
+  border: none;
+  background: #ff2f92;
+  color: white;
+  font-size: 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.add-cart-btn:hover {
+  background: #e60073;
+} 
+/* ===== PAGE WRAPPER ===== */
+
+.details-page {
+  min-height: 100vh;
+  padding: 40px 20px;
+
+  background: #f5f5f5;
+
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+/* ===== CARD ===== */
+
+.details-card {
+  background: #ffffff;
+
+  width: 100%;
+  max-width: 950px;
+
+  border-radius: 12px;
+  padding: 24px;
+
+  display: flex;
+  gap: 30px;
+
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+}
+
+/* ===== IMAGE ===== */
+
+.details-card img {
+  width: 320px;
+  height: 320px;
+
+  object-fit: contain;
+
+  background: #fafafa;
+  border-radius: 10px;
+  padding: 12px;
+
+  transition: transform 0.25s ease;
+}
+
+.details-card img:hover {
+  transform: scale(1.05);
+}
+
+/* ===== INFO SECTION ===== */
+
+.details-info {
+  flex: 1;
+
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* title */
+
+.details-info h2 {
+  font-size: 22px;
+  font-weight: 600;
+  color: #222;
+}
+
+/* price */
+
+.price {
+  font-size: 20px;
+  font-weight: bold;
+  color: #111;
+}
+
+/* category */
+
+.details-info p {
+  font-size: 14px;
+  color: #666;
+}
+
+/* ===== SIZE SELECTOR ===== */
+
+.size-selector {
+  margin-top: 10px;
+}
+
+.size-label {
+  display: block;
+  margin-bottom: 6px;
+
+  font-size: 13px;
+  font-weight: 600;
+  color: #444;
+}
+
+.size-buttons {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+/* size buttons */
+
+.size-btn {
+  width: 30px;
+  height: 30px;
+
+  border: 1px solid #ddd;
+  border-radius: 6px;
+
+  background: #ffffff;
+  color: #333;
+
+  font-size: 13px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  transition: all 0.2s ease;
+}
+
+/* hover */
+
+.size-btn:hover {
+  border-color: black;
+  background: #f0f6ff;
+  color:linear-gradient(90deg, #ff0080, #007bff);
+}
+
+/* selected */
+
+.size-btn.active {
+  border: 2px solid black;
+  /* background: #ffffff;
+  color: white; */
+
+  transform: scale(1.08);
+}
+
+
+ .details-info .size-btn {
+  margin-top: 14px;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.details-info .add-cart-btn {
+  margin-top: 14px;
+  background: linear-gradient(90deg, #ff0080, #007bff);
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  padding: 8px;
+  font-size: 15px;
+  font-weight: 400;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  width: 100px;
+}
+
+/* Toast - make it prominent on details page */
+.toast {
+  position: fixed;
+
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+
+  z-index: 999999; /* very high so nothing hides it */
+
+  padding: 14px 26px;
+  border-radius: 8px;
+
+  color: white;
+  font-weight: 600;
+  font-size: 16px;
+
+  box-shadow: 0 6px 20px rgba(0,0,0,0.35);
+
+  animation: popIn 0.25s ease, fadeOut 0.4s 2.4s forwards;
+}
+
+
+.toast-success {
+  background: #388e3c;          /* green like Flipkart success */
+}
+
+.toast-error {
+  background: #d32f2f;          /* red for errors */
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeOut {
+  to { opacity: 0; transform: translateY(-20px); }
+}
+
+/* Optional: add checkmark icon before success message */
+.toast-success::before {
+  content: "✓ ";
+  font-weight: bold;
+  margin-right: 6px;
+}
+
+
+
+
+
+
+
+
+/* ===== RESPONSIVE ===== */
+
+@media (max-width: 768px) {
+
+  .details-card {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .details-card img {
+    width: 100%;
+    max-width: 260px;
+  }
+
+  .details-info {
+    width: 100%;
+  }
+}

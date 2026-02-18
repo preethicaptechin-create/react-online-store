@@ -1,0 +1,83 @@
+.beauty-page {
+  padding: 40px;
+  text-align: center;
+}
+
+.beauty-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 50px;
+}
+
+.beauty-card {
+  width: 240px;
+  height: 330px;
+  border-radius: 12px;
+  padding: 12px;
+  background: white;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+
+  transition: transform 0.2s ease;
+}
+
+.beauty-card:hover {
+  transform: translateY(-6px);
+}
+
+.beauty-card img {
+  width: 100%;
+  height: 170px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+.beauty-card a {
+  display: block;
+  width: 100%;
+}
+
+.beauty-card h3 {
+  margin: 8px 0 4px;
+  font-size: 16px;
+}
+
+.beauty-card p {
+  font-weight: bold;
+}
+
+/* shared cart UI */
+
+.cart-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  background: linear-gradient(135deg, #ff2f92, #2f6bff);
+  padding: 6px 10px;
+  border-radius: 30px;
+}
+
+.cart-btn {
+  width: 36px;
+  height: 36px;
+  border: none;
+  border-radius: 50%;
+
+  background: white;
+  font-size: 20px;
+  cursor: pointer;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cart-controls span {
+  font-size: 18px;
+  font-weight: bold;
+}

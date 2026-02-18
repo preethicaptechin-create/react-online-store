@@ -1,0 +1,9 @@
+.products-grid {
+  display: grid;
+  gap: clamp(10px, 2vw, 20px);
+
+  grid-template-columns:
+    repeat(auto-fit, minmax(160px, 1fr));
+}
+
+
