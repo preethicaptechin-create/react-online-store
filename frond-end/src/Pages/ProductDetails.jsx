@@ -396,7 +396,18 @@ const ProductDetails = () => {
             src={`${BASE_URL}/${product.image}`}
             alt={product.name}
           />
+          {/* <img
+          src={`http://localhost:5000/${product.image}`}
+          alt={product.name}
+          className="product-image"
+        /> */}
+          {/* <img
+            src={`http://localhost:5000/uploads/${product.image}`}
+            alt={product.name}
+            className="product-image"
+          /> */}
 
+         
           <button
             className={`wishlist-btn ${liked ? "active" : ""}`}
             onClick={handleWishlist}
