@@ -91,20 +91,47 @@
 const Product = require("../models/productModel");
 
 // ✅ GET all products (with category filter support)
+// exports.getProducts = async (req, res) => {
+//   try {
+//     const { category } = req.query;
+
+//     let products;
+
+//     if (category) {
+//       // Case-insensitive filter
+//       products = await Product.find({
+//         category: { $regex: new RegExp(category, "i") }
+//       });
+//     } else {
+//       products = await Product.find();
+//     }
+
+//     res.status(200).json(products);
+
+//   } catch (error) {
+//     console.error("Error fetching products:", error);
+//     res.status(500).json({ message: "Server Error" });
+//   }
+// };
+
 exports.getProducts = async (req, res) => {
   try {
-    const { category } = req.query;
+    const { category, search } = req.query;
 
-    let products;
+    let filter = {};
 
     if (category) {
-      // Case-insensitive filter
-      products = await Product.find({
-        category: { $regex: new RegExp(category, "i") }
-      });
-    } else {
-      products = await Product.find();
+      filter.category = { $regex: category, $options: "i" };
     }
+
+    if (search) {
+      filter.$or = [
+        { name: { $regex: search, $options: "i" } },
+        { category: { $regex: search, $options: "i" } },
+      ];
+    }
+
+    const products = await Product.find(filter);
 
     res.status(200).json(products);
 

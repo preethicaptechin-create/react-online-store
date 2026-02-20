@@ -137,6 +137,95 @@
 
 
 
+// import { useEffect, useState } from "react";
+// import { useSearchParams } from "react-router-dom";
+// import axios from "axios";
+// import ProductCard from "../Components/ProductCard";
+
+// function ProductList() {
+//   const [products, setProducts] = useState([]);
+//   const [searchParams] = useSearchParams();
+
+//   const searchTerm =
+//     searchParams.get("search")?.trim().toLowerCase() || "";
+
+//   // ✅ ADD THIS (fallback safety)
+//   // const API_URL =
+//   //   import.meta.env.VITE_API_URL || "http://localhost:5000"; 
+
+//   const API_URL = import.meta.env.VITE_API_URL;
+//   console.log("API URL:", API_URL);
+     
+
+//   useEffect(() => {
+//     console.log("API URL:", API_URL);
+
+//     const fetchProducts = async () => {
+//       try {
+//         const res = await axios.get(
+//           `${API_URL}/api/products`
+//         );
+
+//         if (Array.isArray(res.data)) {
+//           setProducts(res.data);
+//         } else {
+//           console.error("API did not return array:", res.data);
+//           setProducts([]);
+//         }
+//       } catch (error) {
+//         console.error("Fetch failed:", error);
+//         setProducts([]);
+//       }
+//     };
+
+//     fetchProducts();
+//   }, []);
+
+//   const filteredProducts = Array.isArray(products)
+//     ? products.filter((p) => {
+//         if (!searchTerm) return true;
+//         return (
+//           (p.name || "").toLowerCase().includes(searchTerm) ||
+//           (p.category || "").toLowerCase().includes(searchTerm)
+//         );
+//       })
+//     : [];
+
+//   return (
+//     <div style={{ padding: "20px", maxWidth: "1400px", margin: "0 auto" }}>
+//       <h1>
+//         {searchTerm
+//           ? `Results for "${searchTerm}" (${filteredProducts.length})`
+//           : "All Products"}
+//       </h1>
+
+//       {filteredProducts.length === 0 ? (
+//         <p style={{ textAlign: "center", color: "#666", fontSize: "1.2rem" }}>
+//           No products found
+//         </p>
+//       ) : (
+//         <div
+//           style={{
+//             display: "grid",
+//             gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))",
+//             gap: "24px",
+//           }}
+//         >
+//           {filteredProducts.map((product) => (
+//             <ProductCard key={product._id} product={product} />
+//           ))}
+//         </div>
+//       )}
+//     </div>
+//   );
+// }
+
+// export default ProductList;
+
+
+
+
+
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import axios from "axios";
@@ -149,22 +238,17 @@ function ProductList() {
   const searchTerm =
     searchParams.get("search")?.trim().toLowerCase() || "";
 
-  // ✅ ADD THIS (fallback safety)
-  // const API_URL =
-  //   import.meta.env.VITE_API_URL || "http://localhost:5000"; 
-
-  const API_URL = import.meta.env.VITE_API_URL;
-  console.log("API URL:", API_URL);
-     
+  // ✅ SAFE fallback (VERY IMPORTANT)
+  const API_URL =
+    import.meta.env.VITE_API_URL || "http://localhost:5000";
 
   useEffect(() => {
-    console.log("API URL:", API_URL);
-
     const fetchProducts = async () => {
       try {
+        // const res = await axios.get(`${API_URL}/api/products`);
         const res = await axios.get(
-          `${API_URL}/api/products`
-        );
+  `${API_URL}/api/products?search=${searchTerm}`
+);
 
         if (Array.isArray(res.data)) {
           setProducts(res.data);
@@ -179,17 +263,16 @@ function ProductList() {
     };
 
     fetchProducts();
-  }, []);
+  }, [API_URL]);
 
-  const filteredProducts = Array.isArray(products)
-    ? products.filter((p) => {
-        if (!searchTerm) return true;
-        return (
-          (p.name || "").toLowerCase().includes(searchTerm) ||
-          (p.category || "").toLowerCase().includes(searchTerm)
-        );
-      })
-    : [];
+  const filteredProducts = products.filter((p) => {
+    if (!searchTerm) return true;
+
+    return (
+      (p.name || "").toLowerCase().includes(searchTerm) ||
+      (p.category || "").toLowerCase().includes(searchTerm)
+    );
+  });
 
   return (
     <div style={{ padding: "20px", maxWidth: "1400px", margin: "0 auto" }}>
@@ -221,8 +304,3 @@ function ProductList() {
 }
 
 export default ProductList;
-
-
-
-
-
