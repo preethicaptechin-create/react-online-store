@@ -18,6 +18,8 @@ import Shoes from "./Pages/Shoes";
 import Mobile from "./Pages/Mobile";
 import ProductDetails from "./Pages/ProductDetails";
 import Cart from "./Pages/Cart";
+import AddProduct from "./Pages/AddProduct";
+import Wishlist from "./Pages/Wishlist"
 
 
 
@@ -25,14 +27,14 @@ import "./App.css";
 
 function App() {
   return (
-  
+
     <BrowserRouter>
       <div className="app">
 
         <Header />
         <Navbar />
 
-         <main className="content app-container">
+        <main className="content app-container">
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/products" element={<ProductList />} />
@@ -41,11 +43,13 @@ function App() {
             <Route path="/women" element={<Women />} />
             <Route path="/kids" element={<Kids />} />
             <Route path="/beauty" element={<Beauty />} />
-          <Route path="/mobiles" element={<Mobile />} />
+            <Route path="/mobiles" element={<Mobile />} />
 
             <Route path="/shoes" element={<Shoes />} />
             <Route path="/product/:id" element={<ProductDetails />} />
-         <Route path="/cart" element={<Cart />} />
+            <Route path="/cart" element={<Cart />} />
+            <Route path="/add-product" element={<AddProduct />} />
+            <Route path="/wishlist" element={<Wishlist />} />
 
 
 

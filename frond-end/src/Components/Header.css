@@ -2,7 +2,7 @@
 
 .promo-bar {
   width: 100%;
-  background: #5b2d8b;
+  background: #ae71f0;
   color: white;
   overflow: hidden;
   white-space: nowrap;
@@ -21,6 +21,22 @@
   font-size: 16px;
   font-weight: 500;
 }
+/* .header{
+background: linear-gradient(to right, #ff4e9b, #4facfe);
+} */
+
+.header {
+  background: linear-gradient(135deg, #f29ac0, #4facfe);
+  padding: 18px 50px;
+  color: #ffffff;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
 
 
 @keyframes scrollPromo {
@@ -36,6 +52,7 @@
 .promo-bar.paused .promo-track {
   animation-play-state: paused;
 }
+
 
 
 

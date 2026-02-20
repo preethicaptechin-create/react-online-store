@@ -59,7 +59,8 @@ import {
   FaFemale,
   FaChild,
   FaMobileAlt,
-  FaShoePrints
+  FaShoePrints,
+   FaHeart 
 } from "react-icons/fa";
 
 import { GiLipstick } from "react-icons/gi";
@@ -96,6 +97,11 @@ function Navbar() {
       <Link to="/mobiles" className="nav-item">
         <FaMobileAlt />
         <span>Mobiles</span>
+      </Link>
+
+      <Link to="/wishlist" className="nav-item wishlist-item">
+        <FaHeart />
+        <span>Wishlist</span>
       </Link>
 
     </nav>
