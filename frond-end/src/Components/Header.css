@@ -2,7 +2,7 @@
 
 .promo-bar {
   width: 100%;
-  background: #ae71f0;
+  background:rgb(157, 8, 157);
   color: white;
   overflow: hidden;
   white-space: nowrap;
@@ -47,7 +47,8 @@ background: linear-gradient(to right, #ff4e9b, #4facfe);
   justify-content: center;
   padding: 12px 20px;
 
-  background: linear-gradient(90deg, #ff0080, #007bff);
+  /* background:  linear-gradient(135deg, #ff2f92, #2f6bff); */
+background: linear-gradient(135deg, #ff3cac, #784ba0, #2b86c5);
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
   font-size: 18px;
 
