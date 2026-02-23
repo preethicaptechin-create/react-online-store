@@ -94,10 +94,13 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 const productRoutes = require("./routes/productRoutes");
 const categoryRoutes = require("./routes/categoryRoutes");
 const testRoutes = require("./routes/testRoutes");
+const authRoutes = require("./routes/authRoutes");
 
 app.use("/api/products", productRoutes);
 app.use("/api/categories", categoryRoutes);
 app.use("/api/test", testRoutes);
+app.use("/api/auth", authRoutes);
+
 
 /* ==============================
    DATABASE CONNECTION
