@@ -67,6 +67,7 @@ const express = require("express");
 const router = express.Router();
 
 const upload = require("../middleware/upload");
+const { protect } = require("../middleware/authMiddleware");
 
 const {
   getProducts,
@@ -81,6 +82,7 @@ router.get("/", getProducts);
 router.get("/:id", getSingleProduct);
 
 // CREATE product (with image upload)
-router.post("/", upload.single("image"), createProduct);
+// router.post("/", upload.single("image"), createProduct);
+router.post("/", protect, upload.single("image"), createProduct);
 
 module.exports = router;
