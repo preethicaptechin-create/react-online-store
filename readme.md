@@ -4,7 +4,7 @@ Task 17.2.2026 >> mongodb setup
 
 
 
-cd front-end
+cd frond-end
 npm install
 npm run dev
 
