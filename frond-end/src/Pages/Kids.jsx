@@ -357,6 +357,233 @@
 // export default Kids;
 
 
+// import React, { useState, useEffect } from "react";
+// import { Link } from "react-router-dom";
+// import "./Kids.css";
+
+// const BASE_URL = "http://localhost:5000";
+
+// const Kids = () => {
+
+//   const [products, setProducts] = useState([]);
+//   const [sizes, setSizes] = useState({});
+//   const [toast, setToast] = useState(null);
+//   const [wishlist, setWishlist] = useState([]);
+//   const [loading, setLoading] = useState(true);
+
+//   // ✅ Fetch products from backend
+//   useEffect(() => {
+
+//     fetch(`${BASE_URL}/api/products`)
+//       .then(res => res.json())
+//       .then(data => {
+//         setProducts(data);
+//         setLoading(false);
+//       })
+//       .catch(err => {
+//         console.error("Fetch error:", err);
+//         setLoading(false);
+//       });
+
+//     const storedWishlist =
+//       JSON.parse(localStorage.getItem("wishlist")) || [];
+//     setWishlist(storedWishlist);
+
+//   }, []);
+
+//   const showToast = (message, type = "success") => {
+//     setToast(null);
+//     setTimeout(() => setToast({ message, type }), 100);
+//     setTimeout(() => setToast(null), 2800);
+//   };
+
+//   // ✅ Filter kids category
+//   // const kidsProducts = products.filter(
+//   //   product =>
+//   //     product.category &&
+//   //     product.category.toLowerCase() === "kids"
+//   // );
+
+//   const kidsProducts = Array.isArray(products)
+//   ? products.filter(
+//       (product) =>
+//         (product.category || "").toLowerCase() === "kids"
+//     )
+//   : [];
+
+//   const handleSizeSelect = (productId, size) => {
+//     setSizes(prev => ({
+//       ...prev,
+//       [productId]: size
+//     }));
+//   };
+
+//   const handleWishlist = (product) => {
+
+//     let updatedWishlist = [...wishlist];
+
+//     const exists = updatedWishlist.find(
+//       item => item._id === product._id
+//     );
+
+//     if (exists) {
+//       updatedWishlist = updatedWishlist.filter(
+//         item => item._id !== product._id
+//       );
+//       showToast("Removed from wishlist", "success");
+//     } else {
+//       updatedWishlist.push(product);
+//       showToast("Added to wishlist ❤️", "success");
+//     }
+
+//     setWishlist(updatedWishlist);
+//     localStorage.setItem(
+//       "wishlist",
+//       JSON.stringify(updatedWishlist)
+//     );
+//   };
+
+//   const handleAddToCart = (product) => {
+
+//     const selectedSize = sizes[product._id];
+
+//     if (!selectedSize) {
+//       showToast("Please select size", "error");
+//       return;
+//     }
+
+//     let existingCart =
+//       JSON.parse(localStorage.getItem("cart")) || [];
+
+//     const item = existingCart.find(
+//       i =>
+//         i._id === product._id &&
+//         i.size === selectedSize
+//     );
+
+//     if (item) {
+//       item.qty += 1;
+//     } else {
+//       existingCart.push({
+//         ...product,
+//         size: selectedSize,
+//         qty: 1
+//       });
+//     }
+
+//     localStorage.setItem(
+//       "cart",
+//       JSON.stringify(existingCart)
+//     );
+
+//     // remove from wishlist when added to cart
+//     let updatedWishlist = wishlist.filter(
+//       item => item._id !== product._id
+//     );
+
+//     setWishlist(updatedWishlist);
+//     localStorage.setItem(
+//       "wishlist",
+//       JSON.stringify(updatedWishlist)
+//     );
+
+//     window.dispatchEvent(new Event("cartUpdated"));
+
+//     showToast("Item added to cart ✓", "success");
+//   };
+
+//   if (loading) return <h2>Loading...</h2>;
+
+//   return (
+//     <div className="kids-page">
+
+//       {toast && (
+//         <div className={`snackbar snackbar-${toast.type}`}>
+//           {toast.message}
+//         </div>
+//       )}
+
+//       <h1>Kids Collection</h1>
+
+//       <div className="kids-grid">
+
+//         {kidsProducts.map(product => {
+
+//           const selectedSize = sizes[product._id];
+//           const isLiked = wishlist.find(
+//             item => item._id === product._id
+//           );
+
+//           return (
+
+//             <div key={product._id} className="kids-card">
+
+//               <button
+//                 className={`wishlist-btn ${isLiked ? "active" : ""}`}
+//                 onClick={() => handleWishlist(product)}
+//               >
+//                 {isLiked ? "❤️" : "🤍"}
+//               </button>
+
+//               <Link to={`/product/${product._id}`}>
+//                 <img
+//                   src={`${BASE_URL}/${product.image}`}
+//                   alt={product.name}
+//                 />
+//               </Link>
+
+//               <h3>{product.name}</h3>
+//               <p>₹ {product.price}</p>
+
+//               {selectedSize && (
+//                 <p className="selected-size">
+//                   Size: {selectedSize}
+//                 </p>
+//               )}
+
+//               <div className="size-preview">
+//                 {[6, 7, 8, 9, 10].map(s => (
+//                   <button
+//                     key={s}
+//                     className={
+//                       selectedSize === s
+//                         ? "size-box active"
+//                         : "size-box"
+//                     }
+//                     onClick={() =>
+//                       handleSizeSelect(product._id, s)
+//                     }
+//                   >
+//                     {s}
+//                   </button>
+//                 ))}
+//               </div>
+
+//               <button
+//                 className="add-btn"
+//                 onClick={() => handleAddToCart(product)}
+//               >
+//                 Add to Cart
+//               </button>
+
+//             </div>
+
+//           );
+//         })}
+
+//       </div>
+
+//     </div>
+//   );
+// };
+
+// export default Kids;
+
+
+
+
+
+
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import "./Kids.css";
@@ -364,7 +591,6 @@ import "./Kids.css";
 const BASE_URL = "http://localhost:5000";
 
 const Kids = () => {
-
   const [products, setProducts] = useState([]);
   const [sizes, setSizes] = useState({});
   const [toast, setToast] = useState(null);
@@ -373,11 +599,17 @@ const Kids = () => {
 
   // ✅ Fetch products from backend
   useEffect(() => {
-
     fetch(`${BASE_URL}/api/products`)
       .then(res => res.json())
       .then(data => {
-        setProducts(data);
+        console.log("Kids API Response:", data);
+
+        if (data.success) {
+          setProducts(data.data);   // ⭐ FIXED HERE
+        } else {
+          setProducts([]);
+        }
+
         setLoading(false);
       })
       .catch(err => {
@@ -397,12 +629,13 @@ const Kids = () => {
     setTimeout(() => setToast(null), 2800);
   };
 
-  // ✅ Filter kids category
-  const kidsProducts = products.filter(
-    product =>
-      product.category &&
-      product.category.toLowerCase() === "kids"
-  );
+  // ✅ Filter kids category safely
+  const kidsProducts = Array.isArray(products)
+    ? products.filter(
+        (product) =>
+          (product.category || "").toLowerCase().trim() === "kids"
+      )
+    : [];
 
   const handleSizeSelect = (productId, size) => {
     setSizes(prev => ({
@@ -412,20 +645,19 @@ const Kids = () => {
   };
 
   const handleWishlist = (product) => {
-
-    let updatedWishlist = [...wishlist];
-
-    const exists = updatedWishlist.find(
+    const exists = wishlist.find(
       item => item._id === product._id
     );
 
+    let updatedWishlist;
+
     if (exists) {
-      updatedWishlist = updatedWishlist.filter(
+      updatedWishlist = wishlist.filter(
         item => item._id !== product._id
       );
-      showToast("Removed from wishlist", "success");
+      showToast("Removed from wishlist", "error");
     } else {
-      updatedWishlist.push(product);
+      updatedWishlist = [...wishlist, product];
       showToast("Added to wishlist ❤️", "success");
     }
 
@@ -434,10 +666,11 @@ const Kids = () => {
       "wishlist",
       JSON.stringify(updatedWishlist)
     );
+
+    window.dispatchEvent(new Event("wishlistUpdated"));
   };
 
   const handleAddToCart = (product) => {
-
     const selectedSize = sizes[product._id];
 
     if (!selectedSize) {
@@ -445,7 +678,7 @@ const Kids = () => {
       return;
     }
 
-    let existingCart =
+    const existingCart =
       JSON.parse(localStorage.getItem("cart")) || [];
 
     const item = existingCart.find(
@@ -469,19 +702,7 @@ const Kids = () => {
       JSON.stringify(existingCart)
     );
 
-    // remove from wishlist when added to cart
-    let updatedWishlist = wishlist.filter(
-      item => item._id !== product._id
-    );
-
-    setWishlist(updatedWishlist);
-    localStorage.setItem(
-      "wishlist",
-      JSON.stringify(updatedWishlist)
-    );
-
     window.dispatchEvent(new Event("cartUpdated"));
-
     showToast("Item added to cart ✓", "success");
   };
 
@@ -498,73 +719,73 @@ const Kids = () => {
 
       <h1>Kids Collection</h1>
 
-      <div className="kids-grid">
+      {kidsProducts.length === 0 ? (
+        <h3>No Kids products found</h3>
+      ) : (
+        <div className="kids-grid">
+          {kidsProducts.map(product => {
 
-        {kidsProducts.map(product => {
+            const selectedSize = sizes[product._id];
+            const isLiked = wishlist.find(
+              item => item._id === product._id
+            );
 
-          const selectedSize = sizes[product._id];
-          const isLiked = wishlist.find(
-            item => item._id === product._id
-          );
+            return (
+              <div key={product._id} className="kids-card">
 
-          return (
+                <button
+                  className={`wishlist-btn ${isLiked ? "active" : ""}`}
+                  onClick={() => handleWishlist(product)}
+                >
+                  {isLiked ? "❤️" : "🤍"}
+                </button>
 
-            <div key={product._id} className="kids-card">
+                <Link to={`/product/${product._id}`}>
+                  <img
+                    src={`${BASE_URL}/${product.image}`}
+                    alt={product.name}
+                  />
+                </Link>
 
-              <button
-                className={`wishlist-btn ${isLiked ? "active" : ""}`}
-                onClick={() => handleWishlist(product)}
-              >
-                {isLiked ? "❤️" : "🤍"}
-              </button>
+                <h3>{product.name}</h3>
+                <p>₹ {product.price}</p>
 
-              <Link to={`/product/${product._id}`}>
-                <img
-                  src={`${BASE_URL}/${product.image}`}
-                  alt={product.name}
-                />
-              </Link>
+                {selectedSize && (
+                  <p className="selected-size">
+                    Size: {selectedSize}
+                  </p>
+                )}
 
-              <h3>{product.name}</h3>
-              <p>₹ {product.price}</p>
+                <div className="size-preview">
+                  {[6, 7, 8, 9, 10].map(s => (
+                    <button
+                      key={s}
+                      className={
+                        selectedSize === s
+                          ? "size-box active"
+                          : "size-box"
+                      }
+                      onClick={() =>
+                        handleSizeSelect(product._id, s)
+                      }
+                    >
+                      {s}
+                    </button>
+                  ))}
+                </div>
 
-              {selectedSize && (
-                <p className="selected-size">
-                  Size: {selectedSize}
-                </p>
-              )}
+                <button
+                  className="add-btn"
+                  onClick={() => handleAddToCart(product)}
+                >
+                  Add to Cart
+                </button>
 
-              <div className="size-preview">
-                {[6, 7, 8, 9, 10].map(s => (
-                  <button
-                    key={s}
-                    className={
-                      selectedSize === s
-                        ? "size-box active"
-                        : "size-box"
-                    }
-                    onClick={() =>
-                      handleSizeSelect(product._id, s)
-                    }
-                  >
-                    {s}
-                  </button>
-                ))}
               </div>
-
-              <button
-                className="add-btn"
-                onClick={() => handleAddToCart(product)}
-              >
-                Add to Cart
-              </button>
-
-            </div>
-
-          );
-        })}
-
-      </div>
+            );
+          })}
+        </div>
+      )}
 
     </div>
   );

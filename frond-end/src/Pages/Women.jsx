@@ -175,7 +175,14 @@ const Women = () => {
     fetch(`${BASE_URL}/api/products`)
       .then(res => res.json())
       .then(data => {
-        setProducts(data);
+
+        if (Array.isArray(data.data)) {
+          setProducts(data.data);
+        } else {
+          console.error("API did not return array:", data);
+          setProducts([]);
+        }
+
         setLoading(false);
       })
       .catch(err => {
@@ -188,7 +195,6 @@ const Women = () => {
     setWishlist(storedWishlist);
 
   }, []);
-
   const showToast = (message, type = "success") => {
     setToast(null);
     setTimeout(() => setToast({ message, type }), 100);
@@ -196,11 +202,12 @@ const Women = () => {
   };
 
   // ✅ Filter women category (backend data)
-  const womenProducts = products.filter(
-    product =>
-      product.category &&
-      product.category.toLowerCase() === "women"
-  );
+const womenProducts = Array.isArray(products)
+  ? products.filter(
+      (product) =>
+        (product.category || "").toLowerCase() === "women"
+    )
+  : [];
 
   const handleSizeSelect = (productId, size) => {
     setSizes(prev => ({

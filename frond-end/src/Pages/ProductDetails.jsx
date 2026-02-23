@@ -300,8 +300,12 @@ const ProductDetails = () => {
   useEffect(() => {
     fetch(`${BASE_URL}/api/products/${id}`)
       .then((res) => res.json())
+      // .then((data) => {
+      //   setProduct(data);
+      //   setLoading(false);
+      // })
       .then((data) => {
-        setProduct(data);
+        setProduct(data.data);  // ✅ important change
         setLoading(false);
       })
       .catch((err) => {
@@ -407,7 +411,7 @@ const ProductDetails = () => {
             className="product-image"
           /> */}
 
-         
+
           <button
             className={`wishlist-btn ${liked ? "active" : ""}`}
             onClick={handleWishlist}

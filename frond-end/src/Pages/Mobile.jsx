@@ -106,7 +106,14 @@ const Mobile = () => {
     fetch(`${BASE_URL}/api/products`)
       .then(res => res.json())
       .then(data => {
-        setProducts(data);
+
+        if (Array.isArray(data.data)) {
+          setProducts(data.data);
+        } else {
+          console.error("API did not return array:", data);
+          setProducts([]);
+        }
+
         setLoading(false);
       })
       .catch(err => {
@@ -126,11 +133,12 @@ const Mobile = () => {
   };
 
   // ✅ Filter mobile products
-  const mobileProducts = products.filter(
-    product =>
-      product.category &&
-      product.category.toLowerCase() === "mobile"
-  );
+const mobileProducts = Array.isArray(products)
+  ? products.filter(
+      (product) =>
+        (product.category || "").toLowerCase() === "mobile"
+    )
+  : [];
 
   const handleWishlist = (product) => {
 
