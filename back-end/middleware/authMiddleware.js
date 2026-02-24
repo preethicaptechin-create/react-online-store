@@ -6,25 +6,30 @@ const User = require("../models/User");
 exports.protect = async (req, res, next) => {
   let token;
 
-  // Check token in header
-  if (req.headers.authorization && req.headers.authorization.startsWith("Bearer")) {
+  // ✅ Check for token in Authorization header
+  if (
+    req.headers.authorization &&
+    req.headers.authorization.startsWith("Bearer")
+  ) {
     try {
-      // Get token
+      // Extract token
       token = req.headers.authorization.split(" ")[1];
 
       // Verify token
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-      // Get user from token
+      // Attach user to request object (exclude password)
       req.user = await User.findById(decoded.id).select("-password");
 
-      next(); // Move to next function
+      next(); // Pass control to next middleware/controller
     } catch (error) {
+      console.error("Auth middleware error:", error);
       return res.status(401).json({ message: "Not authorized, token failed" });
     }
   }
 
+  // ✅ If no token provided
   if (!token) {
-    return res.status(401).json({ message: "Not authorized, no token" });
+    return res.status(401).json({ message: "Not authorized, no token provided" });
   }
 };
