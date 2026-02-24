@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Header from "./Components/Header";
 import Footer from "./Components/Footer";
 import Navbar from "./Components/Navbar";
+import ProtectedRoute from "./Components/ProtectedRoute";
 
 import Home from "./Pages/Home";
 import ProductList from "./Pages/Productlist";
@@ -49,9 +50,9 @@ function App() {
 
             <Route path="/shoes" element={<Shoes />} />
             <Route path="/product/:id" element={<ProductDetails />} />
-            <Route path="/cart" element={<Cart />} />
-            <Route path="/add-product" element={<AddProduct />} />
-            <Route path="/wishlist" element={<Wishlist />} />
+            <Route path="/cart" element={<ProtectedRoute><Cart /></ProtectedRoute>} />
+            <Route path="/add-product" element={<ProtectedRoute><AddProduct /></ProtectedRoute>} />
+            <Route path="/wishlist" element={ <ProtectedRoute><Wishlist /></ProtectedRoute>} />
 
 
 
