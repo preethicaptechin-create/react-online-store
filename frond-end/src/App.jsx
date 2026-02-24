@@ -20,6 +20,7 @@ import ProductDetails from "./Pages/ProductDetails";
 import Cart from "./Pages/Cart";
 import AddProduct from "./Pages/AddProduct";
 import Wishlist from "./Pages/Wishlist"
+import Register from "./Pages/Register";
 
 
 
@@ -38,6 +39,7 @@ function App() {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/products" element={<ProductList />} />
+            <Route path="/register" element={<Register />} />
             <Route path="/login" element={<Login />} />
             <Route path="/men" element={<Men />} />
             <Route path="/women" element={<Women />} />
