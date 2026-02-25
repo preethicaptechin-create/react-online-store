@@ -1,12 +1,12 @@
 # Frontend
-/frondend/node_modules/
-/frondend/dist/
-/frondend/.env
+/frond-end/node_modules/
+/frond-end/dist/
+/frond-end/.env
 
 # Backend
-/backend/node_modules/
-/backend/logs/
-/backend/.env
+/back-end/node_modules/
+/back-end/logs/
+/back-end/.env
 
 # Common
 .DS_Store
