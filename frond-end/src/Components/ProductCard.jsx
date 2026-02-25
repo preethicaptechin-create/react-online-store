@@ -221,7 +221,7 @@ function ProductCard({ product }) {
           className="product-image"
         />
       </Link>
-
+,
       <h3>{product.name}</h3>
       <p>₹{product.price}</p>
 

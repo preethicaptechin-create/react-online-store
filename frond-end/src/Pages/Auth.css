@@ -179,7 +179,15 @@
   text-align: center;
   margin-top: 15px;
 }
+/* Auth.css */
 
+/* Error messages under inputs */
+.error {
+  color: red;           /* red text */
+  font-size: 0.85rem;   /* slightly smaller text */
+  margin-top: 4px;      /* small spacing from input */
+  display: block;       /* ensure it takes its own line */
+}
 
 @media (max-width: 768px) {
 
