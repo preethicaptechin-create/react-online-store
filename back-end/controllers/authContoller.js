@@ -200,6 +200,187 @@
 
 
 
+// const bcrypt = require("bcryptjs");
+// const jwt = require("jsonwebtoken");
+// const User = require("../models/User");
+
+// // 🔹 Access Token (short time)
+// const generateAccessToken = (userId) => {
+//   return jwt.sign({ id: userId }, process.env.JWT_SECRET, {
+//     expiresIn: "15m",
+//   });
+// };
+
+// // 🔹 Refresh Token (long time)
+// const generateRefreshToken = (userId) => {
+//   return jwt.sign({ id: userId }, process.env.JWT_REFRESH_SECRET, {
+//     expiresIn: "7d",
+//   });
+// };
+
+// // ======================
+// // REGISTER USER
+// // ======================
+// exports.registerUser = async (req, res) => {
+//   try {
+//     const { name, email, password } = req.body;
+//     console.log("Register body:", req.body);
+
+//     if (!name || !email || !password) {
+//       return res.status(400).json({ message: "All fields are required" });
+//     }
+
+//     if (password.length < 6) {
+//       return res.status(400).json({
+//         message: "Password must be at least 6 characters",
+//       });
+//     }
+
+//     const userExists = await User.findOne({ email });
+//     if (userExists) {
+//       return res.status(400).json({ message: "User already exists" });
+//     }
+
+//     const hashedPassword = await bcrypt.hash(password, 10);
+
+//     const newUser = await User.create({
+//       name,
+//       email,
+//       password: hashedPassword,
+//     });
+
+//     // 🔹 Generate tokens
+//     const accessToken = generateAccessToken(newUser._id);
+//     const refreshToken = generateRefreshToken(newUser._id);
+
+//     // 🔹 Save refresh token
+//     newUser.refreshToken = refreshToken;
+//     await newUser.save();
+
+//     res.status(201).json({
+//       message: "User registered successfully",
+//       accessToken,
+//       refreshToken,
+//       user: {
+//         id: newUser._id,
+//         name: newUser.name,
+//         email: newUser.email,
+//       },
+//     });
+
+//   } catch (error) {
+//     console.error("Register error:", error);
+//     res.status(500).json({ message: "Server error" });
+//   }
+// };
+
+// // ======================
+// // LOGIN USER
+// // ======================
+// exports.loginUser = async (req, res) => {
+//   try {
+//     const { email, password } = req.body;
+//     console.log("Login body:", req.body);
+
+//     if (!email || !password) {
+//       return res.status(400).json({ message: "Email and password are required" });
+//     }
+
+//     const existingUser = await User.findOne({ email });
+//     if (!existingUser) {
+//       return res.status(400).json({ message: "Invalid email or password" });
+//     }
+
+//     const isMatch = await bcrypt.compare(password, existingUser.password);
+//     if (!isMatch) {
+//       return res.status(400).json({ message: "Invalid email or password" });
+//     }
+
+//     if (!process.env.JWT_SECRET) {
+//       return res.status(500).json({ message: "JWT secret not configured" });
+//     }
+
+//     // 🔹 Generate tokens
+//     const accessToken = generateAccessToken(existingUser._id);
+//     const refreshToken = generateRefreshToken(existingUser._id);
+
+//     // 🔹 Save refresh token
+//     existingUser.refreshToken = refreshToken;
+//     await existingUser.save();
+
+//     res.status(200).json({
+//       message: "Login successful",
+//       accessToken,
+//       refreshToken,
+//       user: {
+//         id: existingUser._id,
+//         name: existingUser.name,
+//         email: existingUser.email,
+//       },
+//     });
+
+//   } catch (error) {
+//     console.error("Login error:", error);
+//     res.status(500).json({ message: "Server error" });
+//   }
+// };
+
+// // ======================
+// // REFRESH ACCESS TOKEN
+// // ======================
+// exports.refreshToken = async (req, res) => {
+//   try {
+//     const { refreshToken } = req.body;
+
+//     if (!refreshToken) {
+//       return res.status(401).json({ message: "No refresh token provided" });
+//     }
+
+//     const user = await User.findOne({ refreshToken });
+//     if (!user) {
+//       return res.status(403).json({ message: "Invalid refresh token" });
+//     }
+
+//     jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET, (err) => {
+//       if (err) {
+//         return res.status(403).json({ message: "Refresh token expired" });
+//       }
+
+//       const newAccessToken = generateAccessToken(user._id);
+
+//       res.status(200).json({ accessToken: newAccessToken });
+//     });
+
+//   } catch (error) {
+//     res.status(500).json({ message: "Server error" });
+//   }
+// };
+
+// // ======================
+// // LOGOUT USER
+// // ======================
+// exports.logoutUser = async (req, res) => {
+//   try {
+//     const { refreshToken } = req.body;
+
+//     const user = await User.findOne({ refreshToken });
+
+//     if (user) {
+//       user.refreshToken = null;
+//       await user.save();
+//     }
+
+//     res.status(200).json({ message: "Logged out successfully" });
+
+//   } catch (error) {
+//     res.status(500).json({ message: "Server error" });
+//   }
+// };    
+
+
+
+
+
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
@@ -363,16 +544,20 @@ exports.logoutUser = async (req, res) => {
   try {
     const { refreshToken } = req.body;
 
+    if (!refreshToken) {
+      return res.status(400).json({ message: "No refresh token provided" });
+    }
+
     const user = await User.findOne({ refreshToken });
 
     if (user) {
-      user.refreshToken = null;
+      user.refreshToken = null; // remove refresh token from DB
       await user.save();
     }
 
-    res.status(200).json({ message: "Logged out successfully" });
-
+    res.status(200).json({ message: "Logged out successfully ✅" });
   } catch (error) {
+    console.error("Logout error:", error);
     res.status(500).json({ message: "Server error" });
   }
 };
