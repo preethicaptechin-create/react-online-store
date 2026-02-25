@@ -22,6 +22,7 @@ import Cart from "./Pages/Cart";
 import AddProduct from "./Pages/AddProduct";
 import Wishlist from "./Pages/Wishlist"
 import Register from "./Pages/Register";
+import OrderConfirmation from "./Pages/OrderConfirmation";
 
 
 
@@ -52,9 +53,9 @@ function App() {
             <Route path="/product/:id" element={<ProductDetails />} />
             <Route path="/cart" element={<ProtectedRoute><Cart /></ProtectedRoute>} />
             <Route path="/add-product" element={<ProtectedRoute><AddProduct /></ProtectedRoute>} />
-            <Route path="/wishlist" element={ <ProtectedRoute><Wishlist /></ProtectedRoute>} />
+            <Route path="/wishlist" element={<ProtectedRoute><Wishlist /></ProtectedRoute>} />
 
-
+            <Route path="/orderconfirmation" element={<OrderConfirmation />} />
 
           </Routes>
         </main>
