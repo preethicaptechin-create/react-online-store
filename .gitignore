@@ -1,7 +1,7 @@
 # Frontend
-/frontend/node_modules/
-/frontend/dist/
-/frontend/.env
+/frondend/node_modules/
+/frondend/dist/
+/frondend/.env
 
 # Backend
 /backend/node_modules/
