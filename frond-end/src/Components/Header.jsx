@@ -739,21 +739,26 @@
 
 
 import "./Header.css";
-
+import { toast, ToastContainer } from "react-toastify";
 import { FaShoppingCart, FaUserCircle } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState, useRef } from "react";
 
 function Header() {
   const navigate = useNavigate();
+  const [user, setUser] = useState(
+    JSON.parse(localStorage.getItem("user")) || null
+  );
+
+
   const [products, setProducts] = useState([]);
   const [cartCount, setCartCount] = useState(0);
   const [searchTerm, setSearchTerm] = useState("");
   const [showDropdown, setShowDropdown] = useState(false);
   const [paused, setPaused] = useState(false);
   const [accountDropdown, setAccountDropdown] = useState(false);
-  const user = JSON.parse(localStorage.getItem("user")); // logged-in user
-
+  // const user = JSON.parse(localStorage.getItem("user")); // logged-in user
+const accountRef = useRef(null);  
   const wrapperRef = useRef(null);
   const BASE_URL = "http://localhost:5000";
 
@@ -772,35 +777,20 @@ function Header() {
       });
   }, []);
 
-  // // ✅ Cart count update (fixed)
-  // useEffect(() => {
-  //   const updateCartCount = () => {
-  //     const cart = JSON.parse(localStorage.getItem("cart")) || [];
-  //     // Sum actual qty (default 0), so badge updates properly
-  //     const total = cart.reduce((sum, item) => sum + (item.qty || 0), 0);
-  //     setCartCount(total);
-  //   };
 
-  //   updateCartCount(); // init count
-  //   window.addEventListener("cartUpdated", updateCartCount);
+  useEffect(() => {
+    const updateCartCount = () => {
+      const cart = JSON.parse(localStorage.getItem("cart")) || [];
+      // ✅ Count unique products (each _id once)
+      const uniqueProducts = new Set(cart.map((item) => item._id));
+      setCartCount(uniqueProducts.size);
+    };
 
-  //   return () => window.removeEventListener("cartUpdated", updateCartCount);
-  // }, []);
+    updateCartCount();
+    window.addEventListener("cartUpdated", updateCartCount);
 
-  // Cart count update - Flipkart style
-useEffect(() => {
-  const updateCartCount = () => {
-    const cart = JSON.parse(localStorage.getItem("cart")) || [];
-    // ✅ Count unique products (each _id once)
-    const uniqueProducts = new Set(cart.map((item) => item._id));
-    setCartCount(uniqueProducts.size);
-  };
-
-  updateCartCount();
-  window.addEventListener("cartUpdated", updateCartCount);
-
-  return () => window.removeEventListener("cartUpdated", updateCartCount);
-}, []);
+    return () => window.removeEventListener("cartUpdated", updateCartCount);
+  }, []);
 
   // Close dropdown on outside click
   useEffect(() => {
@@ -812,6 +802,22 @@ useEffect(() => {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+  useEffect(() => {
+  const handleAccountOutsideClick = (event) => {
+    if (
+      accountRef.current &&
+      !accountRef.current.contains(event.target)
+    ) {
+      setAccountDropdown(false);
+    }
+  };
+
+  document.addEventListener("mousedown", handleAccountOutsideClick);
+
+  return () => {
+    document.removeEventListener("mousedown", handleAccountOutsideClick);
+  };
+}, []);
 
   // Filter products for search
   const filteredProducts = products
@@ -827,7 +833,20 @@ useEffect(() => {
 
   // Logout
   const handleLogout = async () => {
+
     const refreshToken = localStorage.getItem("refreshToken");
+
+
+
+
+
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("refreshToken");
+    localStorage.removeItem("user");
+    setUser(null);
+
+    // Show toast
+    toast.success("You have successfully logged out!");
 
     if (refreshToken) {
       try {
@@ -841,9 +860,6 @@ useEffect(() => {
       }
     }
 
-    localStorage.removeItem("accessToken");
-    localStorage.removeItem("refreshToken");
-    localStorage.removeItem("user");
 
     navigate("/login");
   };
@@ -921,7 +937,7 @@ useEffect(() => {
           {cartCount > 0 && <span className="cart-badge">{cartCount}</span>}
         </div>
 
-        <div className="account-wrapper">
+       <div className="account-wrapper" ref={accountRef}>
           <div
             className="account-section"
             onClick={() => {
@@ -931,9 +947,22 @@ useEffect(() => {
           >
             <FaUserCircle className="user-icon" />
             <span>{user ? user.name : "Login"}</span>
+
             {user && accountDropdown && (
               <div className="account-dropdown">
                 <p className="dropdown-username">{user.name}</p>
+
+                {/* ✅ ADD THIS LINE HERE */}
+                <p
+                  className="dropdown-orders"
+                  onClick={() => {
+                    setAccountDropdown(false);
+                    navigate("/orders");
+                  }}
+                >
+                  View Orders
+                </p>
+
                 <p className="dropdown-logout" onClick={handleLogout}>
                   Logout
                 </p>

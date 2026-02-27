@@ -736,6 +736,176 @@
 
 
 
+// import React, { useState } from "react";
+// import { useNavigate } from "react-router-dom";
+// import { refreshAccessToken } from "../utils/refreshToken";
+// import "./OrderDetails.css";
+
+// const OrderDetails = () => {
+//   const navigate = useNavigate();
+
+//   const [formData, setFormData] = useState({
+//     firstName: "",
+//     lastName: "",
+//     address: "",
+//     mobile: "",
+//     paymentMethod: "",
+//   });
+
+//   const handleChange = (e) => {
+//     setFormData({ ...formData, [e.target.name]: e.target.value });
+//   };
+
+//   const handleSubmit = async (e) => {
+//     e.preventDefault();
+
+//     const cartItems = JSON.parse(localStorage.getItem("cartItems") || "[]");
+//     const cartTotal = parseFloat(localStorage.getItem("cartTotal") || "0");
+//     let token = localStorage.getItem("accessToken");
+
+//     if (!cartItems.length) {
+//       alert("Cart is empty!");
+//       return;
+//     }
+
+//     if (!token) {
+//       alert("Please login first");
+//       navigate("/login");
+//       return;
+//     }
+
+//     const orderData = {
+//       items: cartItems.map((item) => ({
+//         product: item._id,
+//         name: item.name,
+//         price: item.price,
+//         quantity: item.qty,
+//         size: item.size,
+//       })),
+//       total: cartTotal,
+//       firstName: formData.firstName,
+//       lastName: formData.lastName,
+//       address: formData.address,
+//       mobile: formData.mobile,
+//       paymentMethod: formData.paymentMethod,
+//     };
+
+//     try {
+//       let res = await fetch("http://localhost:5000/api/orders", {
+//         method: "POST",
+//         headers: {
+//           "Content-Type": "application/json",
+//           Authorization: `Bearer ${token}`,
+//         },
+//         body: JSON.stringify(orderData),
+//       });
+
+//       // 🔹 Refresh token if 401 Unauthorized
+//       if (res.status === 401) {
+//         token = await refreshAccessToken();
+//         if (!token) return; // user redirected to login
+
+//         res = await fetch("http://localhost:5000/api/orders", {
+//           method: "POST",
+//           headers: {
+//             "Content-Type": "application/json",
+//             Authorization: `Bearer ${token}`,
+//           },
+//           body: JSON.stringify(orderData),
+//         });
+//       }
+
+//       const data = await res.json();
+
+//       if (res.ok) {
+//         // ✅ Clear cart after successful order
+//         localStorage.removeItem("cartItems");
+//         localStorage.removeItem("cartTotal");
+//         localStorage.removeItem("cart");
+
+//         // ✅ Notify other components (like Header badge)
+//         window.dispatchEvent(new Event("cartUpdated"));
+
+//         navigate(`/order-confirmation/${data._id}`);
+//       } else {
+//         alert(data.message || "Failed to place order");
+//       }
+//     } catch (err) {
+//       console.error("Order error:", err);
+//       alert("Something went wrong!");
+//     }
+//   };
+
+//   return (
+//     <div className="order-details-page">
+//       <h2>Enter Order Details</h2>
+//       <form onSubmit={handleSubmit} className="order-form">
+//         <div className="name-row">
+//           <div>
+//             <label>First Name</label>
+//             <input
+//               type="text"
+//               name="firstName"
+//               value={formData.firstName}
+//               onChange={handleChange}
+//               required
+//             />
+//           </div>
+
+//           <div>
+//             <label>Last Name</label>
+//             <input
+//               type="text"
+//               name="lastName"
+//               value={formData.lastName}
+//               onChange={handleChange}
+//               required
+//             />
+//           </div>
+//         </div>
+
+//         <label>Address</label>
+//         <input
+//           type="text"
+//           name="address"
+//           value={formData.address}
+//           onChange={handleChange}
+//           required
+//         />
+
+//         <label>Mobile Number</label>
+//         <input
+//           type="text"
+//           name="mobile"
+//           value={formData.mobile}
+//           onChange={handleChange}
+//           required
+//         />
+
+//         <label>Payment Method</label>
+//         <select
+//           name="paymentMethod"
+//           value={formData.paymentMethod}
+//           onChange={handleChange}
+//           required
+//         >
+//           <option value="">Select</option>
+//           <option value="UPI">UPI</option>
+//           <option value="Credit/Debit Card">Credit/Debit Card</option>
+//           <option value="Cash on Delivery">Cash on Delivery</option>
+//         </select>
+
+//         <button type="submit">Place Order</button>
+//       </form>
+//     </div>
+//   );
+// };
+
+// export default OrderDetails;
+
+
+
+
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { refreshAccessToken } from "../utils/refreshToken";
@@ -752,6 +922,14 @@ const OrderDetails = () => {
     paymentMethod: "",
   });
 
+  // ✅ TOAST STATE
+  const [toast, setToast] = useState(null);
+
+  const showToast = (message, type = "success") => {
+    setToast({ message, type });
+    setTimeout(() => setToast(null), 2800);
+  };
+
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
@@ -763,14 +941,15 @@ const OrderDetails = () => {
     const cartTotal = parseFloat(localStorage.getItem("cartTotal") || "0");
     let token = localStorage.getItem("accessToken");
 
+    // ❌ alert removed → ✅ toast
     if (!cartItems.length) {
-      alert("Cart is empty!");
+      showToast("Your cart is empty 🛒", "error");
       return;
     }
 
     if (!token) {
-      alert("Please login first");
-      navigate("/login");
+      showToast("Please login to place order", "error");
+      setTimeout(() => navigate("/login"), 1200);
       return;
     }
 
@@ -800,10 +979,10 @@ const OrderDetails = () => {
         body: JSON.stringify(orderData),
       });
 
-      // 🔹 Refresh token if 401 Unauthorized
+      // 🔹 Refresh token if 401
       if (res.status === 401) {
         token = await refreshAccessToken();
-        if (!token) return; // user redirected to login
+        if (!token) return;
 
         res = await fetch("http://localhost:5000/api/orders", {
           method: "POST",
@@ -818,27 +997,32 @@ const OrderDetails = () => {
       const data = await res.json();
 
       if (res.ok) {
-        // ✅ Clear cart after successful order
+        // ✅ Clear cart
         localStorage.removeItem("cartItems");
         localStorage.removeItem("cartTotal");
         localStorage.removeItem("cart");
 
-        // ✅ Notify other components (like Header badge)
         window.dispatchEvent(new Event("cartUpdated"));
 
-        navigate(`/order-confirmation/${data._id}`);
+        // ✅ SUCCESS TOAST
+        showToast("Order placed successfully ✅", "success");
+
+        setTimeout(() => {
+          navigate(`/order-confirmation/${data._id}`);
+        }, 1200);
       } else {
-        alert(data.message || "Failed to place order");
+        showToast(data.message || "Failed to place order", "error");
       }
     } catch (err) {
       console.error("Order error:", err);
-      alert("Something went wrong!");
+      showToast("Something went wrong!", "error");
     }
   };
 
   return (
     <div className="order-details-page">
       <h2>Enter Order Details</h2>
+
       <form onSubmit={handleSubmit} className="order-form">
         <div className="name-row">
           <div>
@@ -897,6 +1081,13 @@ const OrderDetails = () => {
 
         <button type="submit">Place Order</button>
       </form>
+
+      {/* ✅ TOAST UI */}
+      {toast && (
+        <div className={`snackbar snackbar-${toast.type}`}>
+          {toast.message}
+        </div>
+      )}
     </div>
   );
 };
