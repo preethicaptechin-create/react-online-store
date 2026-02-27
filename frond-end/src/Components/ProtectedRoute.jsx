@@ -92,7 +92,7 @@ const ProtectedRoute = ({ children }) => {
 
   useEffect(() => {
     const checkAuth = async () => {
-      let accessToken = localStorage.getItem("accessToken");
+      const accessToken = localStorage.getItem("accessToken");
       const refreshToken = localStorage.getItem("refreshToken");
 
       if (!accessToken && !refreshToken) {
@@ -102,28 +102,22 @@ const ProtectedRoute = ({ children }) => {
       }
 
       try {
-        // ✅ Access protected route with access token
-        await axios.get(`${API_URL}/api/auth/profile`, {
+        // ✅ access token
+        const profile = await axios.get(`${API_URL}/api/auth/profile`, {
           headers: { Authorization: `Bearer ${accessToken}` },
         });
-        setIsAuth(true);
-      } catch (error) {
-        // 🔄 Access token invalid / expired → try refresh
+        if (profile.data.user) setIsAuth(true);
+      } catch (err) {
         if (refreshToken) {
           try {
-            const response = await axios.post(`${API_URL}/api/auth/refresh-token`, {
-              refreshToken, // ✅ match backend key
-            });
-            localStorage.setItem("accessToken", response.data.accessToken);
+            const refresh = await axios.post(`${API_URL}/api/auth/refresh-token`, { refreshToken });
+            localStorage.setItem("accessToken", refresh.data.accessToken);
 
-            // Retry accessing protected route with new access token
-            await axios.get(`${API_URL}/api/auth/profile`, {
-              headers: { Authorization: `Bearer ${response.data.accessToken}` },
+            const retry = await axios.get(`${API_URL}/api/auth/profile`, {
+              headers: { Authorization: `Bearer ${refresh.data.accessToken}` },
             });
-
-            setIsAuth(true);
-          } catch (refreshError) {
-            console.log("Refresh token failed:", refreshError);
+            if (retry.data.user) setIsAuth(true);
+          } catch {
             setIsAuth(false);
           }
         } else {
@@ -138,7 +132,6 @@ const ProtectedRoute = ({ children }) => {
   }, []);
 
   if (loading) return <div>Loading...</div>;
-
   if (!isAuth) return <Navigate to="/login" />;
 
   return children;

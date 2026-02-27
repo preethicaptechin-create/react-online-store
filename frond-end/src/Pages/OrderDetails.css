@@ -1,0 +1,78 @@
+/* OrderDetails.css */
+
+.order-details-page {
+  max-width: 500px;
+  margin: 50px auto;
+  padding: 30px 25px;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.order-details-page h2 {
+  text-align: center;
+  margin-bottom: 25px;
+  color: #333;
+  font-size: 24px;
+}
+
+.order-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.order-form label {
+  font-weight: 600;
+  margin-bottom: 5px;
+  color: #555;
+}
+
+.order-form input,
+.order-form select {
+  padding: 10px 12px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 16px;
+  outline: none;
+  transition: border 0.2s ease, box-shadow 0.2s ease;
+}
+
+.order-form input:focus,
+.order-form select:focus {
+  border-color: #007185; /* Flipkart-like blue */
+  box-shadow: 0 0 5px rgba(0, 113, 133, 0.2);
+}
+
+.order-form button {
+  padding: 12px;
+  border: none;
+  background-color: #ffce00; /* Flipkart yellow */
+  color: #111;
+  font-weight: 700;
+  font-size: 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.order-form button:hover {
+  background-color: #e0b800;
+}
+
+@media screen and (max-width: 600px) {
+  .order-details-page {
+    margin: 20px;
+    padding: 20px;
+  }
+
+  .order-form input,
+  .order-form select {
+    font-size: 14px;
+  }
+
+  .order-form button {
+    font-size: 14px;
+  }
+}
