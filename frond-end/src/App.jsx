@@ -102,7 +102,8 @@ import AdminDashboard from "./Pages/AdminDashboard";
 import AdminLogin from "./Pages/AdminLogin";
 import AdminOrders from "./Pages/AdminOrder";
 import AdminProducts from "./Pages/AdminProducts";
-
+import MyOrders from "./Pages/MyOrders";
+import { ToastContainer, toast } from "react-toastify";
 
 
 import "./App.css";
@@ -178,6 +179,7 @@ function App() {
         <Navbar />
 
         <main className="content app-container">
+           <ToastContainer position="top-right" autoClose={3000} />
           <Routes>
             {/* Public / user routes */}
             <Route path="/" element={<Home />} />
@@ -196,6 +198,7 @@ function App() {
             <Route path="/wishlist" element={<Wishlist />} />
             <Route path="/order-details" element={<OrderDetails />} />
             <Route path="/order-confirmation/:orderId" element={<OrderConfirmation />} />
+            <Route path="/orders" element={<MyOrders />} />
 
             {/* Admin login route */}
             <Route path="/admin-login" element={<AdminLogin onLogin={() => setLoggedIn(true)} />} />

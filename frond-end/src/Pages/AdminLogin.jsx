@@ -4,6 +4,7 @@ import axios from "axios";
 const AdminLogin = ({ onLogin }) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+    const [role, setRole] = useState("");
   const [error, setError] = useState("");
 
 //   const handleSubmit = async (e) => {
@@ -26,6 +27,7 @@ const handleSubmit = async (e) => {
     const res = await axios.post("http://localhost:5000/api/admin/login", {
       username,
       password,
+      role,
     });
 
     const { token } = res.data;
@@ -54,6 +56,13 @@ const handleSubmit = async (e) => {
           placeholder="Password" 
           value={password} 
           onChange={(e) => setPassword(e.target.value)} 
+          required 
+        />
+           <input 
+          type="role" 
+          placeholder="Role" 
+          value={role} 
+          onChange={(e) => setRole(e.target.value)} 
           required 
         />
         <button type="submit">Login</button>

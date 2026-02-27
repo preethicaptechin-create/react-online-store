@@ -163,6 +163,10 @@ background: linear-gradient(to right, #ff4e9b, #4facfe);
   color: red;
   font-size: 12px;
 }
+.dropdown-orders{
+  font-size: 12px;
+  cursor: default;
+}
 
 
 
