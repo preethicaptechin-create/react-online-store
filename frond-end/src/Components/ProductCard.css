@@ -298,7 +298,7 @@
   gap: 6px;
 }
 
-.size-btn {
+/* .size-btn {
   width: 32px;
   height: 32px;
   border-radius: 6px;
@@ -311,6 +311,43 @@
   background: #2f6bff;
   color: #fff;
   border-color: #2f6bff;
+} */
+
+.size-btn {
+  /* your normal styles */
+  background: #ffffff;
+  color: #333;
+  border: 1px solid #ccc;
+  transition: all 0.15s ease;
+  user-select: none;          /* prevents text selection on click */
+}
+
+.size-btn:hover {
+  background: #f0f0f0;
+  border-color: #aaa;
+}
+
+/* ← This is the important part */
+.size-btn:active,
+.size-btn:focus:active {
+  background: inherit !important;     /* or match your normal/hover color */
+  color: inherit !important;
+  border-color: inherit !important;
+  transform: scale(0.98);             /* optional small press effect */
+  outline: none;
+}
+
+/* When actually selected */
+.size-btn.active {
+  background: #2f6bff;
+  color: #fff;
+  border-color: #2f6bff;
+}
+
+/* Optional: make active state stronger than hover */
+.size-btn.active:hover,
+.size-btn.active:active {
+  background: #1e5ae6;          /* slightly darker blue on hover when active */
 }
 
 /* add to cart */

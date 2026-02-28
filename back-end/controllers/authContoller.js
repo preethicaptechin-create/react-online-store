@@ -383,29 +383,24 @@
 
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const User = require("../models/User");
+const crypto = require("crypto");
+const User = require("../models/user");
+const sendEmail = require("../utils/sendEmail");
 
-// 🔹 Access Token (short time)
-const generateAccessToken = (userId) => {
-  return jwt.sign({ id: userId }, process.env.JWT_SECRET, {
-    expiresIn: "15m",
-  });
-};
+// ======================
+// TOKEN HELPERS
+// ======================
+const generateAccessToken = (userId) =>
+  jwt.sign({ id: userId }, process.env.JWT_SECRET, { expiresIn: "15m" });
 
-// 🔹 Refresh Token (long time)
-const generateRefreshToken = (userId) => {
-  return jwt.sign({ id: userId }, process.env.JWT_REFRESH_SECRET, {
-    expiresIn: "7d",
-  });
-};
-
+const generateRefreshToken = (userId) =>
+  jwt.sign({ id: userId }, process.env.JWT_REFRESH_SECRET, { expiresIn: "7d" });
 // ======================
 // REGISTER USER
 // ======================
 exports.registerUser = async (req, res) => {
   try {
     const { name, email, password } = req.body;
-    console.log("Register body:", req.body);
 
     if (!name || !email || !password) {
       return res.status(400).json({ message: "All fields are required" });
@@ -424,31 +419,28 @@ exports.registerUser = async (req, res) => {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const newUser = await User.create({
+    const user = await User.create({
       name,
       email,
       password: hashedPassword,
     });
 
-    // 🔹 Generate tokens
-    const accessToken = generateAccessToken(newUser._id);
-    const refreshToken = generateRefreshToken(newUser._id);
+    const accessToken = generateAccessToken(user._id);
+    const refreshToken = generateRefreshToken(user._id);
 
-    // 🔹 Save refresh token
-    newUser.refreshToken = refreshToken;
-    await newUser.save();
+    user.refreshToken = refreshToken;
+    await user.save();
 
     res.status(201).json({
       message: "User registered successfully",
       accessToken,
       refreshToken,
       user: {
-        id: newUser._id,
-        name: newUser.name,
-        email: newUser.email,
+        id: user._id,
+        name: user.name,
+        email: user.email,
       },
     });
-
   } catch (error) {
     console.error("Register error:", error);
     res.status(500).json({ message: "Server error" });
@@ -461,45 +453,37 @@ exports.registerUser = async (req, res) => {
 exports.loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
-    console.log("Login body:", req.body);
 
     if (!email || !password) {
       return res.status(400).json({ message: "Email and password are required" });
     }
 
-    const existingUser = await User.findOne({ email });
-    if (!existingUser) {
+    const user = await User.findOne({ email });
+    if (!user) {
       return res.status(400).json({ message: "Invalid email or password" });
     }
 
-    const isMatch = await bcrypt.compare(password, existingUser.password);
+    const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       return res.status(400).json({ message: "Invalid email or password" });
     }
 
-    if (!process.env.JWT_SECRET) {
-      return res.status(500).json({ message: "JWT secret not configured" });
-    }
+    const accessToken = generateAccessToken(user._id);
+    const refreshToken = generateRefreshToken(user._id);
 
-    // 🔹 Generate tokens
-    const accessToken = generateAccessToken(existingUser._id);
-    const refreshToken = generateRefreshToken(existingUser._id);
-
-    // 🔹 Save refresh token
-    existingUser.refreshToken = refreshToken;
-    await existingUser.save();
+    user.refreshToken = refreshToken;
+    await user.save();
 
     res.status(200).json({
       message: "Login successful",
       accessToken,
       refreshToken,
       user: {
-        id: existingUser._id,
-        name: existingUser.name,
-        email: existingUser.email,
+        id: user._id,
+        name: user.name,
+        email: user.email,
       },
     });
-
   } catch (error) {
     console.error("Login error:", error);
     res.status(500).json({ message: "Server error" });
@@ -507,7 +491,7 @@ exports.loginUser = async (req, res) => {
 };
 
 // ======================
-// REFRESH ACCESS TOKEN
+// REFRESH TOKEN
 // ======================
 exports.refreshToken = async (req, res) => {
   try {
@@ -528,10 +512,8 @@ exports.refreshToken = async (req, res) => {
       }
 
       const newAccessToken = generateAccessToken(user._id);
-
       res.status(200).json({ accessToken: newAccessToken });
     });
-
   } catch (error) {
     res.status(500).json({ message: "Server error" });
   }
@@ -551,13 +533,90 @@ exports.logoutUser = async (req, res) => {
     const user = await User.findOne({ refreshToken });
 
     if (user) {
-      user.refreshToken = null; // remove refresh token from DB
+      user.refreshToken = null;
       await user.save();
     }
 
-    res.status(200).json({ message: "Logged out successfully ✅" });
+    res.status(200).json({ message: "Logged out successfully" });
   } catch (error) {
     console.error("Logout error:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+// ======================
+// FORGOT PASSWORD
+// ======================
+
+exports.forgotPassword = async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    // 1️⃣ Find the user
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // 2️⃣ Generate a reset token
+    const resetToken = crypto.randomBytes(32).toString("hex");
+
+    // 3️⃣ Hash the token and save in user
+    user.resetPasswordToken = crypto
+      .createHash("sha256")
+      .update(resetToken)
+      .digest("hex");
+
+    // 15 minutes expiry
+    user.resetPasswordExpire = Date.now() + 15 * 60 * 1000;
+
+    await user.save();
+
+    // 4️⃣ Return the reset link in response (instead of sending email)
+    const resetLink = `http://localhost:5173/reset-password/${resetToken}`;
+    console.log("RESET LINK 👉", resetLink); // optional for backend console
+
+    res.status(200).json({
+      message: "Password reset link generated ✅",
+      resetLink, // send link in response
+    });
+
+  } catch (error) {
+    console.error("Forgot password error:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+// ======================
+// RESET PASSWORD
+// ======================
+exports.resetPassword = async (req, res) => {
+  try {
+    const resetToken = req.params.token;
+    const { password } = req.body;
+
+    const hashedToken = crypto
+      .createHash("sha256")
+      .update(resetToken)
+      .digest("hex");
+
+    const user = await User.findOne({
+      resetPasswordToken: hashedToken,
+      resetPasswordExpire: { $gt: Date.now() },
+    });
+
+    if (!user)
+      return res.status(400).json({ message: "Token is invalid or expired" });
+
+    user.password = await bcrypt.hash(password, 10);
+    user.resetPasswordToken = undefined;
+    user.resetPasswordExpire = undefined;
+
+    await user.save();
+
+    res.json({ message: "Password reset successful" });
+  } catch (error) {
+    console.error("Reset password error:", error);
     res.status(500).json({ message: "Server error" });
   }
 };

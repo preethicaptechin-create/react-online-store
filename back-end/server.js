@@ -194,6 +194,9 @@ app.use(express.urlencoded({ extended: true })); // Parse form data if needed
 
 // Serve static files (uploaded images, etc.)
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+app.get("/test-image", (req, res) => {
+  res.sendFile(path.join(__dirname, "uploads/1772260495779-885314867.jpg"));
+});
 
 // Optional: log every request (very useful while developing)
 app.use((req, res, next) => {
@@ -210,8 +213,8 @@ app.use("/api/test",      require("./routes/testRoutes"));
 app.use("/api/auth",      require("./routes/authRoutes"));
 app.use("/api/orders",    require("./routes/orderRoutes"));
 app.use("/api/admin",     require("./routes/adminRoutes"));
+app.use("/api/admin/orders", require("./routes/adminorderRoutes"));
 
-// 404 handler - catch unmatched routes
 app.use((req, res) => {
   res.status(404).json({ 
     success: false,

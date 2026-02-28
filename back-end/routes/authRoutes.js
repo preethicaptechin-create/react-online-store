@@ -251,11 +251,11 @@
 
 
 
-const express = require("express");
-const router = express.Router();
-const jwt = require("jsonwebtoken");
-const User = require("../models/user");
-const bcrypt = require("bcryptjs");
+// const express = require("express");
+// const router = express.Router();
+// const jwt = require("jsonwebtoken");
+// const User = require("../models/user");
+// const bcrypt = require("bcryptjs");
 
 // ================= REGISTER =================
 // router.post("/register", async (req, res) => {
@@ -285,6 +285,174 @@ const bcrypt = require("bcryptjs");
 //   }
 // });
 
+// router.post("/register", async (req, res) => {
+//   try {
+//     const { name, lastName, email, password } = req.body;
+
+//     if (!name || !lastName || !email || !password) {
+//       return res.status(400).json({ message: "All fields are required" });
+//     }
+
+//     const userExists = await User.findOne({ email });
+//     if (userExists) {
+//       return res.status(400).json({ message: "User already exists" });
+//     }
+
+//     const hashedPassword = await bcrypt.hash(password, 10);
+
+//     const user = await User.create({
+//       name,
+//       lastName, // ✅ IMPORTANT ADD THIS
+//       email,
+//       password: hashedPassword,
+//     });
+
+//     res.status(201).json({
+//       message: "User registered successfully",
+//       user: {
+//         _id: user._id,
+//         name: user.name,
+//         lastName: user.lastName,
+//         email: user.email,
+//       },
+//     });
+//   } catch (err) {
+//     console.error("Register error:", err);
+//     res.status(500).json({ message: err.message });
+//   }
+// });
+
+// // ================= LOGIN =================
+// router.post("/login", async (req, res) => {
+//   const { email, password } = req.body;
+
+//   try {
+//     const user = await User.findOne({ email });
+//     if (!user)
+//       return res.status(401).json({ message: "Invalid credentials" });
+
+//     const isMatch = await bcrypt.compare(password, user.password);
+//     if (!isMatch)
+//       return res.status(401).json({ message: "Invalid credentials" });
+
+//     const accessToken = jwt.sign(
+//       { id: user._id },
+//       process.env.JWT_SECRET,
+//       { expiresIn: "1d" }
+//     );
+
+//     const refreshToken = jwt.sign(
+//       { id: user._id },
+//       process.env.JWT_REFRESH_SECRET,
+//       { expiresIn: "7d" }
+//     );
+
+//     // ✅ STORE refresh token in DB
+//     user.refreshToken = refreshToken;
+//     await user.save();
+
+//     res.json({
+//       accessToken,
+//       refreshToken,
+//       user: {
+//         _id: user._id,
+//         name: user.name,
+//         email: user.email,
+//       },
+//     });
+
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).json({ message: "Server error" });
+//   }
+// });
+
+// // ================= LOGOUT =================
+// router.post("/logout", async (req, res) => {
+//   const { refreshToken } = req.body;
+
+//   if (!refreshToken)
+//     return res.status(400).json({ message: "Refresh token required" });
+
+//   try {
+//     const user = await User.findOne({ refreshToken });
+
+//     if (!user)
+//       return res.status(404).json({ message: "User not found" });
+
+//     // ✅ REMOVE refresh token from DB
+//     user.refreshToken = null;
+//     await user.save();
+
+//     res.json({ message: "Logged out successfully" });
+
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).json({ message: "Server error" });
+//   }
+// });
+
+// // ================= REFRESH TOKEN =================
+// router.post("/refresh-token", async (req, res) => {
+//   const { refreshToken } = req.body;
+
+//   if (!refreshToken)
+//     return res.status(401).json({ message: "No refresh token" });
+
+//   try {
+//     const user = await User.findOne({ refreshToken });
+//     if (!user)
+//       return res.status(403).json({ message: "Invalid refresh token" });
+
+//     const payload = jwt.verify(
+//       refreshToken,
+//       process.env.JWT_REFRESH_SECRET
+//     );
+
+//     const accessToken = jwt.sign(
+//       { id: payload.id },
+//       process.env.JWT_SECRET,
+//       { expiresIn: "15m" }
+//     );
+
+//     res.json({ accessToken });
+
+//   } catch (err) {
+//     console.error(err);
+//     res.status(403).json({ message: "Invalid refresh token" });
+//   }
+// });
+
+// // ================= PROFILE =================
+// const { protect } = require("../middleware/authMiddleware");
+
+// router.get("/profile", protect, async (req, res) => {
+//   res.json({
+//     _id: req.user._id,
+//     name: req.user.name,
+//     email: req.user.email,
+//   });
+// });
+
+// module.exports = router;
+
+
+
+
+
+
+
+
+const express = require("express");
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
+const User = require("../models/user");
+const authController = require("../controllers/authContoller"); // ✅ FIXED
+const { protect } = require("../middleware/authMiddleware");
+
+const router = express.Router();
+
+// ================= REGISTER =================
 router.post("/register", async (req, res) => {
   try {
     const { name, lastName, email, password } = req.body;
@@ -302,13 +470,29 @@ router.post("/register", async (req, res) => {
 
     const user = await User.create({
       name,
-      lastName, // ✅ IMPORTANT ADD THIS
+      lastName,
       email,
       password: hashedPassword,
     });
 
+    const accessToken = jwt.sign(
+      { id: user._id },
+      process.env.JWT_SECRET,
+      { expiresIn: "15m" }
+    );
+
+    const refreshToken = jwt.sign(
+      { id: user._id },
+      process.env.JWT_REFRESH_SECRET,
+      { expiresIn: "7d" }
+    );
+
+    user.refreshToken = refreshToken;
+    await user.save();
+
     res.status(201).json({
-      message: "User registered successfully",
+      accessToken,
+      refreshToken,
       user: {
         _id: user._id,
         name: user.name,
@@ -317,7 +501,6 @@ router.post("/register", async (req, res) => {
       },
     });
   } catch (err) {
-    console.error("Register error:", err);
     res.status(500).json({ message: err.message });
   }
 });
@@ -347,7 +530,6 @@ router.post("/login", async (req, res) => {
       { expiresIn: "7d" }
     );
 
-    // ✅ STORE refresh token in DB
     user.refreshToken = refreshToken;
     await user.save();
 
@@ -360,9 +542,7 @@ router.post("/login", async (req, res) => {
         email: user.email,
       },
     });
-
   } catch (err) {
-    console.error(err);
     res.status(500).json({ message: "Server error" });
   }
 });
@@ -371,67 +551,46 @@ router.post("/login", async (req, res) => {
 router.post("/logout", async (req, res) => {
   const { refreshToken } = req.body;
 
-  if (!refreshToken)
-    return res.status(400).json({ message: "Refresh token required" });
-
-  try {
-    const user = await User.findOne({ refreshToken });
-
-    if (!user)
-      return res.status(404).json({ message: "User not found" });
-
-    // ✅ REMOVE refresh token from DB
+  const user = await User.findOne({ refreshToken });
+  if (user) {
     user.refreshToken = null;
     await user.save();
-
-    res.json({ message: "Logged out successfully" });
-
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: "Server error" });
   }
+
+  res.json({ message: "Logged out successfully" });
 });
 
 // ================= REFRESH TOKEN =================
 router.post("/refresh-token", async (req, res) => {
   const { refreshToken } = req.body;
 
-  if (!refreshToken)
-    return res.status(401).json({ message: "No refresh token" });
+  const user = await User.findOne({ refreshToken });
+  if (!user)
+    return res.status(403).json({ message: "Invalid refresh token" });
 
-  try {
-    const user = await User.findOne({ refreshToken });
-    if (!user)
+  jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET, (err) => {
+    if (err)
       return res.status(403).json({ message: "Invalid refresh token" });
 
-    const payload = jwt.verify(
-      refreshToken,
-      process.env.JWT_REFRESH_SECRET
-    );
-
     const accessToken = jwt.sign(
-      { id: payload.id },
+      { id: user._id },
       process.env.JWT_SECRET,
       { expiresIn: "15m" }
     );
 
     res.json({ accessToken });
-
-  } catch (err) {
-    console.error(err);
-    res.status(403).json({ message: "Invalid refresh token" });
-  }
+  });
 });
 
-// ================= PROFILE =================
-const { protect } = require("../middleware/authMiddleware");
+// ================= FORGOT PASSWORD =================
+router.post("/forgot-password", authController.forgotPassword);
 
-router.get("/profile", protect, async (req, res) => {
-  res.json({
-    _id: req.user._id,
-    name: req.user.name,
-    email: req.user.email,
-  });
+// ================= RESET PASSWORD =================
+router.post("/reset-password/:token", authController.resetPassword);
+
+// ================= PROFILE =================
+router.get("/profile", protect, (req, res) => {
+  res.json(req.user);
 });
 
 module.exports = router;

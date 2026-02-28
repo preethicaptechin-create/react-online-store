@@ -41,7 +41,7 @@
 //       if (!response.ok) throw new Error(data.message);
 
 //       // 🔥 Save token
-   
+
 
 //       // 🔥 Save user object for header dropdown
 // // 🔥 Save access & refresh token
@@ -155,6 +155,8 @@ const Login = () => {
       localStorage.setItem("refreshToken", data.refreshToken);
       localStorage.setItem("user", JSON.stringify(data.user));
 
+      window.dispatchEvent(new Event("userUpdated"));
+
       // ✅ Show success toast
       toast.success("Login successful ✅", {
         position: "top-right",
@@ -163,7 +165,7 @@ const Login = () => {
       });
 
       // 🔥 Redirect to home after 3s
-      setTimeout(() => navigate("/"), 3000);
+      setTimeout(() => navigate("/"));
     } catch (error) {
       // ✅ Show error toast for mismatch
       toast.error(error.message || "Login failed ❌", {
@@ -180,7 +182,6 @@ const Login = () => {
     <div className="auth-page">
       <div className="auth-box">
         <h2>Login</h2>
-
         <form onSubmit={handleSubmit}>
           <input
             type="email"
@@ -190,7 +191,6 @@ const Login = () => {
             required
           />
 
-          {/* 👁 Password input with show/hide */}
           <div style={{ position: "relative" }}>
             <input
               type={showPassword ? "text" : "password"}
@@ -213,6 +213,27 @@ const Login = () => {
               {showPassword ? "🙈" : "👁"}
             </span>
           </div>
+
+          {/* ✅ Forgot Password (inline CSS) */}
+          <p
+            style={{
+              textAlign: "right",
+              margin: "6px 0 12px",
+            }}
+          >
+            <Link
+              to="/forgot-password"
+              style={{
+                fontSize: "14px",
+                color: "#007bff",
+                textDecoration: "none",
+              }}
+              onMouseOver={(e) => (e.target.style.textDecoration = "underline")}
+              onMouseOut={(e) => (e.target.style.textDecoration = "none")}
+            >
+              Forgot Password?
+            </Link>
+          </p>
 
           <button type="submit" disabled={isSubmitting}>
             {isSubmitting ? "Logging in..." : "Login"}
