@@ -44,7 +44,7 @@
 
 /* Full height layout */
 
-html,
+/* html,
 body,
 #root {
   height : 100%;
@@ -59,11 +59,11 @@ body {
   display: flex;
   flex-direction: column;
   min-height : 100vh;
-}
+} */
 
 /* This pushes footer down */
 
-.content {
+/* .content {
   flex: 1;
 }
 .app-container {
@@ -72,7 +72,50 @@ body {
   padding: 0 16px;
   width: 100%;
   box-sizing: border-box;
+} */
+
+
+
+/* Recommended version — slightly safer & more complete */
+
+html, body, #root {
+  height: 100%;
+  margin: 0;           /* move margin here — more consistent */
+  padding: 0;
 }
 
+body {
+  display: flex;                  /* ← better place than .app in many cases */
+  flex-direction: column;
+  min-height: 100vh;
+  overflow-x: hidden;
+  /* font-family, line-height, etc. can go here if global */
+}
 
+.app {
+  display: flex;
+  flex-direction: column;
+  flex: 1;                        /* ← lets .app grow inside body if needed */
+  min-height: 100vh;              /* optional — but safe */
+}
 
+/* The element that should grow and push footer down */
+main,                    /* ← most common in React apps */
+.content {               /* or whatever class you use for <main> or content wrapper */
+  flex: 1 0 auto;        /* grow + don't shrink below content size */
+}
+
+/* Centered content wrapper — good as is */
+.app-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 16px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Footer (add if not already present) */
+footer {
+  flex-shrink: 0;                /* never shrinks */
+  width: 100%;
+}

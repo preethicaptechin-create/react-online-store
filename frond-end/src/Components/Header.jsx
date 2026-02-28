@@ -758,9 +758,26 @@ function Header() {
   const [paused, setPaused] = useState(false);
   const [accountDropdown, setAccountDropdown] = useState(false);
   // const user = JSON.parse(localStorage.getItem("user")); // logged-in user
-const accountRef = useRef(null);  
+  const accountRef = useRef(null);
   const wrapperRef = useRef(null);
   const BASE_URL = "http://localhost:5000";
+  // 🔥 SYNC USER FROM LOCALSTORAGE (LOGIN / LOGOUT)
+  useEffect(() => {
+    const syncUser = () => {
+      const storedUser = JSON.parse(localStorage.getItem("user"));
+      setUser(storedUser);
+    };
+
+    // initial sync
+    syncUser();
+
+    // listen for updates
+    window.addEventListener("userUpdated", syncUser);
+
+    return () => {
+      window.removeEventListener("userUpdated", syncUser);
+    };
+  }, []);
 
   // ✅ FETCH PRODUCTS FROM BACKEND
   useEffect(() => {
@@ -803,21 +820,21 @@ const accountRef = useRef(null);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
   useEffect(() => {
-  const handleAccountOutsideClick = (event) => {
-    if (
-      accountRef.current &&
-      !accountRef.current.contains(event.target)
-    ) {
-      setAccountDropdown(false);
-    }
-  };
+    const handleAccountOutsideClick = (event) => {
+      if (
+        accountRef.current &&
+        !accountRef.current.contains(event.target)
+      ) {
+        setAccountDropdown(false);
+      }
+    };
 
-  document.addEventListener("mousedown", handleAccountOutsideClick);
+    document.addEventListener("mousedown", handleAccountOutsideClick);
 
-  return () => {
-    document.removeEventListener("mousedown", handleAccountOutsideClick);
-  };
-}, []);
+    return () => {
+      document.removeEventListener("mousedown", handleAccountOutsideClick);
+    };
+  }, []);
 
   // Filter products for search
   const filteredProducts = products
@@ -833,19 +850,15 @@ const accountRef = useRef(null);
 
   // Logout
   const handleLogout = async () => {
-
     const refreshToken = localStorage.getItem("refreshToken");
-
-
-
-
 
     localStorage.removeItem("accessToken");
     localStorage.removeItem("refreshToken");
     localStorage.removeItem("user");
+
+    window.dispatchEvent(new Event("userUpdated"));
     setUser(null);
 
-    // Show toast
     toast.success("You have successfully logged out!");
 
     if (refreshToken) {
@@ -860,10 +873,8 @@ const accountRef = useRef(null);
       }
     }
 
-
-    navigate("/login");
+    navigate("/login"); // ✅ only once
   };
-
   return (
     <header>
       <div
@@ -929,15 +940,18 @@ const accountRef = useRef(null);
           )}
         </div>
 
-        <div className="cart-wrapper">
+        {/* <div className="cart-wrapper">
           <FaShoppingCart
             className="cart-icon"
             onClick={() => navigate("/cart")}
           />
           {cartCount > 0 && <span className="cart-badge">{cartCount}</span>}
-        </div>
+        </div> */}<Link to="/cart" className="cart-wrapper">
+          <FaShoppingCart className="cart-icon" />
+          {cartCount > 0 && <span className="cart-badge">{cartCount}</span>}
+        </Link>
 
-       <div className="account-wrapper" ref={accountRef}>
+        <div className="account-wrapper" ref={accountRef}>
           <div
             className="account-section"
             onClick={() => {

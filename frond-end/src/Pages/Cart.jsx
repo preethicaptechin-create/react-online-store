@@ -671,7 +671,7 @@
 //             ))
 //           )}
 //         </div>
-      
+
 
 //         {/* Cart Summary */}
 //         {cart.length > 0 && (
@@ -1273,18 +1273,372 @@
 
 
 
+// import React, { useEffect, useState } from "react";
+// import "./Cart.css";
+// import { FaShoppingCart } from "react-icons/fa";
+// import { useNavigate } from "react-router-dom";
+
+// // ✅ Dynamic config
+// const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+// const CURRENCY = import.meta.env.VITE_CURRENCY || "₹";
+// const ROUTES = {
+//   products: "/products",
+//   orderDetails: "/order-details",
+// };
+
+// const Cart = () => {
+//   const navigate = useNavigate();
+
+//   const [cart, setCart] = useState(() => {
+//     const saved = localStorage.getItem("cart");
+//     try {
+//       return saved ? JSON.parse(saved) : [];
+//     } catch (err) {
+//       console.error("Failed to parse cart:", err);
+//       return [];
+//     }
+//   });
+
+//   // Listen for cart updates from other components
+//   useEffect(() => {
+//     const handleCartUpdate = () => {
+//       const saved = JSON.parse(localStorage.getItem("cart") || "[]");
+//       setCart(saved);
+//     };
+//     window.addEventListener("cartUpdated", handleCartUpdate);
+//     return () => window.removeEventListener("cartUpdated", handleCartUpdate);
+//   }, []);
+
+//   // Save cart to localStorage on changes (fallback)
+//   useEffect(() => {
+//     localStorage.setItem("cart", JSON.stringify(cart));
+//   }, [cart]);
+
+//   // ✅ Quantity controls with instant header badge update
+//   // const increaseQty = (_id, size) => {
+//   //   setCart((prev) => {
+//   //     const updated = prev.map((item) =>
+//   //       item._id === _id && item.size === size
+//   //         ? { ...item, qty: item.qty + 1 }
+//   //         : item
+//   //     );
+//   //     localStorage.setItem("cart", JSON.stringify(updated));
+//   //     window.dispatchEvent(new Event("cartUpdated"));
+//   //     return updated;
+//   //   });
+//   // };
+
+//   const increaseQty = (_id, size) => {
+//     setCart((prev) => {
+//       const updated = prev.map((item) =>
+//         item._id === _id && item.size === size
+//           ? { ...item, qty: item.qty + 1 }
+//           : item
+//       );
+//       localStorage.setItem("cart", JSON.stringify(updated));
+//       // NO dispatch here anymore
+//       return updated;
+//     });
+//   };
+
+//   // same for decreaseQty and removeItem
+
+//   // And add at the top level:
+//   useEffect(() => {
+//     window.dispatchEvent(new Event("cartUpdated"));
+//   }, [cart]);
+
+//   const decreaseQty = (_id, size) => {
+//     setCart((prev) => {
+//       const updated = prev
+//         .map((item) =>
+//           item._id === _id && item.size === size
+//             ? { ...item, qty: item.qty - 1 }
+//             : item
+//         )
+//         .filter((item) => item.qty > 0);
+//       localStorage.setItem("cart", JSON.stringify(updated));
+//       window.dispatchEvent(new Event("cartUpdated"));
+//       return updated;
+//     });
+//   };
+
+//   const removeItem = (_id, size) => {
+//     setCart((prev) => {
+//       const updated = prev.filter((item) => !(item._id === _id && item.size === size));
+//       localStorage.setItem("cart", JSON.stringify(updated));
+//       window.dispatchEvent(new Event("cartUpdated"));
+//       return updated;
+//     });
+//   };
+
+//   // Cart totals
+//   const totalItems = cart.reduce((sum, item) => sum + (item.qty || 0), 0);
+//   const totalPrice = cart.reduce(
+//     (sum, item) => sum + (item.price || 0) * (item.qty || 0),
+//     0
+//   );
+
+//   // Proceed to checkout
+//   const handleCheckout = () => {
+//     if (!cart.length) return alert("Cart is empty!");
+
+//     localStorage.setItem("cartItems", JSON.stringify(cart));
+//     localStorage.setItem("cartTotal", totalPrice);
+
+//     window.dispatchEvent(new Event("cartUpdated"));
+//     navigate(ROUTES.orderDetails);
+//   };
+
+//   return (
+//     <div className="cart-page">
+//       <h1 className="cart-title">Your Cart</h1>
+
+//       <div className="cart-container">
+//         {/* Cart Items */}
+//         <div className="cart-items">
+//           {cart.length === 0 ? (
+//             <div className="empty-cart">
+//               <FaShoppingCart className="empty-icon" />
+//               <h2>Your cart is empty</h2>
+//               <p>Add something you love ❤️</p>
+//               <button className="shop-btn" onClick={() => navigate(ROUTES.products)}>
+//                 Continue Shopping
+//               </button>
+//             </div>
+//           ) : (
+//             cart.map((item) => (
+//               <div key={`${item._id}-${item.size || ""}`} className="cart-item">
+//                 <img
+//                   src={`${BASE_URL}/${item.image}`}
+//                   alt={item.name}
+//                   className="cart-img"
+//                 />
+//                 <div className="cart-info">
+//                   <h3>{item.name}</h3>
+//                   <p className="price">{CURRENCY} {item.price}</p>
+//                   {item.size && <p>Size: {item.size}</p>}
+//                   <div className="qty-controls">
+//                     <button onClick={() => decreaseQty(item._id, item.size)}>−</button>
+//                     <span>{item.qty}</span>
+//                     <button onClick={() => increaseQty(item._id, item.size)}>+</button>
+//                   </div>
+//                   <button
+//                     className="remove-btn"
+//                     onClick={() => removeItem(item._id, item.size)}
+//                   >
+//                     Remove
+//                   </button>
+//                 </div>
+//               </div>
+//             ))
+//           )}
+//         </div>
+
+//         {/* Cart Summary */}
+//         {cart.length > 0 && (
+//           <div className="cart-summary">
+//             <h2>Total</h2>
+//             <p>Total Items: {totalItems}</p>
+//             <p>Total Price: {CURRENCY} {totalPrice.toFixed(2)}</p>
+//             <button className="checkout-btn" onClick={handleCheckout}>
+//               Proceed to Checkout
+//             </button>
+//           </div>
+//         )}
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default Cart;
+
+
+// import React, { useEffect, useState } from "react";
+// import "./Cart.css";
+// import { FaShoppingCart } from "react-icons/fa";
+// import { useNavigate } from "react-router-dom";
+
+// // Dynamic config
+// const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+// const CURRENCY = import.meta.env.VITE_CURRENCY || "₹";
+// const ROUTES = {
+//   products: "/products",
+//   orderDetails: "/order-details",
+// };
+
+// const Cart = () => {
+//   const navigate = useNavigate();
+
+//   const [cart, setCart] = useState(() => {
+//     const saved = localStorage.getItem("cart");
+//     try {
+//       return saved ? JSON.parse(saved) : [];
+//     } catch (err) {
+//       console.error("Failed to parse cart:", err);
+//       return [];
+//     }
+//   });
+
+//   // ────────────────────────────────────────────────
+//   //   IMPORTANT: Remove this block completely
+//   //   Cart should NOT listen to its own event
+//   // ────────────────────────────────────────────────
+//   // useEffect(() => {
+//   //   const handleCartUpdate = () => {
+//   //     const saved = JSON.parse(localStorage.getItem("cart") || "[]");
+//   //     setCart(saved);
+//   //   };
+//   //   window.addEventListener("cartUpdated", handleCartUpdate);
+//   //   return () => window.removeEventListener("cartUpdated", handleCartUpdate);
+//   // }, []);
+
+//   // Sync to localStorage + notify other components (Header, badge, etc.)
+//   useEffect(() => {
+//     localStorage.setItem("cart", JSON.stringify(cart));
+//     window.dispatchEvent(new Event("cartUpdated"));
+//   }, [cart]);
+
+//   const updateCart = (updater) => {
+//     setCart((prev) => {
+//       const nextCart = updater(prev);
+//       return nextCart;
+//     });
+//   };
+
+//   const increaseQty = (_id, size) => {
+//     updateCart((prev) =>
+//       prev.map((item) =>
+//         item._id === _id && item.size === size
+//           ? { ...item, qty: item.qty + 1 }
+//           : item
+//       )
+//     );
+//   };
+
+//   const decreaseQty = (_id, size) => {
+//     updateCart((prev) =>
+//       prev
+//         .map((item) =>
+//           item._id === _id && item.size === size
+//             ? { ...item, qty: item.qty - 1 }
+//             : item
+//         )
+//         .filter((item) => item.qty > 0)
+//     );
+//   };
+
+//   const removeItem = (_id, size) => {
+//     updateCart((prev) =>
+//       prev.filter((item) => !(item._id === _id && item.size === size))
+//     );
+//   };
+
+//   const totalItems = cart.reduce((sum, item) => sum + (item.qty || 0), 0);
+//   const totalPrice = cart.reduce(
+//     (sum, item) => sum + (item.price || 0) * (item.qty || 0),
+//     0
+//   );
+
+//   const handleCheckout = () => {
+//     if (!cart.length) {
+//       alert("Cart is empty!");
+//       return;
+//     }
+
+//     localStorage.setItem("cartItems", JSON.stringify(cart));
+//     localStorage.setItem("cartTotal", totalPrice.toFixed(2));
+
+//     window.dispatchEvent(new Event("cartUpdated"));
+//     navigate(ROUTES.orderDetails);
+//   };
+
+//   return (
+//     <div className="cart-page">
+//       <h1 className="cart-title">Your Cart</h1>
+
+//       <div className="cart-container">
+//         {/* Cart Items */}
+//         <div className="cart-items">
+//           {cart.length === 0 ? (
+//             <div className="empty-cart">
+//               <FaShoppingCart className="empty-icon" />
+//               <h2>Your cart is empty</h2>
+//               <p>Add something you love ❤️</p>
+//               <button
+//                 className="shop-btn"
+//                 onClick={() => navigate(ROUTES.products)}
+//               >
+//                 Continue Shopping
+//               </button>
+//             </div>
+//           ) : (
+//             cart.map((item) => (
+//               <div
+//                 key={`${item._id}-${item.size || ""}`}
+//                 className="cart-item"
+//               >
+//                 <img
+//                   src={`${BASE_URL}/${item.image}`}
+//                   alt={item.name}
+//                   className="cart-img"
+//                 />
+//                 <div className="cart-info">
+//                   <h3>{item.name}</h3>
+//                   <p className="price">
+//                     {CURRENCY} {item.price}
+//                   </p>
+//                   {item.size && <p>Size: {item.size}</p>}
+//                   <div className="qty-controls">
+//                     <button onClick={() => decreaseQty(item._id, item.size)}>
+//                       −
+//                     </button>
+//                     <span>{item.qty}</span>
+//                     <button onClick={() => increaseQty(item._id, item.size)}>
+//                       +
+//                     </button>
+//                   </div>
+//                   <button
+//                     className="remove-btn"
+//                     onClick={() => removeItem(item._id, item.size)}
+//                   >
+//                     Remove
+//                   </button>
+//                 </div>
+//               </div>
+//             ))
+//           )}
+//         </div>
+
+//         {/* Cart Summary */}
+//         {cart.length > 0 && (
+//           <div className="cart-summary">
+//             <h2>Total</h2>
+//             <p>Total Items: {totalItems}</p>
+//             <p>Total Price: {CURRENCY} {totalPrice.toFixed(2)}</p>
+//             <button className="checkout-btn" onClick={handleCheckout}>
+//               Proceed to Checkout
+//             </button>
+//           </div>
+//         )}
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default Cart;
+
+
+
+
+
 import React, { useEffect, useState } from "react";
 import "./Cart.css";
 import { FaShoppingCart } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 
-// ✅ Dynamic config
-const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
-const CURRENCY = import.meta.env.VITE_CURRENCY || "₹";
-const ROUTES = {
-  products: "/products",
-  orderDetails: "/order-details",
-};
+// Import dynamic config
+import { BASE_URL, CURRENCY, ROUTES, MESSAGES, SYMBOLS } from "../utils/config";
 
 const Cart = () => {
   const navigate = useNavigate();
@@ -1299,72 +1653,61 @@ const Cart = () => {
     }
   });
 
-  // Listen for cart updates from other components
-  useEffect(() => {
-    const handleCartUpdate = () => {
-      const saved = JSON.parse(localStorage.getItem("cart") || "[]");
-      setCart(saved);
-    };
-    window.addEventListener("cartUpdated", handleCartUpdate);
-    return () => window.removeEventListener("cartUpdated", handleCartUpdate);
-  }, []);
-
-  // Save cart to localStorage on changes (fallback)
+  // Sync to localStorage + notify other components
   useEffect(() => {
     localStorage.setItem("cart", JSON.stringify(cart));
+    window.dispatchEvent(new Event("cartUpdated"));
   }, [cart]);
 
-  // ✅ Quantity controls with instant header badge update
-  const increaseQty = (_id, size) => {
+  const updateCart = (updater) => {
     setCart((prev) => {
-      const updated = prev.map((item) =>
-        item._id === _id && item.size === size
-          ? { ...item, qty: item.qty + 1 }
-          : item
-      );
-      localStorage.setItem("cart", JSON.stringify(updated));
-      window.dispatchEvent(new Event("cartUpdated"));
-      return updated;
+      const nextCart = updater(prev);
+      return nextCart;
     });
   };
 
+  const increaseQty = (_id, size) => {
+    updateCart((prev) =>
+      prev.map((item) =>
+        item._id === _id && item.size === size
+          ? { ...item, qty: item.qty + 1 }
+          : item
+      )
+    );
+  };
+
   const decreaseQty = (_id, size) => {
-    setCart((prev) => {
-      const updated = prev
+    updateCart((prev) =>
+      prev
         .map((item) =>
           item._id === _id && item.size === size
             ? { ...item, qty: item.qty - 1 }
             : item
         )
-        .filter((item) => item.qty > 0);
-      localStorage.setItem("cart", JSON.stringify(updated));
-      window.dispatchEvent(new Event("cartUpdated"));
-      return updated;
-    });
+        .filter((item) => item.qty > 0)
+    );
   };
 
   const removeItem = (_id, size) => {
-    setCart((prev) => {
-      const updated = prev.filter((item) => !(item._id === _id && item.size === size));
-      localStorage.setItem("cart", JSON.stringify(updated));
-      window.dispatchEvent(new Event("cartUpdated"));
-      return updated;
-    });
+    updateCart((prev) =>
+      prev.filter((item) => !(item._id === _id && item.size === size))
+    );
   };
 
-  // Cart totals
   const totalItems = cart.reduce((sum, item) => sum + (item.qty || 0), 0);
   const totalPrice = cart.reduce(
     (sum, item) => sum + (item.price || 0) * (item.qty || 0),
     0
   );
 
-  // Proceed to checkout
   const handleCheckout = () => {
-    if (!cart.length) return alert("Cart is empty!");
+    if (!cart.length) {
+      alert(MESSAGES.cartEmptyAlert);
+      return;
+    }
 
     localStorage.setItem("cartItems", JSON.stringify(cart));
-    localStorage.setItem("cartTotal", totalPrice);
+    localStorage.setItem("cartTotal", totalPrice.toFixed(2));
 
     window.dispatchEvent(new Event("cartUpdated"));
     navigate(ROUTES.orderDetails);
@@ -1380,15 +1723,21 @@ const Cart = () => {
           {cart.length === 0 ? (
             <div className="empty-cart">
               <FaShoppingCart className="empty-icon" />
-              <h2>Your cart is empty</h2>
-              <p>Add something you love ❤️</p>
-              <button className="shop-btn" onClick={() => navigate(ROUTES.products)}>
-                Continue Shopping
+              <h2>{MESSAGES.emptyCart}</h2>
+              <p>{MESSAGES.emptyCartDesc}</p>
+              <button
+                className="shop-btn"
+                onClick={() => navigate(ROUTES.products)}
+              >
+                {MESSAGES.continueShopping}
               </button>
             </div>
           ) : (
             cart.map((item) => (
-              <div key={`${item._id}-${item.size || ""}`} className="cart-item">
+              <div
+                key={`${item._id}-${item.size || ""}`}
+                className="cart-item"
+              >
                 <img
                   src={`${BASE_URL}/${item.image}`}
                   alt={item.name}
@@ -1396,12 +1745,18 @@ const Cart = () => {
                 />
                 <div className="cart-info">
                   <h3>{item.name}</h3>
-                  <p className="price">{CURRENCY} {item.price}</p>
+                  <p className="price">
+                    {CURRENCY} {item.price}
+                  </p>
                   {item.size && <p>Size: {item.size}</p>}
                   <div className="qty-controls">
-                    <button onClick={() => decreaseQty(item._id, item.size)}>−</button>
+                    <button onClick={() => decreaseQty(item._id, item.size)}>
+                      {SYMBOLS.decrease}
+                    </button>
                     <span>{item.qty}</span>
-                    <button onClick={() => increaseQty(item._id, item.size)}>+</button>
+                    <button onClick={() => increaseQty(item._id, item.size)}>
+                      {SYMBOLS.increase}
+                    </button>
                   </div>
                   <button
                     className="remove-btn"
@@ -1422,7 +1777,7 @@ const Cart = () => {
             <p>Total Items: {totalItems}</p>
             <p>Total Price: {CURRENCY} {totalPrice.toFixed(2)}</p>
             <button className="checkout-btn" onClick={handleCheckout}>
-              Proceed to Checkout
+              {MESSAGES.checkout}
             </button>
           </div>
         )}

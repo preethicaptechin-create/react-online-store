@@ -1,95 +1,137 @@
-import React, { useEffect, useState } from "react";
-import axios from "axios";
+// import React, { useState } from "react";
+// import AdminProducts from "./AdminProducts"; // Your products component
+// import AdminOrders from "./AdminOrder"; // Your orders component
+// import "./AdminDashboard.css"
+
+// const AdminDashboard = () => {
+//   const [activeTab, setActiveTab] = useState("products"); // default tab
+
+//   return (
+//     <div style={{ padding: "20px" }}>
+//       <h1>Admin Dashboard</h1>
+
+//       {/* Tabs */}
+//       <div style={{ marginBottom: "20px" }}>
+//         <button
+//           onClick={() => setActiveTab("products")}
+//           style={{
+//             marginRight: "10px",
+//             padding: "10px 20px",
+//             backgroundColor: activeTab === "products" ? "#4CAF50" : "#ddd",
+//             color: activeTab === "products" ? "#fff" : "#000",
+//             border: "none",
+//             borderRadius: "5px",
+//             cursor: "pointer",
+//           }}
+//         >
+//           Products
+//         </button>
+//         <button
+//           onClick={() => setActiveTab("orders")}
+//           style={{
+//             padding: "10px 20px",
+//             backgroundColor: activeTab === "orders" ? "#4CAF50" : "#ddd",
+//             color: activeTab === "orders" ? "#fff" : "#000",
+//             border: "none",
+//             borderRadius: "5px",
+//             cursor: "pointer",
+//           }}
+//         >
+//           Orders
+//         </button>
+//       </div>
+
+//       {/* Tab Content */}
+//       <div>
+//         {activeTab === "products" && <AdminProducts />}
+//         {activeTab === "orders" && <AdminOrders />}
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default AdminDashboard;
+
+
+
+
+// import React from "react";
+// import { NavLink, Outlet } from "react-router-dom";
+// import "./AdminDashboard.css";
+
+// const AdminDashboard = () => {
+//   return (
+//     <div className="admin-dashboard-container" style={{ padding: "20px" }}>
+//       <h1>Admin Dashboard</h1>
+
+//       {/* Dashboard navigation tabs */}
+//       <div className="admin-dashboard-tabs" style={{ marginBottom: "20px" }}>
+//         <NavLink
+//           to="products"   // relative route!
+//           className={({ isActive }) =>
+//             isActive ? "tab-button active" : "tab-button"
+//           }
+//         >
+//           Products
+//         </NavLink>
+//         <NavLink
+//           to="orders"     // relative route!
+//           className={({ isActive }) =>
+//             isActive ? "tab-button active" : "tab-button"
+//           }
+//         >
+//           Orders
+//         </NavLink>
+//       </div>
+
+//       {/* Nested route content will render here */}
+//       <div className="admin-dashboard-content">
+//         <Outlet />
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default AdminDashboard;
+
+
+
+import React from "react";
+import { NavLink, Outlet, useLocation } from "react-router-dom";
+import "./AdminDashboard.css";
 
 const AdminDashboard = () => {
-  const [products, setProducts] = useState([]);
-  const [name, setName] = useState("");
-  const [price, setPrice] = useState("");
-  const [file, setFile] = useState(null);
-
-  const token = localStorage.getItem("adminToken"); // JWT token
-
-  // Fetch all products
-  const fetchProducts = async () => {
-    try {
-      const res = await axios.get("http://localhost:5000/api/products");
-      setProducts(res.data.data);
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
-  useEffect(() => {
-    fetchProducts();
-  }, []);
-
-  // Create product
-  const handleCreate = async (e) => {
-    e.preventDefault();
-    try {
-      const formData = new FormData();
-      formData.append("name", name);
-      formData.append("price", price);
-      if (file) formData.append("image", file);
-
-      await axios.post("http://localhost:5000/api/products", formData, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
-      setName("");
-      setPrice("");
-      setFile(null);
-      fetchProducts(); // refresh list
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
-  // Delete product
-  const handleDelete = async (id) => {
-    try {
-      await axios.delete(`http://localhost:5000/api/products/${id}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      fetchProducts(); // refresh list
-    } catch (err) {
-      console.error(err);
-    }
-  };
+  const location = useLocation();
 
   return (
-    <div>
+    <div className="admin-dashboard-container" style={{ padding: "20px" }}>
       <h1>Admin Dashboard</h1>
 
-      <h2>Create Product</h2>
-      <form onSubmit={handleCreate}>
-        <input
-          type="text"
-          placeholder="Name"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          required
-        />
-        <input
-          type="number"
-          placeholder="Price"
-          value={price}
-          onChange={(e) => setPrice(e.target.value)}
-          required
-        />
-        <input type="file" onChange={(e) => setFile(e.target.files[0])} />
-        <button type="submit">Create</button>
-      </form>
+      {/* Dashboard navigation tabs */}
+      <div className="admin-dashboard-tabs" style={{ marginBottom: "20px" }}>
+        <NavLink
+          to="products" // relative route
+          end // ensures "products" link is active only on exact match
+          className={({ isActive }) =>
+            isActive ? "tab-button active" : "tab-button"
+          }
+        >
+          Products
+        </NavLink>
+        <NavLink
+          to="orders" // relative route
+          className={({ isActive }) =>
+            isActive ? "tab-button active" : "tab-button"
+          }
+        >
+          Orders
+        </NavLink>
+      </div>
 
-      <h2>Products List</h2>
-      <ul>
-        {products.map((p) => (
-          <li key={p._id}>
-            {p.name} - ₹{p.price}
-            <button onClick={() => handleDelete(p._id)}>Delete</button>
-          </li>
-        ))}
-      </ul>
+      {/* Nested route content */}
+      <div className="admin-dashboard-content">
+        <Outlet />
+      </div>
     </div>
   );
 };

@@ -21,7 +21,7 @@
 
 
 // Make sure file names match exactly in your /models folder
-const User = require("../models/User");   // lowercase, match your actual file
+const User = require("../models/user");   // lowercase, match your actual file
 const Order = require("../models/orderModel"); // lowercase, match your actual file
 
 // Insert test user

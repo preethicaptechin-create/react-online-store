@@ -1,0 +1,124 @@
+/* Container styling */
+.admin-products {
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+  max-width: 900px;
+  margin: auto;
+  font-family: Arial, sans-serif;
+}
+
+/* Heading */
+.admin-products h2 {
+  color: #333;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+/* Form styling */
+.admin-products form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 20px;
+  align-items: center;
+}
+
+.admin-products form input[type="text"],
+.admin-products form input[type="number"],
+.admin-products form input[type="file"] {
+  flex: 1 1 200px;
+  padding: 10px 12px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+  transition: all 0.2s ease;
+}
+
+.admin-products form input[type="text"]:focus,
+.admin-products form input[type="number"]:focus,
+.admin-products form input[type="file"]:focus {
+  border-color: #4CAF50;
+  outline: none;
+  background-color: #f7fff7;
+}
+
+/* Submit button */
+.admin-products form button[type="submit"] {
+  padding: 10px 20px;
+  background-color: #4CAF50;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.admin-products form button[type="submit"]:hover {
+  background-color: #45a049;
+}
+
+/* Product list container */
+.admin-products .product-list {
+  margin-top: 20px;
+}
+
+/* Individual product item */
+.admin-products .product-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  border-bottom: 1px solid #eee;
+}
+
+.admin-products .product-item:last-child {
+  border-bottom: none;
+}
+
+.admin-products .product-item p {
+  margin: 0;
+  font-size: 16px;
+  color: #333;
+}
+
+/* Delete button */
+.admin-products .product-item button {
+  padding: 6px 12px;
+  background-color: #f44336;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.admin-products .product-item button:hover {
+  background-color: #d32f2f;
+}
+.admin-products .product-item img {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 6px;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .admin-products form {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .admin-products .product-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+
+  .admin-products .product-item button {
+    align-self: flex-end;
+  }
+}

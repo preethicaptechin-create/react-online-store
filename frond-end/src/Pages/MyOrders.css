@@ -1,10 +1,10 @@
 /* Page container */
-.my-orders {
+/* .my-orders {
   max-width: 900px;
   margin: 30px auto;
   padding: 20px;
   font-family: Arial, sans-serif;
-}
+} */
 
 /* Page title */
 .my-orders h2 {
@@ -21,11 +21,11 @@
 }
 
 /* Empty state */
-.no-orders {
+/* .no-orders {
   text-align: center;
   color: #777;
   margin-top: 40px;
-}
+} */
 
 /* Order card */
 .order-card {
@@ -72,4 +72,33 @@
   .order-card {
     padding: 14px;
   }
+}
+
+
+/* Your existing code is good — add/enhance these if you want */
+
+.my-orders {
+  max-width: 900px;
+  margin: 30px auto;
+  padding: 20px;
+  font-family: Arial, sans-serif;
+  width: 100%;                /* ← good to add */
+  box-sizing: border-box;
+}
+
+/* Make empty state more centered/pleasant */
+.no-orders {
+  text-align: center;
+  color: #777;
+  margin: 80px 0 120px;       /* ← more vertical space looks better */
+  font-size: 1.3rem;
+}
+
+/* If you want the whole page to feel more balanced when empty */
+.my-orders:empty::before {    /* optional — fallback if no content at all */
+  content: "No orders found";
+  display: block;
+  text-align: center;
+  color: #777;
+  margin: 100px 0;
 }
