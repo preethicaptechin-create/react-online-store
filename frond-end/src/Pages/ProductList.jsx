@@ -386,26 +386,173 @@
 
 // export default ProductList;
 
+// import { useEffect, useState } from "react";
+// import { useSearchParams } from "react-router-dom";
+// import axios from "axios";
+// import ProductCard from "../Components/ProductCard";
+// import "./ProductList.css"
+
+// function ProductList() {
+//   const [products, setProducts] = useState([]);
+//   const [searchParams] = useSearchParams();
+
+//   // 🔹 pagination state
+//   const [currentPage, setCurrentPage] = useState(1);
+//   const ITEMS_PER_PAGE = 8; // ⭐ 4 columns × 2 rows
+
+//   const searchTerm =
+//     searchParams.get("search")?.trim().toLowerCase() || "";
+
+//   const API_URL =
+//     import.meta.env.VITE_API_URL || "http://localhost:5000";
+
+//   useEffect(() => {
+//     const fetchProducts = async () => {
+//       try {
+//         const res = await axios.get(
+//           `${API_URL}/api/products?search=${searchTerm}`
+//         );
+
+//         if (Array.isArray(res.data.data)) {
+//           setProducts(res.data.data);
+//           setCurrentPage(1); // ⭐ search change aagum pothu page reset
+//         } else {
+//           setProducts([]);
+//         }
+//       } catch (error) {
+//         console.error("Fetch failed:", error);
+//         setProducts([]);
+//       }
+//     };
+
+//     fetchProducts();
+//   }, [API_URL, searchTerm]);
+
+//   // 🔹 filter
+//   const filteredProducts = products.filter((p) => {
+//     if (!searchTerm) return true;
+
+//     return (
+//       (p.name || "").toLowerCase().includes(searchTerm) ||
+//       (p.category || "").toLowerCase().includes(searchTerm)
+//     );
+//   });
+
+//   // 🔹 pagination calculation
+//   const totalPages = Math.ceil(
+//     filteredProducts.length / ITEMS_PER_PAGE
+//   );
+
+//   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+//   const endIndex = startIndex + ITEMS_PER_PAGE;
+
+//   const currentProducts = filteredProducts.slice(
+//     startIndex,
+//     endIndex
+//   );
+
+//   return (
+//     <div style={{ padding: "20px", maxWidth: "1400px", margin: "0 auto" }}>
+//       <h1>
+//         {searchTerm
+//           ? `Results for "${searchTerm}" (${filteredProducts.length})`
+//           : "All Products"}
+//       </h1>
+
+//       {filteredProducts.length === 0 ? (
+//         <p style={{ textAlign: "center", color: "#666", fontSize: "1.2rem" }}>
+//           No products found
+//         </p>
+//       ) : (
+//         <>
+//           {/* PRODUCTS GRID */}
+//           <div
+//             className="products-grid"
+//             style={{
+//               display: "grid",
+//               gridTemplateColumns: "repeat(4, 1fr)",
+//               gap: "24px",
+//             }}
+//           >
+//             {currentProducts.map((product) => (
+//               <ProductCard key={product._id} product={product} />
+//             ))}
+//           </div>
+
+//           {/* PAGINATION */}
+//           {totalPages > 1 && (
+//             <div
+//               style={{
+//                 display: "flex",
+//                 justifyContent: "center",
+//                 gap: "8px",
+//                 marginTop: "30px",
+//               }}
+//             >
+//               <button
+//                 disabled={currentPage === 1}
+//                 onClick={() => setCurrentPage((p) => p - 1)}
+//               >
+//                 Prev
+//               </button>
+
+//               {[...Array(totalPages)].map((_, i) => (
+//                 <button
+//                   key={i}
+//                   onClick={() => setCurrentPage(i + 1)}
+//                   style={{
+//                     background:
+//                       currentPage === i + 1 ? "#2f6bff" : "#fff",
+//                     color:
+//                       currentPage === i + 1 ? "#fff" : "#000",
+//                     border: "1px solid #ddd",
+//                     padding: "6px 12px",
+//                     borderRadius: "6px",
+//                   }}
+//                 >
+//                   {i + 1}
+//                 </button>
+//               ))}
+
+//               <button
+//                 disabled={currentPage === totalPages}
+//                 onClick={() => setCurrentPage((p) => p + 1)}
+//               >
+//                 Next
+//               </button>
+//             </div>
+//           )}
+//         </>
+//       )}
+//     </div>
+//   );
+// }
+
+// export default ProductList;
+
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import axios from "axios";
 import ProductCard from "../Components/ProductCard";
-import "./ProductList.css"
+import "./ProductList.css";
 
 function ProductList() {
   const [products, setProducts] = useState([]);
   const [searchParams] = useSearchParams();
 
-  // 🔹 pagination state
+  // 🔹 Pagination & layout configuration
+  const COLUMNS = 4; // Number of columns in the grid
+  const ROWS = 2;    // Number of rows per page
+  const ITEMS_PER_PAGE = COLUMNS * ROWS;
+
   const [currentPage, setCurrentPage] = useState(1);
-  const ITEMS_PER_PAGE = 8; // ⭐ 4 columns × 2 rows
 
-  const searchTerm =
-    searchParams.get("search")?.trim().toLowerCase() || "";
+  const searchTerm = searchParams.get("search")?.trim().toLowerCase() || "";
 
-  const API_URL =
-    import.meta.env.VITE_API_URL || "http://localhost:5000";
+  // 🔹 API URL from environment variable
+  const API_URL = import.meta.env.VITE_API_URL;
 
+  // 🔹 Fetch products
   useEffect(() => {
     const fetchProducts = async () => {
       try {
@@ -415,7 +562,7 @@ function ProductList() {
 
         if (Array.isArray(res.data.data)) {
           setProducts(res.data.data);
-          setCurrentPage(1); // ⭐ search change aagum pothu page reset
+          setCurrentPage(1); // Reset page on search
         } else {
           setProducts([]);
         }
@@ -428,28 +575,20 @@ function ProductList() {
     fetchProducts();
   }, [API_URL, searchTerm]);
 
-  // 🔹 filter
+  // 🔹 Filter products by search term
   const filteredProducts = products.filter((p) => {
     if (!searchTerm) return true;
-
     return (
       (p.name || "").toLowerCase().includes(searchTerm) ||
       (p.category || "").toLowerCase().includes(searchTerm)
     );
   });
 
-  // 🔹 pagination calculation
-  const totalPages = Math.ceil(
-    filteredProducts.length / ITEMS_PER_PAGE
-  );
-
+  // 🔹 Pagination calculation
+  const totalPages = Math.ceil(filteredProducts.length / ITEMS_PER_PAGE);
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
   const endIndex = startIndex + ITEMS_PER_PAGE;
-
-  const currentProducts = filteredProducts.slice(
-    startIndex,
-    endIndex
-  );
+  const currentProducts = filteredProducts.slice(startIndex, endIndex);
 
   return (
     <div style={{ padding: "20px", maxWidth: "1400px", margin: "0 auto" }}>
@@ -470,7 +609,7 @@ function ProductList() {
             className="products-grid"
             style={{
               display: "grid",
-              gridTemplateColumns: "repeat(4, 1fr)",
+              gridTemplateColumns: `repeat(${COLUMNS}, 1fr)`,
               gap: "24px",
             }}
           >
@@ -500,15 +639,7 @@ function ProductList() {
                 <button
                   key={i}
                   onClick={() => setCurrentPage(i + 1)}
-                  style={{
-                    background:
-                      currentPage === i + 1 ? "#2f6bff" : "#fff",
-                    color:
-                      currentPage === i + 1 ? "#fff" : "#000",
-                    border: "1px solid #ddd",
-                    padding: "6px 12px",
-                    borderRadius: "6px",
-                  }}
+                  className={currentPage === i + 1 ? "active-page" : ""}
                 >
                   {i + 1}
                 </button>

@@ -928,7 +928,13 @@ function Header() {
                     }}
                   >
                     <img
-                      src={`${BASE_URL}/${product.image}`}
+                      src={
+                        product.image
+                          ? product.image.startsWith("http")
+                            ? product.image
+                            : `${BASE_URL}/uploads/${product.image}`
+                          : "https://via.placeholder.com/50x50?text=No+Image"
+                      }
                       alt={product.name}
                       className="dropdown-img"
                     />

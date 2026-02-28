@@ -729,7 +729,13 @@ const Shoes = () => {
 
                 <Link to={`/product/${product._id}`}>
                   <img
-                    src={`${BASE_URL}/${product.image}`}
+                    src={
+                      product.image
+                        ? product.image.startsWith("http")
+                          ? product.image
+                          : `${BASE_URL}/uploads/${product.image}`
+                        : "https://via.placeholder.com/200x200?text=No+Image"
+                    }
                     alt={product.name}
                   />
                 </Link>

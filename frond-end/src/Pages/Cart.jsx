@@ -1739,7 +1739,13 @@ const Cart = () => {
                 className="cart-item"
               >
                 <img
-                  src={`${BASE_URL}/${item.image}`}
+                  src={
+                    item.image
+                      ? item.image.startsWith("http")
+                        ? item.image
+                        : `${BASE_URL}/uploads/${item.image}`
+                      : "https://via.placeholder.com/100x100?text=No+Image"
+                  }
                   alt={item.name}
                   className="cart-img"
                 />

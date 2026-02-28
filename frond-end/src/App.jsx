@@ -451,6 +451,175 @@
 
 
 
+// import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+// import { useState, useEffect } from "react";
+
+// // Public Components
+// import Header from "./Components/Header";
+// import Navbar from "./Components/Navbar";
+// import Footer from "./Components/Footer";
+
+// // Public Pages
+// import Home from "./Pages/Home";
+// import ProductList from "./Pages/Productlist";
+// import Login from "./Pages/Login";
+// import Register from "./Pages/Register";
+// import Men from "./Pages/Men";
+// import Women from "./Pages/Women";
+// import Kids from "./Pages/Kids";
+// import Beauty from "./Pages/Beauty";
+// import Mobile from "./Pages/Mobile";
+// import Shoes from "./Pages/Shoes";
+// import ProductDetails from "./Pages/ProductDetails";
+// import Cart from "./Pages/Cart";
+// import AddProduct from "./Pages/AddProduct";
+// import Wishlist from "./Pages/Wishlist";
+// import OrderConfirmation from "./Pages/OrderConfirmation";
+// import OrderDetails from "./Pages/OrderDetails";
+// import MyOrders from "./Pages/MyOrders";
+// import ForgotPassword from "./Pages/ForgotPassword";
+
+// // Admin
+// import AdminLogin from "./Pages/AdminLogin";
+// import AdminLayout from "./Components/AdminLayout";
+// import AdminDashboard from "./Pages/AdminDashboard";
+// import AdminOrders from "./Pages/AdminOrder";
+// import AdminProducts from "./Pages/AdminProducts";
+// import ProtectedRoute from "./Components/ProtectedRoute";
+
+
+// // --------- Public Layout Wrapper ----------
+// const PublicLayout = ({ children }) => (
+//   <>
+//     <Header />
+//     <Navbar />
+//     <main>{children}</main>
+//     <Footer />
+//   </>
+// );
+
+// function App() {
+//   const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(false);
+
+//   useEffect(() => {
+//     const token = localStorage.getItem("adminToken");
+//     if (token) setIsAdminLoggedIn(true);
+//   }, []);
+
+//   const handleAdminLogin = () => setIsAdminLoggedIn(true);
+//   const handleAdminLogout = () => {
+//     localStorage.removeItem("adminToken");
+//     setIsAdminLoggedIn(false);
+//   };
+
+//   return (
+//     <BrowserRouter>
+//       <Routes>
+
+//         {/* ---------------- PUBLIC ROUTES ---------------- */}
+//         <Route
+//           path="/*"
+//           element={
+//             <PublicLayout>
+//               <Routes>
+//                 <Route path="/" element={<Home />} />
+//                 <Route path="/products" element={<ProductList />} />
+//                 <Route path="/register" element={<Register />} />
+//                 <Route path="/login" element={<Login />} />
+//                 <Route path="/forgot-password" element={<ForgotPassword />} />
+//                 <Route path="/men" element={<Men />} />
+//                 <Route path="/women" element={<Women />} />
+//                 <Route path="/kids" element={<Kids />} />
+//                 <Route path="/beauty" element={<Beauty />} />
+//                 <Route path="/mobiles" element={<Mobile />} />
+//                 <Route path="/shoes" element={<Shoes />} />
+//                 <Route path="/product/:id" element={<ProductDetails />} />
+//                 <Route path="/cart" element={<Cart />} />
+//                 <Route path="/add-product" element={<AddProduct />} />
+//                 <Route path="/wishlist" element={<Wishlist />} />
+//                 <Route path="/order-details" element={<OrderDetails />} />
+//                 <Route path="/order-confirmation/:orderId" element={<OrderConfirmation />} />
+//                 <Route path="/orders" element={<MyOrders />} />
+//               </Routes>
+//             </PublicLayout>
+//           }
+//         />
+//         {/* ---------------- ADMIN LOGIN ---------------- */}
+//         <Route
+//           path="/admin-login"
+//           element={<AdminLogin onLogin={handleAdminLogin} />}
+//         />
+      
+//         <Route
+//           path="/admin/*"
+//           element={
+//             isAdminLoggedIn
+//               ? <AdminLayout onLogout={handleAdminLogout} />
+//               : <Navigate to="/admin-login" replace />
+//           }
+//         >
+      
+//           <Route path="dashboard" element={<AdminDashboard />}>
+       
+//             <Route
+//               path="products"
+//               element={<AdminProducts token={localStorage.getItem("adminToken")} />}
+//             />
+//             <Route
+//               path="orders"
+//               element={<AdminOrders token={localStorage.getItem("adminToken")} />}
+//             />
+//           </Route>
+
+       
+//           <Route path="" element={<Navigate to="dashboard/products" replace />} />
+//         </Route>
+
+
+//         <Routes>
+//           {/* Admin login */}
+//           <Route path="/admin-login" element={<AdminLogin onLogin={handleAdminLogin} />} />
+
+//           {/* Protected admin routes */}
+//           <Route
+//             path="/admin/*"
+//             element={
+//               <ProtectedRoute>
+//                 <AdminLayout onLogout={handleAdminLogout} />
+//               </ProtectedRoute>
+//             }
+//           >
+//             {/* Dashboard main page */}
+//             <Route path="dashboard" element={<AdminDashboard />} />
+
+//             {/* Admin products */}
+//             <Route
+//               path="products"
+//               element={<AdminProducts token={localStorage.getItem("adminToken")} />}
+//             />
+
+//             {/* Admin orders */}
+//             <Route
+//               path="orders"
+//               element={<AdminOrders token={localStorage.getItem("adminToken")} />}
+//             />
+
+//             {/* Default /admin → redirect */}
+//             <Route path="" element={<Navigate to="dashboard" replace />} />
+//           </Route>
+//         </Routes>
+//         {/* ---------------- CATCH ALL ---------------- */}
+//         <Route path="*" element={<Navigate to="/" />} />
+//       </Routes>
+//     </BrowserRouter>
+//   );
+// }
+
+// export default App;
+
+
+
+
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 
@@ -485,6 +654,7 @@ import AdminLayout from "./Components/AdminLayout";
 import AdminDashboard from "./Pages/AdminDashboard";
 import AdminOrders from "./Pages/AdminOrder";
 import AdminProducts from "./Pages/AdminProducts";
+import UploadGallery from "./Components/UploadGallery"; // adjust path
 
 // --------- Public Layout Wrapper ----------
 const PublicLayout = ({ children }) => (
@@ -564,6 +734,7 @@ function App() {
               path="products"
               element={<AdminProducts token={localStorage.getItem("adminToken")} />}
             />
+            {/* <Route path="gallery" element={<UploadGallery />} /> */}
             <Route
               path="orders"
               element={<AdminOrders token={localStorage.getItem("adminToken")} />}
