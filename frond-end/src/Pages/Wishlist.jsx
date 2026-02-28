@@ -134,7 +134,13 @@ function Wishlist() {
               key={`${item._id || item.id}-${index}`}
             >
               <img
-                src={`${BASE_URL}/${item.image}`}
+                src={
+                  item.image
+                    ? item.image.startsWith("http")
+                      ? item.image
+                      : `${BASE_URL}/uploads/${item.image}`
+                    : "https://via.placeholder.com/200x200?text=No+Image"
+                }
                 alt={item.name}
               />
               <h4>{item.name}</h4>

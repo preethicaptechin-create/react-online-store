@@ -348,7 +348,137 @@
 
 
 
-import React, { useState } from "react";
+// import React, { useState } from "react";
+// import axios from "axios";
+// import { useNavigate } from "react-router-dom";
+// import "./AdminLogin.css";
+
+// const AdminLogin = ({ onLogin }) => {
+//   const [username, setUsername] = useState("");
+//   const [password, setPassword] = useState("");
+//   const [role, setRole] = useState("admin"); // default to "admin"
+//   const [error, setError] = useState("");
+//   const [loading, setLoading] = useState(false);
+//   const [showPassword, setShowPassword] = useState(false);
+
+//   const navigate = useNavigate();
+
+//   const handleSubmit = async (e) => {
+//     e.preventDefault();
+//     setError("");
+//     setLoading(true);
+
+//     // Very important: log exactly what you're sending
+//     console.log("Sending login data:", {
+//       username,
+//       password: "••••••", // don't log real password
+//       role,
+//     });
+
+//     try {
+//       const res = await axios.post("http://localhost:5000/api/admin/login", {
+//         username,     // ← sending as username
+//         password,
+//         role,
+//       });
+
+//       const { token } = res.data;
+
+//       if (!token) {
+//         throw new Error("No token received from server");
+//       }
+
+//       console.log("Login successful - token received");
+
+//       localStorage.setItem("adminToken", token);
+//       onLogin(); // or onLogin(token) if your App needs it
+
+//       navigate("/admin/dashboard"); // or /admin/products — your choice
+
+//       // Optional success message
+//       alert("Login successful!");
+//     } catch (err) {
+//       console.error("Login failed:", err.response?.data || err.message);
+
+//       let errorMessage = "Login failed. Please try again.";
+
+//       if (err.response) {
+//         if (err.response.status === 401) {
+//           errorMessage = err.response.data?.message || "Invalid username or password";
+//         } else if (err.response.status === 400) {
+//           errorMessage = err.response.data?.message || "Missing fields";
+//         }
+//       }
+
+//       setError(errorMessage);
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
+
+//   return (
+//     <div className="login-container">
+//       <h1>Admin Login</h1>
+
+//       <form onSubmit={handleSubmit} className="login-form">
+//         <input
+//           type="text"
+//           name="username"
+//           placeholder="Username"
+//           value={username}
+//           onChange={(e) => setUsername(e.target.value.trim())}
+//           required
+//           disabled={loading}
+//           autoFocus
+//         />
+
+//         <div className="password-wrapper">
+//           <input
+//             type={showPassword ? "text" : "password"}
+//             placeholder="Password"
+//             value={password}
+//             onChange={(e) => setPassword(e.target.value)}
+//             required
+//             disabled={loading}
+//           />
+//           <button
+//             type="button"
+//             className="show-hide-btn"
+//             onClick={() => setShowPassword(!showPassword)}
+//             disabled={loading}
+//           >
+//             {showPassword ? "Hide" : "Show"}
+//           </button>
+//         </div>
+
+//         <input
+//           type="text"
+//           placeholder="Role (usually 'admin')"
+//           value={role}
+//           onChange={(e) => setRole(e.target.value.trim())}
+//           required
+//           disabled={loading}
+//         />
+
+//         <button
+//           type="submit"
+//           className="login-btn"
+//           disabled={loading || !username || !password || !role}
+//         >
+//           {loading ? "Logging in..." : "Login"}
+//         </button>
+//       </form>
+
+//       {error && <p className="error-msg" style={{ color: "red" }}>{error}</p>}
+//     </div>
+//   );
+// };
+
+// export default AdminLogin;
+
+
+
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import "./AdminLogin.css";
@@ -356,52 +486,58 @@ import "./AdminLogin.css";
 const AdminLogin = ({ onLogin }) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [role, setRole] = useState("admin"); // default to "admin"
+  const [role, setRole] = useState("admin"); // default role
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
   const navigate = useNavigate();
 
+  // Auto-redirect if already logged in
+  useEffect(() => {
+    const token = localStorage.getItem("adminToken");
+    if (token) {
+      onLogin?.(token); // update parent state if needed
+      navigate("/admin/dashboard");
+    }
+  }, [navigate, onLogin]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
     setLoading(true);
 
-    // Very important: log exactly what you're sending
-    console.log("Sending login data:", {
-      username,
-      password: "••••••", // don't log real password
-      role,
-    });
-
     try {
-      const res = await axios.post("http://localhost:5000/api/admin/login", {
-        username,     // ← sending as username
-        password,
+      console.log("Sending login data:", {
+        username,
+        password: "••••••", // never log real password
         role,
+      });
+
+      const res = await axios.post("http://localhost:5000/api/admin/login", {
+        username: username.trim(),
+        password,
+        role: role.trim(),
       });
 
       const { token } = res.data;
 
-      if (!token) {
-        throw new Error("No token received from server");
-      }
+      if (!token) throw new Error("No token received from server");
 
-      console.log("Login successful - token received");
-
+      // Save token to localStorage
       localStorage.setItem("adminToken", token);
-      onLogin(); // or onLogin(token) if your App needs it
 
-      navigate("/admin/dashboard"); // or /admin/products — your choice
+      // Call parent callback
+      onLogin?.(token);
 
-      // Optional success message
+      // Navigate to dashboard
+      navigate("/admin/dashboard");
+
       alert("Login successful!");
     } catch (err) {
       console.error("Login failed:", err.response?.data || err.message);
 
       let errorMessage = "Login failed. Please try again.";
-
       if (err.response) {
         if (err.response.status === 401) {
           errorMessage = err.response.data?.message || "Invalid username or password";
@@ -409,7 +545,6 @@ const AdminLogin = ({ onLogin }) => {
           errorMessage = err.response.data?.message || "Missing fields";
         }
       }
-
       setError(errorMessage);
     } finally {
       setLoading(false);
@@ -426,7 +561,7 @@ const AdminLogin = ({ onLogin }) => {
           name="username"
           placeholder="Username"
           value={username}
-          onChange={(e) => setUsername(e.target.value.trim())}
+          onChange={(e) => setUsername(e.target.value)}
           required
           disabled={loading}
           autoFocus
@@ -455,7 +590,7 @@ const AdminLogin = ({ onLogin }) => {
           type="text"
           placeholder="Role (usually 'admin')"
           value={role}
-          onChange={(e) => setRole(e.target.value.trim())}
+          onChange={(e) => setRole(e.target.value)}
           required
           disabled={loading}
         />
@@ -463,7 +598,7 @@ const AdminLogin = ({ onLogin }) => {
         <button
           type="submit"
           className="login-btn"
-          disabled={loading || !username || !password || !role}
+          disabled={loading || !username.trim() || !password || !role.trim()}
         >
           {loading ? "Logging in..." : "Login"}
         </button>

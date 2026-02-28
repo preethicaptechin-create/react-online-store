@@ -825,18 +825,170 @@
 
 // export default ProductCard;
 
+// import React, { useState, useRef, useEffect } from "react";
+// import { Link } from "react-router-dom";
+// import "./Productcard.css";
+
+// function ProductCard({ product, sizeOptions }) {
+//   const [size, setSize] = useState(null);
+//   const [toast, setToast] = useState(null);
+//   const [wishlist, setWishlist] = useState([]);
+//   const cardRef = useRef(null);
+
+//   const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+
+//   useEffect(() => {
+//     const loadWishlist = () => {
+//       const stored = JSON.parse(localStorage.getItem("wishlist")) || [];
+//       setWishlist(stored);
+//     };
+
+//     loadWishlist();
+//     window.addEventListener("wishlistUpdated", loadWishlist);
+
+//     return () => {
+//       window.removeEventListener("wishlistUpdated", loadWishlist);
+//     };
+//   }, []);
+
+//   const showToast = (message, type = "success") => {
+//     setToast({ message, type });
+//     setTimeout(() => setToast(null), 2800);
+//   };
+
+//   const needsSize = ["men", "women", "kids", "shoes"].includes(
+//     product?.category?.toLowerCase?.() || ""
+//   );
+
+//   const handleWishlist = (e) => {
+//     e.stopPropagation();
+//     e.preventDefault();
+
+//     const currentWishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
+//     const exists = currentWishlist.some((item) => item._id === product._id);
+
+//     let updatedWishlist;
+//     if (exists) {
+//       updatedWishlist = currentWishlist.filter((item) => item._id !== product._id);
+//       showToast("Removed from wishlist", "error");
+//     } else {
+//       updatedWishlist = [...currentWishlist, product];
+//       showToast("Added to wishlist ❤️", "success");
+//     }
+
+//     localStorage.setItem("wishlist", JSON.stringify(updatedWishlist));
+//     setWishlist(updatedWishlist);
+//     window.dispatchEvent(new Event("wishlistUpdated"));
+//   };
+
+//   // ─── THIS LINE WAS MISSING ────────────────────────────────
+//   const isLiked = wishlist.some((item) => item._id === product._id);
+//   // ───────────────────────────────────────────────────────────
+
+//   const handleAddToCart = () => {
+//     if (needsSize && !size) {
+//       showToast("Please select a size", "error");
+//       const sizeEl = cardRef.current?.querySelector(".size-selector");
+//       if (sizeEl) {
+//         sizeEl.scrollIntoView({ behavior: "smooth", block: "center" });
+//         sizeEl.classList.add("error-flash");
+//         setTimeout(() => sizeEl.classList.remove("error-flash"), 2000);
+//       }
+//       return;
+//     }
+
+//     let cart = JSON.parse(localStorage.getItem("cart")) || [];
+//     const existingItem = cart.find((i) =>
+//       needsSize ? i._id === product._id && i.size === size : i._id === product._id
+//     );
+
+//     if (existingItem) {
+//       existingItem.qty += 1;
+//     } else {
+//       cart.push({ ...product, size: needsSize ? size : null, qty: 1 });
+//     }
+
+//     localStorage.setItem("cart", JSON.stringify(cart));
+//     window.dispatchEvent(new Event("cartUpdated"));
+//     showToast("Item added to cart", "success");
+//   };
+
+//   return (
+//     <div ref={cardRef} className="product-card">
+//       <div className="image-wrap">
+//   <button
+//     className={`wishlist-btn ${isLiked ? "active" : ""}`}
+//     onClick={handleWishlist}
+//     type="button"
+//   >
+//     {isLiked ? "❤️" : "🤍"}
+//   </button>
+
+//   <Link to={`/product/${product._id}`} className="product-image-link">
+//     <img
+//       src={
+//         product.image
+//           ? product.image.startsWith("http")
+//             ? product.image
+//             : `${BASE_URL}/uploads/${product.image}`
+//           : "https://via.placeholder.com/300x300?text=No+Image"
+//       }
+//       alt={product.name}
+//       className="product-image"
+//       draggable={false}
+//       onError={(e) => {
+//         e.target.src = "https://via.placeholder.com/300x300?text=Image+Not+Found";
+//       }}
+//     />
+//   </Link>
+// </div>
+
+//       <h3>{product.name}</h3>
+//       <p>₹{product.price}</p>
+
+//       {needsSize && (
+//         <div className="size-selector">
+//           {(sizeOptions || [6, 7, 8, 9, 10]).map((s) => (
+//             <button
+//               key={s}
+//               className={`size-btn ${size === s ? "active" : ""}`}
+//               onClick={() => setSize(s)}
+//             >
+//               {s}
+//             </button>
+//           ))}
+//         </div>
+//       )}
+
+//       <button className="add-btn" onClick={handleAddToCart}>
+//         Add to Cart
+//       </button>
+
+//       {toast && (
+//         <div className={`snackbar snackbar-${toast.type}`}>
+//           {toast.message}
+//         </div>
+//       )}
+//     </div>
+//   );
+// }
+
+// export default ProductCard;
+
 import React, { useState, useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
-import "./Productcard.css";
+import "./ProductCard.css";
 
-function ProductCard({ product, sizeOptions }) {
+function ProductCard({ product, sizeOptions = [], currency = "₹", placeholderImage }) {
   const [size, setSize] = useState(null);
   const [toast, setToast] = useState(null);
   const [wishlist, setWishlist] = useState([]);
   const cardRef = useRef(null);
 
-  const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+  // 🔹 Base API URL
+  const BASE_URL = import.meta.env.VITE_API_URL;
 
+  // 🔹 Load wishlist from localStorage
   useEffect(() => {
     const loadWishlist = () => {
       const stored = JSON.parse(localStorage.getItem("wishlist")) || [];
@@ -851,12 +1003,15 @@ function ProductCard({ product, sizeOptions }) {
     };
   }, []);
 
+  // 🔹 Toast notifications
   const showToast = (message, type = "success") => {
     setToast({ message, type });
     setTimeout(() => setToast(null), 2800);
   };
 
-  const needsSize = ["men", "women", "kids", "shoes"].includes(
+  // 🔹 Categories that require size selection
+  const sizeRequiredCategories = ["men", "women", "kids", "shoes"];
+  const needsSize = sizeRequiredCategories.includes(
     product?.category?.toLowerCase?.() || ""
   );
 
@@ -881,9 +1036,7 @@ function ProductCard({ product, sizeOptions }) {
     window.dispatchEvent(new Event("wishlistUpdated"));
   };
 
-  // ─── THIS LINE WAS MISSING ────────────────────────────────
   const isLiked = wishlist.some((item) => item._id === product._id);
-  // ───────────────────────────────────────────────────────────
 
   const handleAddToCart = () => {
     if (needsSize && !size) {
@@ -916,30 +1069,43 @@ function ProductCard({ product, sizeOptions }) {
   return (
     <div ref={cardRef} className="product-card">
       <div className="image-wrap">
-  <button
-    className={`wishlist-btn ${isLiked ? "active" : ""}`}
-    onClick={handleWishlist}
-    type="button"
-  >
-    {isLiked ? "❤️" : "🤍"}
-  </button>
+        <button
+          className={`wishlist-btn ${isLiked ? "active" : ""}`}
+          onClick={handleWishlist}
+          type="button"
+        >
+          {isLiked ? "❤️" : "🤍"}
+        </button>
 
-  <Link to={`/product/${product._id}`} className="product-image-link">
-    <img
-      src={`${BASE_URL}/${product.image}`}
-      alt={product.name}
-      className="product-image"
-      draggable={false}
-    />
-  </Link>
-</div>
+        <Link to={`/product/${product._id}`} className="product-image-link">
+          <img
+            src={
+              product.image
+                ? product.image.startsWith("http")
+                  ? product.image
+                  : `${BASE_URL}/uploads/${product.image}`
+                : placeholderImage || "https://via.placeholder.com/300x300?text=No+Image"
+            }
+            alt={product.name || "Product"}
+            className="product-image"
+            draggable={false}
+            onError={(e) => {
+              e.target.src =
+                placeholderImage || "https://via.placeholder.com/300x300?text=Image+Not+Found";
+            }}
+          />
+        </Link>
+      </div>
 
-      <h3>{product.name}</h3>
-      <p>₹{product.price}</p>
+      <h3>{product.name || "Unnamed Product"}</h3>
+      <p>
+        {currency}
+        {product.price ?? "0.00"}
+      </p>
 
       {needsSize && (
         <div className="size-selector">
-          {(sizeOptions || [6, 7, 8, 9, 10]).map((s) => (
+          {(sizeOptions.length ? sizeOptions : [6, 7, 8, 9, 10]).map((s) => (
             <button
               key={s}
               className={`size-btn ${size === s ? "active" : ""}`}
@@ -955,11 +1121,7 @@ function ProductCard({ product, sizeOptions }) {
         Add to Cart
       </button>
 
-      {toast && (
-        <div className={`snackbar snackbar-${toast.type}`}>
-          {toast.message}
-        </div>
-      )}
+      {toast && <div className={`snackbar snackbar-${toast.type}`}>{toast.message}</div>}
     </div>
   );
 }

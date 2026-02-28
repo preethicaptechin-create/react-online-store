@@ -96,6 +96,48 @@
 
 
 
+// import React from "react";
+// import { NavLink, Outlet, useLocation } from "react-router-dom";
+// import "./AdminDashboard.css";
+
+// const AdminDashboard = () => {
+//   const location = useLocation();
+
+//   return (
+//     <div className="admin-dashboard-container" style={{ padding: "20px" }}>
+//       <h1>Admin Dashboard</h1>
+
+//       {/* Dashboard navigation tabs */}
+//       <div className="admin-dashboard-tabs" style={{ marginBottom: "20px" }}>
+//         <NavLink
+//           to="products" // relative route
+//           end // ensures "products" link is active only on exact match
+//           className={({ isActive }) =>
+//             isActive ? "tab-button active" : "tab-button"
+//           }
+//         >
+//           Products
+//         </NavLink>
+//         <NavLink
+//           to="orders" // relative route
+//           className={({ isActive }) =>
+//             isActive ? "tab-button active" : "tab-button"
+//           }
+//         >
+//           Orders
+//         </NavLink>
+//       </div>
+
+//       {/* Nested route content */}
+//       <div className="admin-dashboard-content">
+//         <Outlet />
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default AdminDashboard;
+
 import React from "react";
 import { NavLink, Outlet, useLocation } from "react-router-dom";
 import "./AdminDashboard.css";
@@ -104,14 +146,14 @@ const AdminDashboard = () => {
   const location = useLocation();
 
   return (
-    <div className="admin-dashboard-container" style={{ padding: "20px" }}>
+    <div className="admin-dashboard-container">
       <h1>Admin Dashboard</h1>
 
       {/* Dashboard navigation tabs */}
-      <div className="admin-dashboard-tabs" style={{ marginBottom: "20px" }}>
+      <div className="admin-dashboard-tabs">
         <NavLink
-          to="products" // relative route
-          end // ensures "products" link is active only on exact match
+          to="products"
+          end
           className={({ isActive }) =>
             isActive ? "tab-button active" : "tab-button"
           }
@@ -119,7 +161,7 @@ const AdminDashboard = () => {
           Products
         </NavLink>
         <NavLink
-          to="orders" // relative route
+          to="orders"
           className={({ isActive }) =>
             isActive ? "tab-button active" : "tab-button"
           }
