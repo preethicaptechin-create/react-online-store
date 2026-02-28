@@ -68,7 +68,7 @@ Admin-only routes protection
 Setup Instructions
 
 1. Frontend Setup
-cd Front-end
+cd Frond-end
 npm install
 npm run dev   
 2. Backend Setup
