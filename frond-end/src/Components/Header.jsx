@@ -743,7 +743,7 @@ import { toast } from "react-toastify";
 import { FaShoppingCart, FaUserCircle } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState, useRef } from "react";
-import { BASE_URL, ROUTES, PLACEHOLDER_IMAGE } from "../utils/config";
+import { BASE_URL, ROUTES } from "../utils/config";
 function Header() {
   const navigate = useNavigate();
   const [user, setUser] = useState(
@@ -782,7 +782,7 @@ function Header() {
 
   // ✅ FETCH PRODUCTS FROM BACKEND
   useEffect(() => {
-   fetch(`${BASE_URL}/api/products`)
+    fetch(`${BASE_URL}/api/products`)
       .then((res) => res.json())
       .then((data) => {
         if (Array.isArray(data)) setProducts(data);
@@ -864,7 +864,7 @@ function Header() {
 
     if (refreshToken) {
       try {
-  await fetch(`${BASE_URL}/api/auth/logout`, {
+        await fetch(`${BASE_URL}/api/auth/logout`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ refreshToken }),

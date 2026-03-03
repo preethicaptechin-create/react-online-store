@@ -324,6 +324,8 @@ export const BASE_URL =
 
 export const CURRENCY =
   import.meta.env.VITE_CURRENCY?.trim() || "₹";
+  export const PLACEHOLDER_IMAGE =
+  "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='50' height='50'%3E%3Crect fill='%23e0e0e0' width='50' height='50'/%3E%3C/svg%3E";
 
 // =======================
 // App Routes (Frontend)
