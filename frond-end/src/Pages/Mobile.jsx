@@ -407,14 +407,12 @@
 
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import {
-  BASE_URL,
-  CATEGORY,
-  MESSAGES,
-  CURRENCY,
-} from "../utils/config";
+import { BASE_URL, MESSAGES, CURRENCY } from "../utils/config"; // removed CATEGORY
 import { PLACEHOLDER_IMAGE } from "../utils/productImage";
 import "./Mobile.css";
+
+// ✅ Define CATEGORY locally
+const CATEGORY = { mobile: "mobile", men: "men", women: "women", kids: "kids" };
 
 const Mobile = () => {
   const [products, setProducts] = useState([]);
@@ -452,9 +450,7 @@ const Mobile = () => {
     const exists = wishlist.find((i) => i._id === product._id);
 
     if (exists) {
-      updatedWishlist = wishlist.filter(
-        (i) => i._id !== product._id
-      );
+      updatedWishlist = wishlist.filter((i) => i._id !== product._id);
       showToast(MESSAGES.removedWishlist);
     } else {
       updatedWishlist = [...wishlist, product];
@@ -462,10 +458,7 @@ const Mobile = () => {
     }
 
     setWishlist(updatedWishlist);
-    localStorage.setItem(
-      "wishlist",
-      JSON.stringify(updatedWishlist)
-    );
+    localStorage.setItem("wishlist", JSON.stringify(updatedWishlist));
   };
 
   const handleAddToCart = (product) => {
@@ -501,9 +494,7 @@ const Mobile = () => {
           return (
             <div key={product._id} className="mobile-card">
               <button
-                className={`wishlist-btn ${
-                  isWishlisted ? "active" : ""
-                }`}
+                className={`wishlist-btn ${isWishlisted ? "active" : ""}`}
                 onClick={() => handleWishlist(product)}
               >
                 {isWishlisted ? "❤️" : "🤍"}

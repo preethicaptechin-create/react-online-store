@@ -177,19 +177,20 @@
 //   );
 // }
 
-// export default MyOrders;
-
-
-
-import { useEffect, useState } from "react";
-import { authFetch } from "../utils/authFetch";
-import { MESSAGES, CURRENCY, ROUTES, API_ROUTES } from "../utils/config";
+import React, { useState, useEffect } from "react";
+import { MESSAGES, CURRENCY, ROUTES } from "../utils/config";
+import { authFetch } from "../utils/authFetch"; // assuming you have a helper for authenticated fetch
 import "./MyOrders.css";
+
+// ✅ Define API routes locally
+const API_ROUTES = {
+  myOrders: "/api/orders/me",
+};
 
 function MyOrders() {
   const [orders, setOrders] = useState([]);
   const [totalOrders, setTotalOrders] = useState(0);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
   useEffect(() => {

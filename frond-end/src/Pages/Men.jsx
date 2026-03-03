@@ -792,17 +792,175 @@
 
 
 
+// import React, { useState, useEffect } from "react";
+// import { Link } from "react-router-dom";
+// import { BASE_URL, MESSAGES, CURRENCY, SIZES } from "../utils/config";
+// import { PLACEHOLDER_IMAGE } from "../utils/productImage";
+// import "./Men.css";
+// const CATEGORY = { men: "men", women: "women", kids: "kids" };
+// const SIZES = ["6", "7", "8", "9", "10"];
+
+// const Men = () => {
+//   const [products, setProducts] = useState([]);
+//   const [sizes, setSizes] = useState({});
+//   const [toast, setToast] = useState(null);
+//   const [wishlist, setWishlist] = useState([]);
+//   const [loading, setLoading] = useState(true);
+
+//   useEffect(() => {
+//     fetch(`${BASE_URL}/api/products`)
+//       .then((res) => res.json())
+//       .then((data) => {
+//         setProducts(Array.isArray(data.data) ? data.data : []);
+//         setLoading(false);
+//       })
+//       .catch(() => setLoading(false));
+
+//     setWishlist(JSON.parse(localStorage.getItem("wishlist")) || []);
+//   }, []);
+
+//   const showToast = (message, type = "success") => {
+//     setToast({ message, type });
+//     setTimeout(() => setToast(null), 2500);
+//   };
+
+//   const menProducts = products.filter(
+//     (p) =>
+//       (p.category || "").toLowerCase().trim() === CATEGORY.men
+//   );
+
+//   const handleSizeSelect = (id, size) => {
+//     setSizes((prev) => ({ ...prev, [id]: size }));
+//   };
+
+//   const handleWishlist = (product) => {
+//     const exists = wishlist.find((i) => i._id === product._id);
+//     const updated = exists
+//       ? wishlist.filter((i) => i._id !== product._id)
+//       : [...wishlist, product];
+
+//     showToast(
+//       exists
+//         ? MESSAGES.removedWishlist
+//         : MESSAGES.addedWishlist
+//     );
+
+//     setWishlist(updated);
+//     localStorage.setItem("wishlist", JSON.stringify(updated));
+//   };
+
+//   const handleAddToCart = (product) => {
+//     const selectedSize = sizes[product._id];
+//     if (!selectedSize) {
+//       showToast(MESSAGES.selectSize, "error");
+//       return;
+//     }
+
+//     const cart = JSON.parse(localStorage.getItem("cart")) || [];
+//     const item = cart.find(
+//       (i) => i._id === product._id && i.size === selectedSize
+//     );
+
+//     if (item) item.qty += 1;
+//     else cart.push({ ...product, size: selectedSize, qty: 1 });
+
+//     localStorage.setItem("cart", JSON.stringify(cart));
+//     window.dispatchEvent(new Event("cartUpdated"));
+
+//     showToast(MESSAGES.addedToCart);
+//   };
+
+//   if (loading) return <h2>{MESSAGES.loading}</h2>;
+
+//   return (
+//     <div className="men-page">
+//       <h1>{MESSAGES.menCollection}</h1>
+
+//       {toast && (
+//         <div className={`snackbar snackbar-${toast.type}`}>
+//           {toast.message}
+//         </div>
+//       )}
+
+//       <div className="men-grid">
+//         {menProducts.length === 0 ? (
+//           <p>{MESSAGES.noMenProducts}</p>
+//         ) : (
+//           menProducts.map((product) => {
+//             const selectedSize = sizes[product._id];
+//             const liked = wishlist.some(
+//               (i) => i._id === product._id
+//             );
+
+//             return (
+//               <div key={product._id} className="men-card">
+//                 <button
+//                   className={`wishlist-btn ${liked ? "active" : ""}`}
+//                   onClick={() => handleWishlist(product)}
+//                 >
+//                   {liked ? "❤️" : "🤍"}
+//                 </button>
+
+//                 <Link to={`/product/${product._id}`}>
+//                   <img
+//                     src={
+//                       product.image
+//                         ? product.image.startsWith("http")
+//                           ? product.image
+//                           : `${BASE_URL}/uploads/${product.image}`
+//                         : PLACEHOLDER_IMAGE
+//                     }
+//                     alt={product.name}
+//                   />
+//                 </Link>
+
+//                 <h3>{product.name}</h3>
+//                 <p>{CURRENCY} {product.price}</p>
+
+//                 <div className="size-preview">
+//                   {SIZES.map((s) => (
+//                     <button
+//                       key={s}
+//                       className={
+//                         selectedSize === s
+//                           ? "size-box active"
+//                           : "size-box"
+//                       }
+//                       onClick={() =>
+//                         handleSizeSelect(product._id, s)
+//                       }
+//                     >
+//                       {s}
+//                     </button>
+//                   ))}
+//                 </div>
+
+//                 <button
+//                   className="add-btn"
+//                   onClick={() => handleAddToCart(product)}
+//                 >
+//                   {MESSAGES.addToCart}
+//                 </button>
+//               </div>
+//             );
+//           })
+//         )}
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default Men;
+
+
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import {
-  BASE_URL,
-  CATEGORY,
-  MESSAGES,
-  CURRENCY,
-  SIZES,
-} from "../utils/config";
+import { BASE_URL, MESSAGES, CURRENCY } from "../utils/config"; // removed SIZES
 import { PLACEHOLDER_IMAGE } from "../utils/productImage";
 import "./Men.css";
+
+const CATEGORY = { men: "men", women: "women", kids: "kids" };
+const SIZES = ["6", "7", "8", "9", "10"];
 
 const Men = () => {
   const [products, setProducts] = useState([]);
