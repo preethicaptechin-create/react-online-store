@@ -1744,7 +1744,7 @@ const Cart = () => {
                       ? item.image.startsWith("http")
                         ? item.image
                         : `${BASE_URL}/uploads/${item.image}`
-                      : "https://via.placeholder.com/100x100?text=No+Image"
+                      : "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Crect fill='%23e0e0e0' width='100' height='100'/%3E%3C/svg%3E"
                   }
                   alt={item.name}
                   className="cart-img"

@@ -421,24 +421,30 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage });
 
-// POST /upload route
-app.post("/upload", upload.single("image"), (req, res) => {
-  if (!req.file) return res.status(400).json({ error: "No file uploaded" });
-  res.json({ message: "Upload successful", filename: req.file.filename });
-});
-
-// Serve uploaded images
+// Serve uploaded images (must be before /api routes so /uploads works)
 app.use("/uploads", express.static(UPLOADS_DIR));
 
-// GET /images route
-app.get("/images", (req, res) => {
+// Helper: respond with list of image URLs
+const sendImageList = (req, res) => {
   fs.readdir(UPLOADS_DIR, (err, files) => {
     if (err) return res.status(500).json({ error: "Cannot read files" });
-    const urls = files.map((file) => `http://localhost:5000/uploads/${file}`);
+    const base = req.protocol + "://" + req.get("host");
+    const urls = files.map((file) => `${base}/uploads/${file}`);
     res.json(urls);
   });
-});
+};
 
+// Gallery upload handler
+const uploadHandler = (req, res) => {
+  if (!req.file) return res.status(400).json({ error: "No file uploaded" });
+  res.json({ message: "Upload successful", filename: req.file.filename });
+};
+
+// Gallery routes: both /api/* and root so they work in any setup
+app.get("/api/images", sendImageList);
+app.get("/images", sendImageList);
+app.post("/api/upload", upload.single("image"), uploadHandler);
+app.post("/upload", upload.single("image"), uploadHandler);
 
 // Your other API routes
 app.use("/api/products", require("./routes/productRoutes"));

@@ -739,11 +739,11 @@
 
 
 import "./Header.css";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
 import { FaShoppingCart, FaUserCircle } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState, useRef } from "react";
-
+import { BASE_URL, ROUTES, PLACEHOLDER_IMAGE } from "../utils/config";
 function Header() {
   const navigate = useNavigate();
   const [user, setUser] = useState(
@@ -760,7 +760,8 @@ function Header() {
   // const user = JSON.parse(localStorage.getItem("user")); // logged-in user
   const accountRef = useRef(null);
   const wrapperRef = useRef(null);
-  const BASE_URL = "http://localhost:5000";
+  // src/config.js
+
   // 🔥 SYNC USER FROM LOCALSTORAGE (LOGIN / LOGOUT)
   useEffect(() => {
     const syncUser = () => {
@@ -781,7 +782,7 @@ function Header() {
 
   // ✅ FETCH PRODUCTS FROM BACKEND
   useEffect(() => {
-    fetch(`${BASE_URL}/api/products`)
+   fetch(`${BASE_URL}/api/products`)
       .then((res) => res.json())
       .then((data) => {
         if (Array.isArray(data)) setProducts(data);
@@ -863,7 +864,7 @@ function Header() {
 
     if (refreshToken) {
       try {
-        await fetch(`${BASE_URL}/api/auth/logout`, {
+  await fetch(`${BASE_URL}/api/auth/logout`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ refreshToken }),
@@ -933,7 +934,7 @@ function Header() {
                           ? product.image.startsWith("http")
                             ? product.image
                             : `${BASE_URL}/uploads/${product.image}`
-                          : "https://via.placeholder.com/50x50?text=No+Image"
+                          : "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='50' height='50'%3E%3Crect fill='%23e0e0e0' width='50' height='50'/%3E%3C/svg%3E"
                       }
                       alt={product.name}
                       className="dropdown-img"

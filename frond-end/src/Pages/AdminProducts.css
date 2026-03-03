@@ -105,6 +105,37 @@
   border-radius: 6px;
 }
 
+/* Action buttons container */
+.product-table td button {
+  padding: 6px 12px;
+  margin: 0 4px;
+  font-size: 14px;
+  border-radius: 4px;
+  cursor: pointer;
+  border: none;
+  transition: background-color 0.2s ease;
+}
+
+/* Edit button */
+.product-table td button:first-child {
+  background-color: #1976d2;
+  color: white;
+}
+
+.product-table td button:first-child:hover {
+  background-color: #125aa0;
+}
+
+/* Delete button */
+.product-table td button:last-child {
+  background-color: #d32f2f;
+  color: white;
+}
+
+.product-table td button:last-child:hover {
+  background-color: #a62121;
+}
+
 /* Responsive */
 @media (max-width: 600px) {
   .admin-products form {

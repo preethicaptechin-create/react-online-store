@@ -827,6 +827,7 @@
 
 // import React, { useState, useRef, useEffect } from "react";
 // import { Link } from "react-router-dom";
+// import { PLACEHOLDER_IMAGE } from "../utils/productImage";
 // import "./Productcard.css";
 
 // function ProductCard({ product, sizeOptions }) {
@@ -931,13 +932,14 @@
 //           ? product.image.startsWith("http")
 //             ? product.image
 //             : `${BASE_URL}/uploads/${product.image}`
-//           : "https://via.placeholder.com/300x300?text=No+Image"
+//           : PLACEHOLDER_IMAGE
 //       }
 //       alt={product.name}
 //       className="product-image"
 //       draggable={false}
 //       onError={(e) => {
-//         e.target.src = "https://via.placeholder.com/300x300?text=Image+Not+Found";
+//         e.target.onerror = null;
+//         e.target.src = PLACEHOLDER_IMAGE;
 //       }}
 //     />
 //   </Link>
@@ -975,20 +977,20 @@
 
 // export default ProductCard;
 
+
+
 import React, { useState, useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
-import "./ProductCard.css";
+import { PLACEHOLDER_IMAGE } from "../utils/productImage";
+import { BASE_URL } from "../utils/config"; // ✅ use config
+import "./Productcard.css";
 
-function ProductCard({ product, sizeOptions = [], currency = "₹", placeholderImage }) {
+function ProductCard({ product, sizeOptions }) {
   const [size, setSize] = useState(null);
   const [toast, setToast] = useState(null);
   const [wishlist, setWishlist] = useState([]);
   const cardRef = useRef(null);
 
-  // 🔹 Base API URL
-  const BASE_URL = import.meta.env.VITE_API_URL;
-
-  // 🔹 Load wishlist from localStorage
   useEffect(() => {
     const loadWishlist = () => {
       const stored = JSON.parse(localStorage.getItem("wishlist")) || [];
@@ -1003,15 +1005,12 @@ function ProductCard({ product, sizeOptions = [], currency = "₹", placeholderI
     };
   }, []);
 
-  // 🔹 Toast notifications
   const showToast = (message, type = "success") => {
     setToast({ message, type });
     setTimeout(() => setToast(null), 2800);
   };
 
-  // 🔹 Categories that require size selection
-  const sizeRequiredCategories = ["men", "women", "kids", "shoes"];
-  const needsSize = sizeRequiredCategories.includes(
+  const needsSize = ["men", "women", "kids", "shoes"].includes(
     product?.category?.toLowerCase?.() || ""
   );
 
@@ -1022,18 +1021,18 @@ function ProductCard({ product, sizeOptions = [], currency = "₹", placeholderI
     const currentWishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
     const exists = currentWishlist.some((item) => item._id === product._id);
 
-    let updatedWishlist;
-    if (exists) {
-      updatedWishlist = currentWishlist.filter((item) => item._id !== product._id);
-      showToast("Removed from wishlist", "error");
-    } else {
-      updatedWishlist = [...currentWishlist, product];
-      showToast("Added to wishlist ❤️", "success");
-    }
+    const updatedWishlist = exists
+      ? currentWishlist.filter((item) => item._id !== product._id)
+      : [...currentWishlist, product];
 
     localStorage.setItem("wishlist", JSON.stringify(updatedWishlist));
     setWishlist(updatedWishlist);
     window.dispatchEvent(new Event("wishlistUpdated"));
+
+    showToast(
+      exists ? "Removed from wishlist" : "Added to wishlist ❤️",
+      exists ? "error" : "success"
+    );
   };
 
   const isLiked = wishlist.some((item) => item._id === product._id);
@@ -1041,6 +1040,7 @@ function ProductCard({ product, sizeOptions = [], currency = "₹", placeholderI
   const handleAddToCart = () => {
     if (needsSize && !size) {
       showToast("Please select a size", "error");
+
       const sizeEl = cardRef.current?.querySelector(".size-selector");
       if (sizeEl) {
         sizeEl.scrollIntoView({ behavior: "smooth", block: "center" });
@@ -1051,8 +1051,11 @@ function ProductCard({ product, sizeOptions = [], currency = "₹", placeholderI
     }
 
     let cart = JSON.parse(localStorage.getItem("cart")) || [];
+
     const existingItem = cart.find((i) =>
-      needsSize ? i._id === product._id && i.size === size : i._id === product._id
+      needsSize
+        ? i._id === product._id && i.size === size
+        : i._id === product._id
     );
 
     if (existingItem) {
@@ -1084,28 +1087,25 @@ function ProductCard({ product, sizeOptions = [], currency = "₹", placeholderI
                 ? product.image.startsWith("http")
                   ? product.image
                   : `${BASE_URL}/uploads/${product.image}`
-                : placeholderImage || "https://via.placeholder.com/300x300?text=No+Image"
+                : PLACEHOLDER_IMAGE
             }
-            alt={product.name || "Product"}
+            alt={product.name}
             className="product-image"
             draggable={false}
             onError={(e) => {
-              e.target.src =
-                placeholderImage || "https://via.placeholder.com/300x300?text=Image+Not+Found";
+              e.target.onerror = null;
+              e.target.src = PLACEHOLDER_IMAGE;
             }}
           />
         </Link>
       </div>
 
-      <h3>{product.name || "Unnamed Product"}</h3>
-      <p>
-        {currency}
-        {product.price ?? "0.00"}
-      </p>
+      <h3>{product.name}</h3>
+      <p>₹{product.price}</p>
 
       {needsSize && (
         <div className="size-selector">
-          {(sizeOptions.length ? sizeOptions : [6, 7, 8, 9, 10]).map((s) => (
+          {(sizeOptions || [6, 7, 8, 9, 10]).map((s) => (
             <button
               key={s}
               className={`size-btn ${size === s ? "active" : ""}`}
@@ -1121,7 +1121,11 @@ function ProductCard({ product, sizeOptions = [], currency = "₹", placeholderI
         Add to Cart
       </button>
 
-      {toast && <div className={`snackbar snackbar-${toast.type}`}>{toast.message}</div>}
+      {toast && (
+        <div className={`snackbar snackbar-${toast.type}`}>
+          {toast.message}
+        </div>
+      )}
     </div>
   );
 }

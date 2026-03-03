@@ -281,197 +281,13 @@
 
 
 
-// import React, { useState, useEffect } from "react";
-// import { useParams } from "react-router-dom";
-// import "./ProductDetails.css";
-
-// const BASE_URL = "http://localhost:5000";
-
-// const ProductDetails = () => {
-//   const { id } = useParams();
-
-//   const [product, setProduct] = useState(null);
-//   const [size, setSize] = useState(null);
-//   const [toast, setToast] = useState(null);
-//   const [liked, setLiked] = useState(false);
-//   const [loading, setLoading] = useState(true);
-
-//   // ✅ Fetch product from backend
-//   useEffect(() => {
-//     fetch(`${BASE_URL}/api/products/${id}`)
-//       .then((res) => res.json())
-//       // .then((data) => {
-//       //   setProduct(data);
-//       //   setLoading(false);
-//       // })
-//       .then((data) => {
-//         setProduct(data.data);  // ✅ important change
-//         setLoading(false);
-//       })
-//       .catch((err) => {
-//         console.error("Fetch error:", err);
-//         setLoading(false);
-//       });
-//   }, [id]);
-
-//   // ✅ Check wishlist after product loads
-//   useEffect(() => {
-//     if (!product) return;
-
-//     let wishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
-//     const exists = wishlist.find((item) => item._id === product._id);
-//     setLiked(!!exists);
-//   }, [product]);
-
-//   const showToast = (message, type = "success") => {
-//     setToast({ message, type });
-//     setTimeout(() => setToast(null), 2800);
-//   };
-
-//   if (loading) return <h2>Loading...</h2>;
-//   if (!product) return <h2>Product not found</h2>;
-
-//   const needsSize = ["men", "women", "kids", "shoes"].includes(
-//     product.category?.toLowerCase?.() || ""
-//   );
-
-//   // ✅ Wishlist
-//   const handleWishlist = () => {
-//     let wishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
-
-//     const exists = wishlist.find((item) => item._id === product._id);
-
-//     if (exists) {
-//       wishlist = wishlist.filter((item) => item._id !== product._id);
-//       setLiked(false);
-//       showToast("Removed from Wishlist", "error");
-//     } else {
-//       wishlist.push(product);
-//       setLiked(true);
-//       showToast("Added to Wishlist ❤️", "success");
-//     }
-
-//     localStorage.setItem("wishlist", JSON.stringify(wishlist));
-//   };
-
-//   // ✅ Add To Cart
-//   const handleAddToCart = () => {
-//     if (needsSize && !size) {
-//       showToast("Size required!", "error");
-//       return;
-//     }
-
-//     let cart = JSON.parse(localStorage.getItem("cart")) || [];
-
-//     const existingItem = cart.find((i) =>
-//       needsSize
-//         ? i._id === product._id && i.size === size
-//         : i._id === product._id
-//     );
-
-//     if (existingItem) {
-//       existingItem.qty += 1;
-//     } else {
-//       cart.push({
-//         ...product,
-//         size: needsSize ? size : null,
-//         qty: 1,
-//       });
-//     }
-
-//     localStorage.setItem("cart", JSON.stringify(cart));
-//     window.dispatchEvent(new Event("cartUpdated"));
-
-//     showToast("Added to Cart ✓", "success");
-//   };
-
-//   return (
-//     <div className="details-page">
-//       <div className="details-card">
-
-//         {toast && (
-//           <div className={`snackbar snackbar-${toast.type}`}>
-//             {toast.message}
-//           </div>
-//         )}
-
-//         <div className="image-wrapper">
-//           <img
-//             src={
-//               product.image
-//                 ? product.image.startsWith("http")
-//                   ? product.image
-//                   : `${BASE_URL}/uploads/${product.image}`
-//                 : "https://via.placeholder.com/400x400?text=No+Image"
-//             }
-//             alt={product.name}
-//             onError={(e) => {
-//               e.target.src = "https://via.placeholder.com/400x400?text=Image+Not+Found";
-//             }}
-//           />
-//           {/* <img
-//           src={`http://localhost:5000/${product.image}`}
-//           alt={product.name}
-//           className="product-image"
-//         /> */}
-//           {/* <img
-//             src={`http://localhost:5000/uploads/${product.image}`}
-//             alt={product.name}
-//             className="product-image"
-//           /> */}
-
-
-//           <button
-//             className={`wishlist-btn ${liked ? "active" : ""}`}
-//             onClick={handleWishlist}
-//           >
-//             {liked ? "❤️" : "🤍"}
-//           </button>
-//         </div>
-
-//         <div className="details-info">
-//           <h2>{product.name}</h2>
-//           <p className="price">₹{product.price}</p>
-//           <p>Category: {product.category}</p>
-
-//           {needsSize && (
-//             <div className="size-selector">
-//               {[6, 7, 8, 9, 10].map((s) => (
-//                 <button
-//                   key={s}
-//                   className={`size-btn ${size === s ? "active" : ""}`}
-//                   onClick={() => setSize(s)}
-//                 >
-//                   {s}
-//                 </button>
-//               ))}
-//             </div>
-//           )}
-
-//           <button className="add-cart-btn" onClick={handleAddToCart}>
-//             Add to Cart
-//           </button>
-//         </div>
-
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default ProductDetails;
-
-
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
+import { PLACEHOLDER_IMAGE } from "../utils/productImage";
 import "./ProductDetails.css";
 
-const ProductDetails = ({
-  baseUrl = import.meta.env.VITE_API_URL, // ✅ API base URL from env
-  currency = "₹",                          // ✅ Dynamic currency
-  placeholderImage,                        // ✅ Configurable placeholder image
-  sizeOptions = [],                        // ✅ Dynamic size options
-  sizeRequiredCategories = ["men", "women", "kids", "shoes"], // ✅ Categories that require size
-}) => {
+const BASE_URL = import.meta.env.VITE_API_URL;
+const ProductDetails = () => {
   const { id } = useParams();
 
   const [product, setProduct] = useState(null);
@@ -480,25 +296,29 @@ const ProductDetails = ({
   const [liked, setLiked] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  // 🔹 Fetch product from backend
+  // ✅ Fetch product from backend
   useEffect(() => {
-    fetch(`${baseUrl}/api/products/${id}`)
+    fetch(`${BASE_URL}/api/products/${id}`)
       .then((res) => res.json())
+      // .then((data) => {
+      //   setProduct(data);
+      //   setLoading(false);
+      // })
       .then((data) => {
-        setProduct(data.data); // ✅ important: data.data
+        setProduct(data.data);  // ✅ important change
         setLoading(false);
       })
       .catch((err) => {
         console.error("Fetch error:", err);
         setLoading(false);
       });
-  }, [id, baseUrl]);
+  }, [id]);
 
-  // 🔹 Check wishlist after product loads
+  // ✅ Check wishlist after product loads
   useEffect(() => {
     if (!product) return;
 
-    const wishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
+    let wishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
     const exists = wishlist.find((item) => item._id === product._id);
     setLiked(!!exists);
   }, [product]);
@@ -511,13 +331,14 @@ const ProductDetails = ({
   if (loading) return <h2>Loading...</h2>;
   if (!product) return <h2>Product not found</h2>;
 
-  const needsSize = sizeRequiredCategories.includes(
+  const needsSize = ["men", "women", "kids", "shoes"].includes(
     product.category?.toLowerCase?.() || ""
   );
 
-  // 🔹 Wishlist handler
+  // ✅ Wishlist
   const handleWishlist = () => {
     let wishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
+
     const exists = wishlist.find((item) => item._id === product._id);
 
     if (exists) {
@@ -533,7 +354,7 @@ const ProductDetails = ({
     localStorage.setItem("wishlist", JSON.stringify(wishlist));
   };
 
-  // 🔹 Add to cart handler
+  // ✅ Add To Cart
   const handleAddToCart = () => {
     if (needsSize && !size) {
       showToast("Size required!", "error");
@@ -543,7 +364,9 @@ const ProductDetails = ({
     let cart = JSON.parse(localStorage.getItem("cart")) || [];
 
     const existingItem = cart.find((i) =>
-      needsSize ? i._id === product._id && i.size === size : i._id === product._id
+      needsSize
+        ? i._id === product._id && i.size === size
+        : i._id === product._id
     );
 
     if (existingItem) {
@@ -558,13 +381,19 @@ const ProductDetails = ({
 
     localStorage.setItem("cart", JSON.stringify(cart));
     window.dispatchEvent(new Event("cartUpdated"));
+
     showToast("Added to Cart ✓", "success");
   };
 
   return (
     <div className="details-page">
       <div className="details-card">
-        {toast && <div className={`snackbar snackbar-${toast.type}`}>{toast.message}</div>}
+
+        {toast && (
+          <div className={`snackbar snackbar-${toast.type}`}>
+            {toast.message}
+          </div>
+        )}
 
         <div className="image-wrapper">
           <img
@@ -572,32 +401,43 @@ const ProductDetails = ({
               product.image
                 ? product.image.startsWith("http")
                   ? product.image
-                  : `${baseUrl}/uploads/${product.image}`
-                : placeholderImage || "https://via.placeholder.com/400x400?text=No+Image"
+                  : `${BASE_URL}/uploads/${product.image}`
+                : PLACEHOLDER_IMAGE
             }
-            alt={product.name || "Product"}
+            alt={product.name}
             onError={(e) => {
-              e.target.src =
-                placeholderImage || "https://via.placeholder.com/400x400?text=Image+Not+Found";
+              e.target.onerror = null;
+              e.target.src = PLACEHOLDER_IMAGE;
             }}
           />
+          {/* <img
+          src={`http://localhost:5000/${product.image}`}
+          alt={product.name}
+          className="product-image"
+        /> */}
+          {/* <img
+            src={`http://localhost:5000/uploads/${product.image}`}
+            alt={product.name}
+            className="product-image"
+          /> */}
 
-          <button className={`wishlist-btn ${liked ? "active" : ""}`} onClick={handleWishlist}>
+
+          <button
+            className={`wishlist-btn ${liked ? "active" : ""}`}
+            onClick={handleWishlist}
+          >
             {liked ? "❤️" : "🤍"}
           </button>
         </div>
 
         <div className="details-info">
-          <h2>{product.name || "Unnamed Product"}</h2>
-          <p className="price">
-            {currency}
-            {product.price ?? "0.00"}
-          </p>
-          <p>Category: {product.category || "N/A"}</p>
+          <h2>{product.name}</h2>
+          <p className="price">₹{product.price}</p>
+          <p>Category: {product.category}</p>
 
           {needsSize && (
             <div className="size-selector">
-              {(sizeOptions.length ? sizeOptions : [6, 7, 8, 9, 10]).map((s) => (
+              {[6, 7, 8, 9, 10].map((s) => (
                 <button
                   key={s}
                   className={`size-btn ${size === s ? "active" : ""}`}
@@ -613,6 +453,7 @@ const ProductDetails = ({
             Add to Cart
           </button>
         </div>
+
       </div>
     </div>
   );

@@ -584,11 +584,230 @@
 
 
 
+// import React, { useState, useEffect } from "react";
+// import { Link } from "react-router-dom";
+// import "./Kids.css";
+
+// const BASE_URL = "http://localhost:5000";
+
+// const Kids = () => {
+//   const [products, setProducts] = useState([]);
+//   const [sizes, setSizes] = useState({});
+//   const [toast, setToast] = useState(null);
+//   const [wishlist, setWishlist] = useState([]);
+//   const [loading, setLoading] = useState(true);
+
+//   // ✅ Fetch products from backend
+//   useEffect(() => {
+//     fetch(`${BASE_URL}/api/products`)
+//       .then(res => res.json())
+//       .then(data => {
+//         console.log("Kids API Response:", data);
+
+//         if (data.success) {
+//           setProducts(data.data);   // ⭐ FIXED HERE
+//         } else {
+//           setProducts([]);
+//         }
+
+//         setLoading(false);
+//       })
+//       .catch(err => {
+//         console.error("Fetch error:", err);
+//         setLoading(false);
+//       });
+
+//     const storedWishlist =
+//       JSON.parse(localStorage.getItem("wishlist")) || [];
+//     setWishlist(storedWishlist);
+
+//   }, []);
+
+//   const showToast = (message, type = "success") => {
+//     setToast(null);
+//     setTimeout(() => setToast({ message, type }), 100);
+//     setTimeout(() => setToast(null), 2800);
+//   };
+
+//   // ✅ Filter kids category safely
+//   const kidsProducts = Array.isArray(products)
+//     ? products.filter(
+//         (product) =>
+//           (product.category || "").toLowerCase().trim() === "kids"
+//       )
+//     : [];
+
+//   const handleSizeSelect = (productId, size) => {
+//     setSizes(prev => ({
+//       ...prev,
+//       [productId]: size
+//     }));
+//   };
+
+//   const handleWishlist = (product) => {
+//     const exists = wishlist.find(
+//       item => item._id === product._id
+//     );
+
+//     let updatedWishlist;
+
+//     if (exists) {
+//       updatedWishlist = wishlist.filter(
+//         item => item._id !== product._id
+//       );
+//       showToast("Removed from wishlist", "error");
+//     } else {
+//       updatedWishlist = [...wishlist, product];
+//       showToast("Added to wishlist ❤️", "success");
+//     }
+
+//     setWishlist(updatedWishlist);
+//     localStorage.setItem(
+//       "wishlist",
+//       JSON.stringify(updatedWishlist)
+//     );
+
+//     window.dispatchEvent(new Event("wishlistUpdated"));
+//   };
+
+//   const handleAddToCart = (product) => {
+//     const selectedSize = sizes[product._id];
+
+//     if (!selectedSize) {
+//       showToast("Please select size", "error");
+//       return;
+//     }
+
+//     const existingCart =
+//       JSON.parse(localStorage.getItem("cart")) || [];
+
+//     const item = existingCart.find(
+//       i =>
+//         i._id === product._id &&
+//         i.size === selectedSize
+//     );
+
+//     if (item) {
+//       item.qty += 1;
+//     } else {
+//       existingCart.push({
+//         ...product,
+//         size: selectedSize,
+//         qty: 1
+//       });
+//     }
+
+//     localStorage.setItem(
+//       "cart",
+//       JSON.stringify(existingCart)
+//     );
+
+//     window.dispatchEvent(new Event("cartUpdated"));
+//     showToast("Item added to cart ✓", "success");
+//   };
+
+//   if (loading) return <h2>Loading...</h2>;
+
+//   return (
+//     <div className="kids-page">
+
+//       {toast && (
+//         <div className={`snackbar snackbar-${toast.type}`}>
+//           {toast.message}
+//         </div>
+//       )}
+
+//       <h1>Kids Collection</h1>
+
+//       {kidsProducts.length === 0 ? (
+//         <h3>No Kids products found</h3>
+//       ) : (
+//         <div className="kids-grid">
+//           {kidsProducts.map(product => {
+
+//             const selectedSize = sizes[product._id];
+//             const isLiked = wishlist.find(
+//               item => item._id === product._id
+//             );
+
+//             return (
+//               <div key={product._id} className="kids-card">
+
+//                 <button
+//                   className={`wishlist-btn ${isLiked ? "active" : ""}`}
+//                   onClick={() => handleWishlist(product)}
+//                 >
+//                   {isLiked ? "❤️" : "🤍"}
+//                 </button>
+
+//                 <Link to={`/product/${product._id}`}>
+//                   <img
+//                     src={
+//                       product.image
+//                         ? product.image.startsWith("http")
+//                           ? product.image
+//                           : `${BASE_URL}/uploads/${product.image}`
+//                         : "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Crect fill='%23e0e0e0' width='200' height='200'/%3E%3C/svg%3E"
+//                     }
+//                     alt={product.name}
+//                   />
+//                 </Link>
+
+//                 <h3>{product.name}</h3>
+//                 <p>₹ {product.price}</p>
+
+//                 {selectedSize && (
+//                   <p className="selected-size">
+//                     Size: {selectedSize}
+//                   </p>
+//                 )}
+
+//                 <div className="size-preview">
+//                   {[6, 7, 8, 9, 10].map(s => (
+//                     <button
+//                       key={s}
+//                       className={
+//                         selectedSize === s
+//                           ? "size-box active"
+//                           : "size-box"
+//                       }
+//                       onClick={() =>
+//                         handleSizeSelect(product._id, s)
+//                       }
+//                     >
+//                       {s}
+//                     </button>
+//                   ))}
+//                 </div>
+
+//                 <button
+//                   className="add-btn"
+//                   onClick={() => handleAddToCart(product)}
+//                 >
+//                   Add to Cart
+//                 </button>
+
+//               </div>
+//             );
+//           })}
+//         </div>
+//       )}
+
+//     </div>
+//   );
+// };
+
+// export default Kids;
+
+
+
+
+
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import "./Kids.css";
 
-const BASE_URL = "http://localhost:5000";
+const BASE_URL = import.meta.env.VITE_API_URL;
 
 const Kids = () => {
   const [products, setProducts] = useState([]);
@@ -597,22 +816,21 @@ const Kids = () => {
   const [wishlist, setWishlist] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // ✅ Fetch products from backend
   useEffect(() => {
     fetch(`${BASE_URL}/api/products`)
-      .then(res => res.json())
-      .then(data => {
+      .then((res) => res.json())
+      .then((data) => {
         console.log("Kids API Response:", data);
 
         if (data.success) {
-          setProducts(data.data);   // ⭐ FIXED HERE
+          setProducts(data.data);
         } else {
           setProducts([]);
         }
 
         setLoading(false);
       })
-      .catch(err => {
+      .catch((err) => {
         console.error("Fetch error:", err);
         setLoading(false);
       });
@@ -620,7 +838,6 @@ const Kids = () => {
     const storedWishlist =
       JSON.parse(localStorage.getItem("wishlist")) || [];
     setWishlist(storedWishlist);
-
   }, []);
 
   const showToast = (message, type = "success") => {
@@ -629,7 +846,6 @@ const Kids = () => {
     setTimeout(() => setToast(null), 2800);
   };
 
-  // ✅ Filter kids category safely
   const kidsProducts = Array.isArray(products)
     ? products.filter(
         (product) =>
@@ -638,22 +854,20 @@ const Kids = () => {
     : [];
 
   const handleSizeSelect = (productId, size) => {
-    setSizes(prev => ({
+    setSizes((prev) => ({
       ...prev,
-      [productId]: size
+      [productId]: size,
     }));
   };
 
   const handleWishlist = (product) => {
-    const exists = wishlist.find(
-      item => item._id === product._id
-    );
+    const exists = wishlist.find((item) => item._id === product._id);
 
     let updatedWishlist;
 
     if (exists) {
       updatedWishlist = wishlist.filter(
-        item => item._id !== product._id
+        (item) => item._id !== product._id
       );
       showToast("Removed from wishlist", "error");
     } else {
@@ -682,9 +896,7 @@ const Kids = () => {
       JSON.parse(localStorage.getItem("cart")) || [];
 
     const item = existingCart.find(
-      i =>
-        i._id === product._id &&
-        i.size === selectedSize
+      (i) => i._id === product._id && i.size === selectedSize
     );
 
     if (item) {
@@ -693,15 +905,11 @@ const Kids = () => {
       existingCart.push({
         ...product,
         size: selectedSize,
-        qty: 1
+        qty: 1,
       });
     }
 
-    localStorage.setItem(
-      "cart",
-      JSON.stringify(existingCart)
-    );
-
+    localStorage.setItem("cart", JSON.stringify(existingCart));
     window.dispatchEvent(new Event("cartUpdated"));
     showToast("Item added to cart ✓", "success");
   };
@@ -710,7 +918,6 @@ const Kids = () => {
 
   return (
     <div className="kids-page">
-
       {toast && (
         <div className={`snackbar snackbar-${toast.type}`}>
           {toast.message}
@@ -723,18 +930,18 @@ const Kids = () => {
         <h3>No Kids products found</h3>
       ) : (
         <div className="kids-grid">
-          {kidsProducts.map(product => {
-
+          {kidsProducts.map((product) => {
             const selectedSize = sizes[product._id];
             const isLiked = wishlist.find(
-              item => item._id === product._id
+              (item) => item._id === product._id
             );
 
             return (
               <div key={product._id} className="kids-card">
-
                 <button
-                  className={`wishlist-btn ${isLiked ? "active" : ""}`}
+                  className={`wishlist-btn ${
+                    isLiked ? "active" : ""
+                  }`}
                   onClick={() => handleWishlist(product)}
                 >
                   {isLiked ? "❤️" : "🤍"}
@@ -747,7 +954,7 @@ const Kids = () => {
                         ? product.image.startsWith("http")
                           ? product.image
                           : `${BASE_URL}/uploads/${product.image}`
-                        : "https://via.placeholder.com/200x200?text=No+Image"
+                        : "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Crect fill='%23e0e0e0' width='200' height='200'/%3E%3C/svg%3E"
                     }
                     alt={product.name}
                   />
@@ -763,7 +970,7 @@ const Kids = () => {
                 )}
 
                 <div className="size-preview">
-                  {[6, 7, 8, 9, 10].map(s => (
+                  {[6, 7, 8, 9, 10].map((s) => (
                     <button
                       key={s}
                       className={
@@ -786,13 +993,11 @@ const Kids = () => {
                 >
                   Add to Cart
                 </button>
-
               </div>
             );
           })}
         </div>
       )}
-
     </div>
   );
 };

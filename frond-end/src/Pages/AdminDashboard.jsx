@@ -138,44 +138,44 @@
 
 // export default AdminDashboard;
 
-import React from "react";
-import { NavLink, Outlet, useLocation } from "react-router-dom";
-import "./AdminDashboard.css";
+// import React from "react";
+// import { NavLink, Outlet, useLocation } from "react-router-dom";
+// import "./AdminDashboard.css";
 
-const AdminDashboard = () => {
-  const location = useLocation();
+// const AdminDashboard = () => {
+//   const location = useLocation();
 
-  return (
-    <div className="admin-dashboard-container">
-      <h1>Admin Dashboard</h1>
+//   return (
+//     <div className="admin-dashboard-container">
+//       <h1>Admin Dashboard</h1>
 
-      {/* Dashboard navigation tabs */}
-      <div className="admin-dashboard-tabs">
-        <NavLink
-          to="products"
-          end
-          className={({ isActive }) =>
-            isActive ? "tab-button active" : "tab-button"
-          }
-        >
-          Products
-        </NavLink>
-        <NavLink
-          to="orders"
-          className={({ isActive }) =>
-            isActive ? "tab-button active" : "tab-button"
-          }
-        >
-          Orders
-        </NavLink>
-      </div>
+//       {/* Dashboard navigation tabs */}
+//       <div className="admin-dashboard-tabs">
+//         <NavLink
+//           to="products"
+//           end
+//           className={({ isActive }) =>
+//             isActive ? "tab-button active" : "tab-button"
+//           }
+//         >
+//           Products
+//         </NavLink>
+//         <NavLink
+//           to="orders"
+//           className={({ isActive }) =>
+//             isActive ? "tab-button active" : "tab-button"
+//           }
+//         >
+//           Orders
+//         </NavLink>
+//       </div>
 
-      {/* Nested route content */}
-      <div className="admin-dashboard-content">
-        <Outlet />
-      </div>
-    </div>
-  );
-};
+//       {/* Nested route content */}
+//       <div className="admin-dashboard-content">
+//         <Outlet />
+//       </div>
+//     </div>
+//   );
+// };
 
-export default AdminDashboard;
+// export default AdminDashboard;

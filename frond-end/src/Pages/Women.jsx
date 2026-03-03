@@ -159,7 +159,7 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import "./Women.css";
 
-const BASE_URL = "http://localhost:5000";
+const BASE_URL = import.meta.env.VITE_API_URL;
 
 const Women = () => {
 
@@ -320,7 +320,7 @@ const womenProducts = Array.isArray(products)
                       ? product.image.startsWith("http")
                         ? product.image
                         : `${BASE_URL}/uploads/${product.image}`
-                      : "https://via.placeholder.com/200x200?text=No+Image"
+                      : "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Crect fill='%23e0e0e0' width='200' height='200'/%3E%3C/svg%3E"
                   }
                   alt={product.name}
                 />

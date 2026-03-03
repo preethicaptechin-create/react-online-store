@@ -90,8 +90,9 @@ function UploadGallery() {
                 borderRadius: "5px",
               }}
               onError={(e) => {
+                e.target.onerror = null;
                 e.target.src =
-                  "https://via.placeholder.com/200x200?text=Image+Not+Found";
+                  "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Crect fill='%23e0e0e0' width='200' height='200'/%3E%3C/svg%3E";
               }}
             />
           ))

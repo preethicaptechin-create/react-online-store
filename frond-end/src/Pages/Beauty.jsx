@@ -694,11 +694,161 @@
 
 
 
+// import React, { useState, useEffect } from "react";
+// import { Link } from "react-router-dom";
+// import "./Beauty.css";
+
+// const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+
+// const Beauty = () => {
+//   const [products, setProducts] = useState([]);
+//   const [wishlist, setWishlist] = useState([]);
+//   const [toast, setToast] = useState(null);
+//   const [loading, setLoading] = useState(true);
+
+//   useEffect(() => {
+//     const fetchProducts = async () => {
+//       try {
+//         const res = await fetch(`${BASE_URL}/api/products`);
+//         const data = await res.json();
+
+//         if (Array.isArray(data.data)) {
+//           setProducts(data.data);
+//         } else {
+//           setProducts([]);
+//         }
+//       } catch (err) {
+//         console.error("Failed to fetch products:", err);
+//         setProducts([]);
+//       } finally {
+//         setLoading(false);
+//       }
+//     };
+
+//     fetchProducts();
+
+//     const storedWishlist =
+//       JSON.parse(localStorage.getItem("wishlist")) || [];
+//     setWishlist(storedWishlist);
+//   }, []);
+
+//   // ✅ SAME toast function as Men
+//   const showToast = (message, type = "success") => {
+//     setToast({ message, type });
+//     setTimeout(() => setToast(null), 2500);
+//   };
+
+//   const beautyProducts = products.filter(
+//     (p) => p?.category?.toLowerCase() === "beauty"
+//   );
+
+//   const handleWishlist = (product) => {
+//     let updated = [...wishlist];
+//     const exists = updated.find((item) => item._id === product._id);
+
+//     if (exists) {
+//       updated = updated.filter((item) => item._id !== product._id);
+//       showToast("Removed from wishlist");
+//     } else {
+//       updated.push(product);
+//       showToast("Added to wishlist ❤️");
+//     }
+
+//     setWishlist(updated);
+//     localStorage.setItem("wishlist", JSON.stringify(updated));
+//   };
+
+//   const handleAddToCart = (product) => {
+//     let cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+//     const existing = cart.find((i) => i._id === product._id);
+
+//     if (existing) {
+//       existing.qty += 1;
+//     } else {
+//       cart.push({ ...product, qty: 1, size: "Default" });
+//     }
+
+//     localStorage.setItem("cart", JSON.stringify(cart));
+//     window.dispatchEvent(new Event("cartUpdated"));
+
+//     // ✅ SAME message as Men
+//     showToast("Item added to cart 🛒");
+//   };
+
+//   if (loading) return <h2>Loading...</h2>;
+
+//   return (
+//     <div className="beauty-page">
+//       <h1>Beauty Products</h1>
+
+//       {/* ✅ Toast UI (same as Men) */}
+//       {toast && (
+//         <div className={`snackbar snackbar-${toast.type}`}>
+//           {toast.message}
+//         </div>
+//       )}
+
+//       <div className="beauty-grid">
+//         {beautyProducts.length === 0 ? (
+//           <p>No beauty products found</p>
+//         ) : (
+//           beautyProducts.map((product) => {
+//             const isWishlisted = wishlist.some(
+//               (w) => w._id === product._id
+//             );
+
+//             return (
+//               <div key={product._id} className="beauty-card">
+//                 <button
+//                   className={`wishlist-btn ${isWishlisted ? "active" : ""}`}
+//                   onClick={() => handleWishlist(product)}
+//                 >
+//                   {isWishlisted ? "❤️" : "🤍"}
+//                 </button>
+
+//                 <Link to={`/product/${product._id}`}>
+//                   <img
+//                     src={
+//                       product.image
+//                         ? product.image.startsWith("http")
+//                           ? product.image
+//                           : `${BASE_URL}/uploads/${product.image}`
+//                         : "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Crect fill='%23e0e0e0' width='200' height='200'/%3E%3C/svg%3E"
+//                     }
+//                     alt={product.name}
+//                   />
+//                 </Link>
+
+//                 <h3>{product.name}</h3>
+//                 <p>₹ {product.price}</p>
+
+//                 <button
+//                   className="add-btn"
+//                   onClick={() => handleAddToCart(product)}
+//                 >
+//                   Add to Cart
+//                 </button>
+//               </div>
+//             );
+//           })
+//         )}
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default Beauty;
+
+
+
+
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import "./Beauty.css";
 
-const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+// ✅ Import from config
+import { BASE_URL, CURRENCY, MESSAGES } from "../utils/config";
 
 const Beauty = () => {
   const [products, setProducts] = useState([]);
@@ -732,7 +882,6 @@ const Beauty = () => {
     setWishlist(storedWishlist);
   }, []);
 
-  // ✅ SAME toast function as Men
   const showToast = (message, type = "success") => {
     setToast({ message, type });
     setTimeout(() => setToast(null), 2500);
@@ -748,10 +897,10 @@ const Beauty = () => {
 
     if (exists) {
       updated = updated.filter((item) => item._id !== product._id);
-      showToast("Removed from wishlist");
+      showToast(MESSAGES.removedFromWishlist);
     } else {
       updated.push(product);
-      showToast("Added to wishlist ❤️");
+      showToast(MESSAGES.addedToWishlist);
     }
 
     setWishlist(updated);
@@ -772,17 +921,15 @@ const Beauty = () => {
     localStorage.setItem("cart", JSON.stringify(cart));
     window.dispatchEvent(new Event("cartUpdated"));
 
-    // ✅ SAME message as Men
-    showToast("Item added to cart 🛒");
+    showToast(MESSAGES.addedToCart);
   };
 
-  if (loading) return <h2>Loading...</h2>;
+  if (loading) return <h2>{MESSAGES.loading}</h2>;
 
   return (
     <div className="beauty-page">
-      <h1>Beauty Products</h1>
+      <h1>{MESSAGES.beautyTitle}</h1>
 
-      {/* ✅ Toast UI (same as Men) */}
       {toast && (
         <div className={`snackbar snackbar-${toast.type}`}>
           {toast.message}
@@ -791,7 +938,7 @@ const Beauty = () => {
 
       <div className="beauty-grid">
         {beautyProducts.length === 0 ? (
-          <p>No beauty products found</p>
+          <p>{MESSAGES.noBeautyProducts}</p>
         ) : (
           beautyProducts.map((product) => {
             const isWishlisted = wishlist.some(
@@ -814,20 +961,20 @@ const Beauty = () => {
                         ? product.image.startsWith("http")
                           ? product.image
                           : `${BASE_URL}/uploads/${product.image}`
-                        : "https://via.placeholder.com/200x200?text=No+Image"
+                        : "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Crect fill='%23e0e0e0' width='200' height='200'/%3E%3C/svg%3E"
                     }
                     alt={product.name}
                   />
                 </Link>
 
                 <h3>{product.name}</h3>
-                <p>₹ {product.price}</p>
+                <p>{CURRENCY} {product.price}</p>
 
                 <button
                   className="add-btn"
                   onClick={() => handleAddToCart(product)}
                 >
-                  Add to Cart
+                  {MESSAGES.addToCart}
                 </button>
               </div>
             );

@@ -1,13 +1,93 @@
+// import { useState } from "react";
+// import axios from "axios";
+
+// function AddProduct() {
+//   const [name, setName] = useState("");
+//   const [price, setPrice] = useState("");
+//   const [imageFile, setImageFile] = useState(null);
+
+//   const handleSubmit = async (e) => {
+//     e.preventDefault();
+
+//     const formData = new FormData();
+//     formData.append("name", name);
+//     formData.append("price", price);
+//     formData.append("image", imageFile);
+
+//     try {
+//       await axios.post(
+//         "http://localhost:5000/api/products",
+//         formData
+//       );
+
+//       alert("Product Added Successfully ✅");
+//       setName("");
+//       setPrice("");
+//       setImageFile(null);
+
+//     } catch (error) {
+//       console.error(error);
+//       alert("Error adding product ❌");
+//     }
+//   };
+
+//   return (
+//     <div style={{ padding: "20px" }}>
+//       <h2>Add Product</h2>
+
+//       <form onSubmit={handleSubmit}>
+//         <input
+//           type="text"
+//           placeholder="Product Name"
+//           value={name}
+//           onChange={(e) => setName(e.target.value)}
+//         />
+
+//         <br /><br />
+
+//         <input
+//           type="number"
+//           placeholder="Price"
+//           value={price}
+//           onChange={(e) => setPrice(e.target.value)}
+//         />
+
+//         <br /><br />
+
+//         <input
+//           type="file"
+//           onChange={(e) => setImageFile(e.target.files[0])}
+//         />
+
+//         <br /><br />
+
+//         <button type="submit">Add Product</button>
+//       </form>
+//     </div>
+//   );
+// }
+
+// export default AddProduct;
+
+
+
 import { useState } from "react";
 import axios from "axios";
+import { BASE_URL } from "../utils/config"; // adjust path if needed
 
 function AddProduct() {
   const [name, setName] = useState("");
   const [price, setPrice] = useState("");
   const [imageFile, setImageFile] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!imageFile) {
+      alert("Please select an image ❌");
+      return;
+    }
 
     const formData = new FormData();
     formData.append("name", name);
@@ -15,9 +95,16 @@ function AddProduct() {
     formData.append("image", imageFile);
 
     try {
+      setLoading(true);
+
       await axios.post(
-        "http://localhost:5000/api/products",
-        formData
+        `${BASE_URL}/api/products`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
       );
 
       alert("Product Added Successfully ✅");
@@ -28,6 +115,8 @@ function AddProduct() {
     } catch (error) {
       console.error(error);
       alert("Error adding product ❌");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -40,6 +129,7 @@ function AddProduct() {
           type="text"
           placeholder="Product Name"
           value={name}
+          required
           onChange={(e) => setName(e.target.value)}
         />
 
@@ -49,6 +139,7 @@ function AddProduct() {
           type="number"
           placeholder="Price"
           value={price}
+          required
           onChange={(e) => setPrice(e.target.value)}
         />
 
@@ -56,12 +147,16 @@ function AddProduct() {
 
         <input
           type="file"
+          accept="image/*"
+          required
           onChange={(e) => setImageFile(e.target.files[0])}
         />
 
         <br /><br />
 
-        <button type="submit">Add Product</button>
+        <button type="submit" disabled={loading}>
+          {loading ? "Adding..." : "Add Product"}
+        </button>
       </form>
     </div>
   );
