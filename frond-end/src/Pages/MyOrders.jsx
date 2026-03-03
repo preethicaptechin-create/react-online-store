@@ -177,14 +177,121 @@
 //   );
 // }
 
+// import React, { useState, useEffect } from "react";
+// import { MESSAGES, CURRENCY, ROUTES } from "../utils/config";
+// import { authFetch } from "../utils/authFetch"; // assuming you have a helper for authenticated fetch
+// import "./MyOrders.css";
+
+// // ✅ Define API routes locally
+// const API_ROUTES = {
+//   myOrders: "/api/orders/me",
+// };
+
+// function MyOrders() {
+//   const [orders, setOrders] = useState([]);
+//   const [totalOrders, setTotalOrders] = useState(0);
+//   const [loading, setLoading] = useState(false);
+//   const [error, setError] = useState(null);
+
+//   useEffect(() => {
+//     const fetchMyOrders = async () => {
+//       setLoading(true);
+//       setError(null);
+
+//       try {
+//         const data = await authFetch(API_ROUTES.myOrders);
+
+//         setOrders(data?.orders || []);
+//         setTotalOrders(data?.totalOrders || 0);
+//       } catch (err) {
+//         console.error("Failed to load orders:", err);
+//         setError(err.message || MESSAGES.somethingWentWrong);
+//         setOrders([]);
+//         setTotalOrders(0);
+//       } finally {
+//         setLoading(false);
+//       }
+//     };
+
+//     fetchMyOrders();
+//   }, []);
+
+//   if (loading) {
+//     return <p className="orders-loading">{MESSAGES.loadingOrders}</p>;
+//   }
+
+//   if (error) {
+//     return (
+//       <div className="orders-error">
+//         <p>{error}</p>
+//         {error.includes("Session expired") && (
+//           <p>
+//             Please <a href={ROUTES.login}>log in again</a>.
+//           </p>
+//         )}
+//       </div>
+//     );
+//   }
+
+//   return (
+//     <div className="orders-container">
+//       <h2 className="orders-title">{MESSAGES.myOrders}</h2>
+
+//       <p className="orders-count">
+//         {MESSAGES.ordersPlaced} <b>{totalOrders}</b>
+//       </p>
+
+//       {orders.length === 0 ? (
+//         <p className="no-orders">{MESSAGES.noOrders}</p>
+//       ) : (
+//         orders.map((order, index) => (
+//           <div key={order._id} className="order-card">
+//             <p className="order-id">
+//               <b>{MESSAGES.order} #{index + 1}</b>
+//             </p>
+
+//             <p>
+//               {MESSAGES.status}: <span>{order.status || MESSAGES.pending}</span>
+//             </p>
+
+//             <p className="order-total">
+//               {MESSAGES.total}: {CURRENCY}{order.total}
+//             </p>
+
+//             <p className="order-date">
+//               {MESSAGES.orderedDate}:{" "}
+//               {new Date(order.createdAt).toLocaleDateString()}
+//             </p>
+
+//             <div className="order-products">
+//               <p><b>{MESSAGES.products}:</b></p>
+//               <ul>
+//                 {order.items?.map((item, i) => (
+//                   <li key={i}>
+//                     {item.name} × {item.quantity} — {CURRENCY}{item.price}
+//                   </li>
+//                 ))}
+//               </ul>
+//             </div>
+//           </div>
+//         ))
+//       )}
+//     </div>
+//   );
+// }
+
+// export default MyOrders;
+
+
+
 import React, { useState, useEffect } from "react";
 import { MESSAGES, CURRENCY, ROUTES } from "../utils/config";
-import { authFetch } from "../utils/authFetch"; // assuming you have a helper for authenticated fetch
+import { authFetch } from "../utils/authFetch"; 
 import "./MyOrders.css";
 
-// ✅ Define API routes locally
+// ✅ Updated API route to match backend
 const API_ROUTES = {
-  myOrders: "/api/orders/me",
+  myOrders: "/api/orders/my-orders",
 };
 
 function MyOrders() {
@@ -201,11 +308,19 @@ function MyOrders() {
       try {
         const data = await authFetch(API_ROUTES.myOrders);
 
+        // ✅ Expecting consistent backend response: { orders: [], totalOrders: n }
         setOrders(data?.orders || []);
         setTotalOrders(data?.totalOrders || 0);
       } catch (err) {
         console.error("Failed to load orders:", err);
-        setError(err.message || MESSAGES.somethingWentWrong);
+
+        // ✅ Better error handling for network/server/auth issues
+        if (err.message?.includes("401") || err.message?.includes("Unauthorized")) {
+          setError("Session expired. Please log in again.");
+        } else {
+          setError(err.message || MESSAGES.somethingWentWrong);
+        }
+
         setOrders([]);
         setTotalOrders(0);
       } finally {
@@ -217,7 +332,7 @@ function MyOrders() {
   }, []);
 
   if (loading) {
-    return <p className="orders-loading">{MESSAGES.loadingOrders}</p>;
+    return <p className="orders-loading">{MESSAGES.loadingOrders || "Loading orders..."}</p>;
   }
 
   if (error) {
@@ -235,36 +350,36 @@ function MyOrders() {
 
   return (
     <div className="orders-container">
-      <h2 className="orders-title">{MESSAGES.myOrders}</h2>
+      <h2 className="orders-title">{MESSAGES.myOrders || "My Orders"}</h2>
 
       <p className="orders-count">
-        {MESSAGES.ordersPlaced} <b>{totalOrders}</b>
+        {MESSAGES.ordersPlaced || "Orders Placed:"} <b>{totalOrders}</b>
       </p>
 
       {orders.length === 0 ? (
-        <p className="no-orders">{MESSAGES.noOrders}</p>
+        <p className="no-orders">{MESSAGES.noOrders || "No orders found."}</p>
       ) : (
         orders.map((order, index) => (
           <div key={order._id} className="order-card">
             <p className="order-id">
-              <b>{MESSAGES.order} #{index + 1}</b>
+              <b>{MESSAGES.order || "Order"} #{index + 1}</b>
             </p>
 
             <p>
-              {MESSAGES.status}: <span>{order.status || MESSAGES.pending}</span>
+              {MESSAGES.status || "Status"}: <span>{order.status || MESSAGES.pending || "Pending"}</span>
             </p>
 
             <p className="order-total">
-              {MESSAGES.total}: {CURRENCY}{order.total}
+              {MESSAGES.total || "Total"}: {CURRENCY}{order.total}
             </p>
 
             <p className="order-date">
-              {MESSAGES.orderedDate}:{" "}
+              {MESSAGES.orderedDate || "Ordered Date"}:{" "}
               {new Date(order.createdAt).toLocaleDateString()}
             </p>
 
             <div className="order-products">
-              <p><b>{MESSAGES.products}:</b></p>
+              <p><b>{MESSAGES.products || "Products"}:</b></p>
               <ul>
                 {order.items?.map((item, i) => (
                   <li key={i}>

@@ -138,29 +138,113 @@
 
 
 
+// const express = require("express");
+// const Order = require("../models/orderModel");
+// const { protect } = require("../middleware/authMiddleware");
+
+// const router = express.Router();
+
+// // ✅ CREATE ORDER
+// router.post("/", protect, async (req, res) => {
+//   try {
+//     const {
+//       items,
+//       total,
+//       firstName,
+//       lastName,
+//       address,
+//       mobile,
+//       paymentMethod,
+//     } = req.body;
+
+//     if (!items || !items.length) {
+//       return res.status(400).json({ message: "Cart is empty" });
+//     }
+
+//     const order = new Order({
+//       user: req.user._id,
+//       items,
+//       total,
+//       firstName,
+//       lastName,
+//       address,
+//       mobile,
+//       paymentMethod,
+//     });
+
+//     await order.save();
+//     res.status(201).json(order);
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).json({ message: "Failed to place order" });
+//   }
+// });
+
+// // ✅ GET LOGGED-IN USER ORDERS (ORDER LIST)  ⭐ MUST BE HERE
+// router.get("/my-orders", protect, async (req, res) => {
+//   try {
+//     const orders = await Order.find({ user: req.user._id })
+//       .sort({ createdAt: -1 });
+
+//     res.json({
+//       totalOrders: orders.length,
+//       orders,
+//     });
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).json({ message: "Failed to fetch orders" });
+//   }
+// });
+
+// // ✅ GET ORDER BY ID (KEEP THIS LAST)
+// router.get("/:orderId", protect, async (req, res) => {
+//   try {
+//     const order = await Order.findById(req.params.orderId).populate(
+//       "items.product"
+//     );
+
+//     if (!order)
+//       return res.status(404).json({ message: "Order not found" });
+
+//     if (order.user.toString() !== req.user._id.toString()) {
+//       return res.status(403).json({ message: "Not authorized" });
+//     }
+
+//     res.json(order);
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).json({ message: "Server error" });
+//   }
+// });
+
+// module.exports = router;
+
+
+
 const express = require("express");
 const Order = require("../models/orderModel");
 const { protect } = require("../middleware/authMiddleware");
 
 const router = express.Router();
 
+// ===============================
 // ✅ CREATE ORDER
+// ===============================
 router.post("/", protect, async (req, res) => {
   try {
-    const {
-      items,
-      total,
-      firstName,
-      lastName,
-      address,
-      mobile,
-      paymentMethod,
-    } = req.body;
+    const { items, total, firstName, lastName, address, mobile, paymentMethod } = req.body;
 
-    if (!items || !items.length) {
+    // ✅ Validate cart
+    if (!items || items.length === 0) {
       return res.status(400).json({ message: "Cart is empty" });
     }
 
+    // ✅ Ensure user is logged in
+    if (!req.user) {
+      return res.status(401).json({ message: "Not authorized" });
+    }
+
+    // ✅ Create and save order
     const order = new Order({
       user: req.user._id,
       items,
@@ -173,38 +257,52 @@ router.post("/", protect, async (req, res) => {
     });
 
     await order.save();
-    res.status(201).json(order);
+
+    res.status(201).json({
+      message: "Order placed successfully",
+      order,
+    });
   } catch (err) {
-    console.error(err);
+    console.error("Create order error:", err);
     res.status(500).json({ message: "Failed to place order" });
   }
 });
 
-// ✅ GET LOGGED-IN USER ORDERS (ORDER LIST)  ⭐ MUST BE HERE
+// ===============================
+// ✅ GET LOGGED-IN USER ORDERS
+// ===============================
 router.get("/my-orders", protect, async (req, res) => {
   try {
-    const orders = await Order.find({ user: req.user._id })
-      .sort({ createdAt: -1 });
+    if (!req.user) {
+      return res.status(401).json({ message: "Not authorized" });
+    }
+
+    const orders = await Order.find({ user: req.user._id }).sort({ createdAt: -1 });
 
     res.json({
       totalOrders: orders.length,
       orders,
     });
   } catch (err) {
-    console.error(err);
+    console.error("Fetch my orders error:", err);
     res.status(500).json({ message: "Failed to fetch orders" });
   }
 });
 
-// ✅ GET ORDER BY ID (KEEP THIS LAST)
+// ===============================
+// ✅ GET ORDER BY ID
+// ===============================
 router.get("/:orderId", protect, async (req, res) => {
   try {
-    const order = await Order.findById(req.params.orderId).populate(
-      "items.product"
-    );
+    if (!req.user) {
+      return res.status(401).json({ message: "Not authorized" });
+    }
 
-    if (!order)
+    const order = await Order.findById(req.params.orderId).populate("items.product");
+
+    if (!order) {
       return res.status(404).json({ message: "Order not found" });
+    }
 
     if (order.user.toString() !== req.user._id.toString()) {
       return res.status(403).json({ message: "Not authorized" });
@@ -212,7 +310,7 @@ router.get("/:orderId", protect, async (req, res) => {
 
     res.json(order);
   } catch (err) {
-    console.error(err);
+    console.error("Fetch order by ID error:", err);
     res.status(500).json({ message: "Server error" });
   }
 });
