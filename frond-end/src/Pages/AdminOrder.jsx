@@ -707,9 +707,205 @@
 
 
 
+// import React, { useEffect, useState } from "react";
+// import axios from "axios";
+// import { useNavigate } from "react-router-dom";
+
+// const AdminOrders = () => {
+//   const [orders, setOrders] = useState([]);
+//   const [loading, setLoading] = useState(true);
+//   const [error, setError] = useState(null);
+
+//   const navigate = useNavigate();
+//   const token = localStorage.getItem("adminToken");
+//   const refreshToken = localStorage.getItem("refreshToken"); // store this securely
+
+//   // Helper: Refresh access token
+//   const refreshAccessToken = async () => {
+//     if (!refreshToken) return null;
+//     try {
+//       const { data } = await axios.post("http://localhost:5000/api/admin/refresh-token", {
+//         token: refreshToken,
+//       });
+//       localStorage.setItem("adminToken", data.accessToken);
+//       return data.accessToken;
+//     } catch (err) {
+//       console.error("Refresh token failed:", err);
+//       localStorage.removeItem("adminToken");
+//       localStorage.removeItem("refreshToken");
+//       navigate("/admin-login");
+//       return null;
+//     }
+//   };
+
+//   // Fetch all orders
+//   const fetchOrders = async (currentToken) => {
+//     if (!currentToken) {
+//       setError("Admin login required. Redirecting...");
+//       setTimeout(() => navigate("/admin-login"), 2000);
+//       setLoading(false);
+//       return;
+//     }
+
+//     setLoading(true);
+//     setError(null);
+
+//     try {
+//       const { data } = await axios.get("http://localhost:5000/api/admin/orders", {
+//         headers: { Authorization: `Bearer ${currentToken}` },
+//       });
+
+//       setOrders(data.data || data.orders || []);
+//     } catch (err) {
+//       console.error("Failed to fetch orders:", err);
+
+//       // Token expired
+//       if (err.response?.status === 401 || err.response?.data?.expired) {
+//         const newToken = await refreshAccessToken();
+//         if (newToken) {
+//           // Retry fetching with new token
+//           fetchOrders(newToken);
+//           return;
+//         }
+//         setError("Session expired. Redirecting...");
+//         setTimeout(() => navigate("/admin-login"), 2000);
+//       } else {
+//         setError(err.response?.data?.message || "Failed to load orders.");
+//       }
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
+
+//   useEffect(() => {
+//     fetchOrders(token);
+//   }, [token, navigate]);
+
+//   // Update single order status
+//   const handleStatusChange = async (orderId, newStatus) => {
+//     let currentToken = localStorage.getItem("adminToken");
+//     if (!currentToken) {
+//       alert("Admin authentication required.");
+//       return;
+//     }
+
+//     try {
+//       const { data } = await axios.put(
+//         `http://localhost:5000/api/admin/orders/${orderId}/status`,
+//         { status: newStatus },
+//         { headers: { Authorization: `Bearer ${currentToken}` } }
+//       );
+
+//       const updatedOrder = data.data || data;
+//       setOrders((prev) =>
+//         prev.map((o) => (o._id === orderId ? updatedOrder : o))
+//       );
+
+//       alert("Order status updated successfully!");
+//     } catch (err) {
+//       console.error("Status update failed:", err);
+
+//       // Token expired during status update
+//       if (err.response?.status === 401 || err.response?.data?.expired) {
+//         const newToken = await refreshAccessToken();
+//         if (newToken) {
+//           handleStatusChange(orderId, newStatus); // Retry
+//           return;
+//         }
+//       }
+
+//       alert(err.response?.data?.message || "Failed to update order status.");
+//     }
+//   };
+
+//   return (
+//     <div style={{ padding: "20px", maxWidth: "1200px", margin: "0 auto" }}>
+//       <h1>Admin Orders Management</h1>
+
+//       {loading && <p style={{ textAlign: "center", padding: "40px" }}>Loading orders...</p>}
+//       {error && <p style={{ color: "red", fontWeight: "bold", marginBottom: "20px" }}>{error}</p>}
+
+//       {!loading && !error && (
+//         <>
+//           {orders.length === 0 ? (
+//             <p style={{ textAlign: "center", padding: "40px" }}>No orders found in the system.</p>
+//           ) : (
+//             <table style={{ width: "100%", borderCollapse: "collapse", marginTop: "20px" }}>
+//               <thead>
+//                 <tr style={{ background: "#f8f9fa" }}>
+//                   <th style={{ border: "1px solid #ddd", padding: "12px" }}>Order ID</th>
+//                   <th style={{ border: "1px solid #ddd", padding: "12px" }}>Customer</th>
+//                   <th style={{ border: "1px solid #ddd", padding: "12px" }}>Total</th>
+//                   <th style={{ border: "1px solid #ddd", padding: "12px" }}>Status</th>
+//                   <th style={{ border: "1px solid #ddd", padding: "12px" }}>Actions</th>
+//                 </tr>
+//               </thead>
+//               <tbody>
+//                 {orders.map((order) => (
+//                   <tr key={order._id}>
+//                     <td style={{ border: "1px solid #ddd", padding: "12px" }}>
+//                       {order._id.slice(-8).toUpperCase()}
+//                     </td>
+//                     <td style={{ border: "1px solid #ddd", padding: "12px" }}>
+//                       {order.user?.name || `${order.firstName || ""} ${order.lastName || ""}`.trim() || "Guest"}
+//                       {order.user?.email && <><br /><small>{order.user.email}</small></>}
+//                     </td>
+//                     <td style={{ border: "1px solid #ddd", padding: "12px" }}>
+//                       ₹{(order.totalAmount || order.total || 0).toFixed(2)}
+//                     </td>
+//                     <td style={{ border: "1px solid #ddd", padding: "12px" }}>
+//                       <span
+//                         style={{
+//                           padding: "6px 12px",
+//                           borderRadius: "20px",
+//                           background:
+//                             order.status === "Delivered" ? "#d4edda" :
+//                             order.status === "Cancelled" ? "#f8d7da" :
+//                             order.status === "Shipped" ? "#fff3cd" : "#e2e3e5",
+//                           color:
+//                             order.status === "Delivered" ? "#155724" :
+//                             order.status === "Cancelled" ? "#721c24" :
+//                             order.status === "Shipped" ? "#856404" : "#383d41",
+//                         }}
+//                       >
+//                         {order.status || "Pending"}
+//                       </span>
+//                     </td>
+//                     <td style={{ border: "1px solid #ddd", padding: "12px" }}>
+//                       <select
+//                         value={order.status || "Processing"}
+//                         onChange={(e) => handleStatusChange(order._id, e.target.value)}
+//                         style={{ padding: "8px", borderRadius: "4px", border: "1px solid #ccc" }}
+//                       >
+//                         <option value="Processing">Processing</option>
+//                         <option value="Shipped">Shipped</option>
+//                         <option value="Delivered">Delivered</option>
+//                         <option value="Cancelled">Cancelled</option>
+//                       </select>
+//                     </td>
+//                   </tr>
+//                 ))}
+//               </tbody>
+//             </table>
+//           )}
+//         </>
+//       )}
+//     </div>
+//   );
+// };
+
+// export default AdminOrders;
+
+
+
+
+
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+
+// ✅ Import config
+import { BASE_URL, CURRENCY } from "../utils/config";
 
 const AdminOrders = () => {
   const [orders, setOrders] = useState([]);
@@ -718,15 +914,20 @@ const AdminOrders = () => {
 
   const navigate = useNavigate();
   const token = localStorage.getItem("adminToken");
-  const refreshToken = localStorage.getItem("refreshToken"); // store this securely
+  const refreshToken = localStorage.getItem("refreshToken");
 
-  // Helper: Refresh access token
+  // =========================
+  // Refresh access token
+  // =========================
   const refreshAccessToken = async () => {
     if (!refreshToken) return null;
+
     try {
-      const { data } = await axios.post("http://localhost:5000/api/admin/refresh-token", {
-        token: refreshToken,
-      });
+      const { data } = await axios.post(
+        `${BASE_URL}/api/admin/refresh-token`,
+        { token: refreshToken }
+      );
+
       localStorage.setItem("adminToken", data.accessToken);
       return data.accessToken;
     } catch (err) {
@@ -738,7 +939,9 @@ const AdminOrders = () => {
     }
   };
 
-  // Fetch all orders
+  // =========================
+  // Fetch orders
+  // =========================
   const fetchOrders = async (currentToken) => {
     if (!currentToken) {
       setError("Admin login required. Redirecting...");
@@ -751,19 +954,20 @@ const AdminOrders = () => {
     setError(null);
 
     try {
-      const { data } = await axios.get("http://localhost:5000/api/admin/orders", {
-        headers: { Authorization: `Bearer ${currentToken}` },
-      });
+      const { data } = await axios.get(
+        `${BASE_URL}/api/admin/orders`,
+        {
+          headers: { Authorization: `Bearer ${currentToken}` },
+        }
+      );
 
       setOrders(data.data || data.orders || []);
     } catch (err) {
       console.error("Failed to fetch orders:", err);
 
-      // Token expired
       if (err.response?.status === 401 || err.response?.data?.expired) {
         const newToken = await refreshAccessToken();
         if (newToken) {
-          // Retry fetching with new token
           fetchOrders(newToken);
           return;
         }
@@ -781,7 +985,9 @@ const AdminOrders = () => {
     fetchOrders(token);
   }, [token, navigate]);
 
-  // Update single order status
+  // =========================
+  // Update order status
+  // =========================
   const handleStatusChange = async (orderId, newStatus) => {
     let currentToken = localStorage.getItem("adminToken");
     if (!currentToken) {
@@ -791,7 +997,7 @@ const AdminOrders = () => {
 
     try {
       const { data } = await axios.put(
-        `http://localhost:5000/api/admin/orders/${orderId}/status`,
+        `${BASE_URL}/api/admin/orders/${orderId}/status`,
         { status: newStatus },
         { headers: { Authorization: `Bearer ${currentToken}` } }
       );
@@ -805,11 +1011,10 @@ const AdminOrders = () => {
     } catch (err) {
       console.error("Status update failed:", err);
 
-      // Token expired during status update
       if (err.response?.status === 401 || err.response?.data?.expired) {
         const newToken = await refreshAccessToken();
         if (newToken) {
-          handleStatusChange(orderId, newStatus); // Retry
+          handleStatusChange(orderId, newStatus);
           return;
         }
       }
@@ -822,60 +1027,67 @@ const AdminOrders = () => {
     <div style={{ padding: "20px", maxWidth: "1200px", margin: "0 auto" }}>
       <h1>Admin Orders Management</h1>
 
-      {loading && <p style={{ textAlign: "center", padding: "40px" }}>Loading orders...</p>}
-      {error && <p style={{ color: "red", fontWeight: "bold", marginBottom: "20px" }}>{error}</p>}
+      {loading && (
+        <p style={{ textAlign: "center", padding: "40px" }}>
+          Loading orders...
+        </p>
+      )}
+
+      {error && (
+        <p style={{ color: "red", fontWeight: "bold", marginBottom: "20px" }}>
+          {error}
+        </p>
+      )}
 
       {!loading && !error && (
         <>
           {orders.length === 0 ? (
-            <p style={{ textAlign: "center", padding: "40px" }}>No orders found in the system.</p>
+            <p style={{ textAlign: "center", padding: "40px" }}>
+              No orders found in the system.
+            </p>
           ) : (
-            <table style={{ width: "100%", borderCollapse: "collapse", marginTop: "20px" }}>
+            <table
+              style={{
+                width: "100%",
+                borderCollapse: "collapse",
+                marginTop: "20px",
+              }}
+            >
               <thead>
                 <tr style={{ background: "#f8f9fa" }}>
-                  <th style={{ border: "1px solid #ddd", padding: "12px" }}>Order ID</th>
-                  <th style={{ border: "1px solid #ddd", padding: "12px" }}>Customer</th>
-                  <th style={{ border: "1px solid #ddd", padding: "12px" }}>Total</th>
-                  <th style={{ border: "1px solid #ddd", padding: "12px" }}>Status</th>
-                  <th style={{ border: "1px solid #ddd", padding: "12px" }}>Actions</th>
+                  <th>Order ID</th>
+                  <th>Customer</th>
+                  <th>Total</th>
+                  <th>Status</th>
+                  <th>Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {orders.map((order) => (
                   <tr key={order._id}>
-                    <td style={{ border: "1px solid #ddd", padding: "12px" }}>
-                      {order._id.slice(-8).toUpperCase()}
+                    <td>{order._id.slice(-8).toUpperCase()}</td>
+                    <td>
+                      {order.user?.name ||
+                        `${order.firstName || ""} ${order.lastName || ""}`.trim() ||
+                        "Guest"}
+                      {order.user?.email && (
+                        <>
+                          <br />
+                          <small>{order.user.email}</small>
+                        </>
+                      )}
                     </td>
-                    <td style={{ border: "1px solid #ddd", padding: "12px" }}>
-                      {order.user?.name || `${order.firstName || ""} ${order.lastName || ""}`.trim() || "Guest"}
-                      {order.user?.email && <><br /><small>{order.user.email}</small></>}
+                    <td>
+                      {CURRENCY}
+                      {(order.totalAmount || order.total || 0).toFixed(2)}
                     </td>
-                    <td style={{ border: "1px solid #ddd", padding: "12px" }}>
-                      ₹{(order.totalAmount || order.total || 0).toFixed(2)}
-                    </td>
-                    <td style={{ border: "1px solid #ddd", padding: "12px" }}>
-                      <span
-                        style={{
-                          padding: "6px 12px",
-                          borderRadius: "20px",
-                          background:
-                            order.status === "Delivered" ? "#d4edda" :
-                            order.status === "Cancelled" ? "#f8d7da" :
-                            order.status === "Shipped" ? "#fff3cd" : "#e2e3e5",
-                          color:
-                            order.status === "Delivered" ? "#155724" :
-                            order.status === "Cancelled" ? "#721c24" :
-                            order.status === "Shipped" ? "#856404" : "#383d41",
-                        }}
-                      >
-                        {order.status || "Pending"}
-                      </span>
-                    </td>
-                    <td style={{ border: "1px solid #ddd", padding: "12px" }}>
+                    <td>{order.status || "Pending"}</td>
+                    <td>
                       <select
                         value={order.status || "Processing"}
-                        onChange={(e) => handleStatusChange(order._id, e.target.value)}
-                        style={{ padding: "8px", borderRadius: "4px", border: "1px solid #ccc" }}
+                        onChange={(e) =>
+                          handleStatusChange(order._id, e.target.value)
+                        }
                       >
                         <option value="Processing">Processing</option>
                         <option value="Shipped">Shipped</option>

@@ -249,11 +249,172 @@
 // export default Mobile;
 
 
+// import React, { useState, useEffect } from "react";
+// import { Link } from "react-router-dom";
+// import "./Mobile.css";
+
+// const BASE_URL = import.meta.env.VITE_API_URL;
+
+// const Mobile = () => {
+//   const [products, setProducts] = useState([]);
+//   const [wishlist, setWishlist] = useState([]);
+//   const [toast, setToast] = useState(null);
+//   const [loading, setLoading] = useState(true);
+
+//   useEffect(() => {
+//     fetch(`${BASE_URL}/api/products`)
+//       .then((res) => res.json())
+//       .then((data) => {
+//         if (Array.isArray(data.data)) {
+//           setProducts(data.data);
+//         } else {
+//           setProducts([]);
+//         }
+//         setLoading(false);
+//       })
+//       .catch((err) => {
+//         console.error("Fetch error:", err);
+//         setLoading(false);
+//       });
+
+//     const storedWishlist =
+//       JSON.parse(localStorage.getItem("wishlist")) || [];
+//     setWishlist(storedWishlist);
+//   }, []);
+
+//   // ✅ SAME toast function
+//   const showToast = (message, type = "success") => {
+//     setToast({ message, type });
+//     setTimeout(() => setToast(null), 2500);
+//   };
+
+//   const mobileProducts = Array.isArray(products)
+//     ? products.filter(
+//         (product) =>
+//           (product.category || "").toLowerCase() === "mobile"
+//       )
+//     : [];
+
+//   const handleWishlist = (product) => {
+//     let updatedWishlist = [...wishlist];
+
+//     const exists = updatedWishlist.find(
+//       (item) => item._id === product._id
+//     );
+
+//     if (exists) {
+//       updatedWishlist = updatedWishlist.filter(
+//         (item) => item._id !== product._id
+//       );
+//       showToast("Removed from wishlist");
+//     } else {
+//       updatedWishlist.push(product);
+//       showToast("Added to wishlist ❤️");
+//     }
+
+//     setWishlist(updatedWishlist);
+//     localStorage.setItem(
+//       "wishlist",
+//       JSON.stringify(updatedWishlist)
+//     );
+//   };
+
+//   const handleAddToCart = (product) => {
+//     let existingCart =
+//       JSON.parse(localStorage.getItem("cart")) || [];
+
+//     const item = existingCart.find(
+//       (i) => i._id === product._id
+//     );
+
+//     if (item) {
+//       item.qty += 1;
+//     } else {
+//       existingCart.push({ ...product, qty: 1 });
+//     }
+
+//     localStorage.setItem(
+//       "cart",
+//       JSON.stringify(existingCart)
+//     );
+
+//     window.dispatchEvent(new Event("cartUpdated"));
+//     showToast("Item added to cart 🛒");
+//   };
+
+//   if (loading) return <h2>Loading...</h2>;
+
+//   return (
+//     <div className="mobile-page">
+//       <h1>Mobile Collection</h1>
+
+//       {/* ✅ Toast UI */}
+//       {toast && (
+//         <div className={`snackbar snackbar-${toast.type}`}>
+//           {toast.message}
+//         </div>
+//       )}
+
+//       <div className="mobile-grid">
+//         {mobileProducts.map((product) => {
+//           const isWishlisted = wishlist.find(
+//             (item) => item._id === product._id
+//           );
+
+//           return (
+//             <div key={product._id} className="mobile-card">
+//               <button
+//                 className={`wishlist-btn ${
+//                   isWishlisted ? "active" : ""
+//                 }`}
+//                 onClick={() => handleWishlist(product)}
+//               >
+//                 {isWishlisted ? "❤️" : "🤍"}
+//               </button>
+
+//               <Link to={`/product/${product._id}`}>
+//                 <img
+//                   src={
+//                     product.image
+//                       ? product.image.startsWith("http")
+//                         ? product.image
+//                         : `${BASE_URL}/uploads/${product.image}`
+//                       : "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Crect fill='%23e0e0e0' width='200' height='200'/%3E%3C/svg%3E"
+//                   }
+//                   alt={product.name}
+//                 />
+//               </Link>
+
+//               <h3>{product.name}</h3>
+//               <p>₹ {product.price}</p>
+
+//               <button
+//                 className="add-btn"
+//                 onClick={() => handleAddToCart(product)}
+//               >
+//                 Add to Cart
+//               </button>
+//             </div>
+//           );
+//         })}
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default Mobile;
+
+
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import {
+  BASE_URL,
+  CATEGORY,
+  MESSAGES,
+  CURRENCY,
+} from "../utils/config";
+import { PLACEHOLDER_IMAGE } from "../utils/productImage";
 import "./Mobile.css";
-
-const BASE_URL = "http://localhost:5000";
 
 const Mobile = () => {
   const [products, setProducts] = useState([]);
@@ -265,11 +426,7 @@ const Mobile = () => {
     fetch(`${BASE_URL}/api/products`)
       .then((res) => res.json())
       .then((data) => {
-        if (Array.isArray(data.data)) {
-          setProducts(data.data);
-        } else {
-          setProducts([]);
-        }
+        setProducts(Array.isArray(data.data) ? data.data : []);
         setLoading(false);
       })
       .catch((err) => {
@@ -277,39 +434,31 @@ const Mobile = () => {
         setLoading(false);
       });
 
-    const storedWishlist =
-      JSON.parse(localStorage.getItem("wishlist")) || [];
-    setWishlist(storedWishlist);
+    setWishlist(JSON.parse(localStorage.getItem("wishlist")) || []);
   }, []);
 
-  // ✅ SAME toast function
   const showToast = (message, type = "success") => {
     setToast({ message, type });
     setTimeout(() => setToast(null), 2500);
   };
 
-  const mobileProducts = Array.isArray(products)
-    ? products.filter(
-        (product) =>
-          (product.category || "").toLowerCase() === "mobile"
-      )
-    : [];
+  const mobileProducts = products.filter(
+    (p) =>
+      (p.category || "").toLowerCase() === CATEGORY.mobile
+  );
 
   const handleWishlist = (product) => {
-    let updatedWishlist = [...wishlist];
-
-    const exists = updatedWishlist.find(
-      (item) => item._id === product._id
-    );
+    let updatedWishlist;
+    const exists = wishlist.find((i) => i._id === product._id);
 
     if (exists) {
-      updatedWishlist = updatedWishlist.filter(
-        (item) => item._id !== product._id
+      updatedWishlist = wishlist.filter(
+        (i) => i._id !== product._id
       );
-      showToast("Removed from wishlist");
+      showToast(MESSAGES.removedWishlist);
     } else {
-      updatedWishlist.push(product);
-      showToast("Added to wishlist ❤️");
+      updatedWishlist = [...wishlist, product];
+      showToast(MESSAGES.addedWishlist);
     }
 
     setWishlist(updatedWishlist);
@@ -320,35 +469,23 @@ const Mobile = () => {
   };
 
   const handleAddToCart = (product) => {
-    let existingCart =
-      JSON.parse(localStorage.getItem("cart")) || [];
+    const cart = JSON.parse(localStorage.getItem("cart")) || [];
+    const item = cart.find((i) => i._id === product._id);
 
-    const item = existingCart.find(
-      (i) => i._id === product._id
-    );
+    if (item) item.qty += 1;
+    else cart.push({ ...product, qty: 1 });
 
-    if (item) {
-      item.qty += 1;
-    } else {
-      existingCart.push({ ...product, qty: 1 });
-    }
-
-    localStorage.setItem(
-      "cart",
-      JSON.stringify(existingCart)
-    );
-
+    localStorage.setItem("cart", JSON.stringify(cart));
     window.dispatchEvent(new Event("cartUpdated"));
-    showToast("Item added to cart 🛒");
+    showToast(MESSAGES.addedToCart);
   };
 
-  if (loading) return <h2>Loading...</h2>;
+  if (loading) return <h2>{MESSAGES.loading}</h2>;
 
   return (
     <div className="mobile-page">
-      <h1>Mobile Collection</h1>
+      <h1>{MESSAGES.mobileCollection}</h1>
 
-      {/* ✅ Toast UI */}
       {toast && (
         <div className={`snackbar snackbar-${toast.type}`}>
           {toast.message}
@@ -357,8 +494,8 @@ const Mobile = () => {
 
       <div className="mobile-grid">
         {mobileProducts.map((product) => {
-          const isWishlisted = wishlist.find(
-            (item) => item._id === product._id
+          const isWishlisted = wishlist.some(
+            (i) => i._id === product._id
           );
 
           return (
@@ -379,20 +516,22 @@ const Mobile = () => {
                       ? product.image.startsWith("http")
                         ? product.image
                         : `${BASE_URL}/uploads/${product.image}`
-                      : "https://via.placeholder.com/200x200?text=No+Image"
+                      : PLACEHOLDER_IMAGE
                   }
                   alt={product.name}
                 />
               </Link>
 
               <h3>{product.name}</h3>
-              <p>₹ {product.price}</p>
+              <p>
+                {CURRENCY} {product.price}
+              </p>
 
               <button
                 className="add-btn"
                 onClick={() => handleAddToCart(product)}
               >
-                Add to Cart
+                {MESSAGES.addToCart}
               </button>
             </div>
           );
