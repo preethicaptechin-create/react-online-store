@@ -253,6 +253,7 @@ function Wishlist() {
               />
               <h4>{item.name}</h4>
               <p className="price">₹{item.price}</p>
+              <div className="wishlist-actions">
 
               <button
                 className="move-btn"
@@ -268,7 +269,7 @@ function Wishlist() {
               >
                 Remove
               </button>
-            
+             </div>
             </div>
           ))}
         </div>
