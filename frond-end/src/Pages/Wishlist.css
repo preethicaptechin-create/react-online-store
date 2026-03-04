@@ -55,7 +55,7 @@
 .move-btn {
   width: 100px;
   padding: 2px;
-  background-color: #ff3f6c; /* meesho pink feel */
+  background: linear-gradient(135deg, #ff2f92, #2f6bff);
   color: white;
   border: none;
   border-radius: 15px;
@@ -94,7 +94,7 @@
 .remove-btn {
   width: 100px;
   padding: 4px;
-  background-color: #ff3f6c;
+  background: linear-gradient(135deg, #ff2f92, #2f6bff);
   color: white;
   border: none;
   border-radius: 15px;
