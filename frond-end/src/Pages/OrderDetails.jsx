@@ -1494,7 +1494,7 @@ const OrderDetails = () => {
         showToast(MESSAGES.orderPlaced, "success");
 
         setTimeout(() => {
-          navigate(`${ROUTES.orderConfirmation}/${data._id}`);
+       navigate(`${ROUTES.orderConfirmation}/${data.order._id}`);
         }, 1200);
       } else {
         showToast(data.message || MESSAGES.orderFailed, "error");

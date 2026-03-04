@@ -533,6 +533,109 @@
 
 
 // OrderConfirmation.js
+// import React, { useEffect, useState } from "react";
+// import { useNavigate, useParams } from "react-router-dom";
+// import { refreshAccessToken } from "../utils/refreshToken";
+// import { BASE_URL, MESSAGES, CURRENCY, ROUTES } from "../utils/config";
+// import "./OrderConfirmation.css";
+
+// const OrderConfirmation = () => {
+//   const navigate = useNavigate();
+//   const { orderId } = useParams();
+
+//   const [orderDetails, setOrderDetails] = useState(null);
+//   const [loading, setLoading] = useState(true);
+
+//   useEffect(() => {
+//     const fetchOrder = async () => {
+//       let token = localStorage.getItem("accessToken");
+
+//       if (!token) {
+//         navigate(ROUTES.login);
+//         return;
+//       }
+
+//       try {
+//         // Initial fetch
+//         let res = await fetch(`${BASE_URL}/api/orders/${orderId}`, {
+//           headers: { Authorization: `Bearer ${token}` },
+//         });
+
+//         // Token expired → refresh & retry
+//         if (res.status === 401) {
+//           token = await refreshAccessToken();
+//           if (!token) return;
+
+//           res = await fetch(`${BASE_URL}/api/orders/${orderId}`, {
+//             headers: { Authorization: `Bearer ${token}` },
+//           });
+//         }
+
+//         const data = await res.json();
+
+//         if (res.ok) {
+//           setOrderDetails(data);
+
+//           // Clear cart after order confirmation
+//           localStorage.removeItem("cartItems");
+//           localStorage.removeItem("cartTotal");
+//           localStorage.removeItem("cart");
+
+//           // Update cart badge in header
+//           window.dispatchEvent(new Event("cartUpdated"));
+//         } else {
+//           alert(data.message || MESSAGES.orderFailed);
+//           navigate("/");
+//         }
+//       } catch (err) {
+//         console.error("Fetch error:", err);
+//         navigate("/");
+//       } finally {
+//         setLoading(false);
+//       }
+//     };
+
+//     fetchOrder();
+//   }, [orderId, navigate]);
+
+//   if (loading) return <h2>{MESSAGES.loadingOrder || "Loading order details..."}</h2>;
+//   if (!orderDetails) return <h2>{MESSAGES.orderNotAvailable || "Order not available"}</h2>;
+
+//   return (
+//     <div className="order-container">
+//       <h2>{MESSAGES.orderPlaced}</h2>
+//       <p className="success-message">{MESSAGES.thankYou || "Thank you for your purchase ❤️"}</p>
+
+//       <div className="order-details">
+//         <p><strong>{MESSAGES.orderId || "Order ID:"}</strong> {orderId}</p>
+//         <p>
+//           <strong>{MESSAGES.name || "Name:"}</strong> {orderDetails.firstName} {orderDetails.lastName}
+//         </p>
+//         <p><strong>{MESSAGES.address || "Address:"}</strong> {orderDetails.address}</p>
+//         <p><strong>{MESSAGES.mobile || "Mobile:"}</strong> {orderDetails.mobile}</p>
+//         <p><strong>{MESSAGES.paymentMethod || "Payment Method:"}</strong> {orderDetails.paymentMethod}</p>
+
+//         <h3>{MESSAGES.itemsOrdered || "Items Ordered:"}</h3>
+//         {orderDetails.items?.map((item, index) => (
+//           <p key={index}>
+//             {item.name} - {CURRENCY} {item.price} × {item.quantity}{" "}
+//             {item.size && `(Size: ${item.size})`}
+//           </p>
+//         ))}
+
+//         <p><strong>{MESSAGES.total || "Total:"}</strong> {CURRENCY} {orderDetails.total}</p>
+//       </div>
+
+//       <p>{MESSAGES.orderProcessing || "Your order is being processed. You will receive updates shortly."}</p>
+//     </div>
+//   );
+// };
+
+// export default OrderConfirmation;
+
+
+
+
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { refreshAccessToken } from "../utils/refreshToken";
@@ -547,6 +650,13 @@ const OrderConfirmation = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // ✅ GUARD: prevent undefined API call
+    if (!orderId) {
+      console.error("Order ID is missing");
+      navigate("/");
+      return;
+    }
+
     const fetchOrder = async () => {
       let token = localStorage.getItem("accessToken");
 
@@ -556,12 +666,10 @@ const OrderConfirmation = () => {
       }
 
       try {
-        // Initial fetch
         let res = await fetch(`${BASE_URL}/api/orders/${orderId}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
 
-        // Token expired → refresh & retry
         if (res.status === 401) {
           token = await refreshAccessToken();
           if (!token) return;
@@ -576,12 +684,10 @@ const OrderConfirmation = () => {
         if (res.ok) {
           setOrderDetails(data);
 
-          // Clear cart after order confirmation
           localStorage.removeItem("cartItems");
           localStorage.removeItem("cartTotal");
           localStorage.removeItem("cart");
 
-          // Update cart badge in header
           window.dispatchEvent(new Event("cartUpdated"));
         } else {
           alert(data.message || MESSAGES.orderFailed);
@@ -598,22 +704,39 @@ const OrderConfirmation = () => {
     fetchOrder();
   }, [orderId, navigate]);
 
-  if (loading) return <h2>{MESSAGES.loadingOrder || "Loading order details..."}</h2>;
-  if (!orderDetails) return <h2>{MESSAGES.orderNotAvailable || "Order not available"}</h2>;
+  if (loading)
+    return <h2>{MESSAGES.loadingOrder || "Loading order details..."}</h2>;
+
+  if (!orderDetails)
+    return <h2>{MESSAGES.orderNotAvailable || "Order not available"}</h2>;
 
   return (
     <div className="order-container">
       <h2>{MESSAGES.orderPlaced}</h2>
-      <p className="success-message">{MESSAGES.thankYou || "Thank you for your purchase ❤️"}</p>
+      <p className="success-message">
+        {MESSAGES.thankYou || "Thank you for your purchase ❤️"}
+      </p>
 
       <div className="order-details">
-        <p><strong>{MESSAGES.orderId || "Order ID:"}</strong> {orderId}</p>
         <p>
-          <strong>{MESSAGES.name || "Name:"}</strong> {orderDetails.firstName} {orderDetails.lastName}
+          <strong>{MESSAGES.orderId || "Order ID:"}</strong> {orderId}
         </p>
-        <p><strong>{MESSAGES.address || "Address:"}</strong> {orderDetails.address}</p>
-        <p><strong>{MESSAGES.mobile || "Mobile:"}</strong> {orderDetails.mobile}</p>
-        <p><strong>{MESSAGES.paymentMethod || "Payment Method:"}</strong> {orderDetails.paymentMethod}</p>
+        <p>
+          <strong>{MESSAGES.name || "Name:"}</strong>{" "}
+          {orderDetails.firstName} {orderDetails.lastName}
+        </p>
+        <p>
+          <strong>{MESSAGES.address || "Address:"}</strong>{" "}
+          {orderDetails.address}
+        </p>
+        <p>
+          <strong>{MESSAGES.mobile || "Mobile:"}</strong>{" "}
+          {orderDetails.mobile}
+        </p>
+        <p>
+          <strong>{MESSAGES.paymentMethod || "Payment Method:"}</strong>{" "}
+          {orderDetails.paymentMethod}
+        </p>
 
         <h3>{MESSAGES.itemsOrdered || "Items Ordered:"}</h3>
         {orderDetails.items?.map((item, index) => (
@@ -623,10 +746,16 @@ const OrderConfirmation = () => {
           </p>
         ))}
 
-        <p><strong>{MESSAGES.total || "Total:"}</strong> {CURRENCY} {orderDetails.total}</p>
+        <p>
+          <strong>{MESSAGES.total || "Total:"}</strong> {CURRENCY}{" "}
+          {orderDetails.total}
+        </p>
       </div>
 
-      <p>{MESSAGES.orderProcessing || "Your order is being processed. You will receive updates shortly."}</p>
+      <p>
+        {MESSAGES.orderProcessing ||
+          "Your order is being processed. You will receive updates shortly."}
+      </p>
     </div>
   );
 };
