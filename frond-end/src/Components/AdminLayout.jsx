@@ -83,8 +83,7 @@ import {
   LayoutDashboard,
   Package,
   ShoppingCart,
-  Users,
-  Settings,
+
   LogOut,
   Menu,
 } from "lucide-react";
@@ -120,21 +119,20 @@ const AdminLayout = ({ onLogout }) => {
             <LayoutDashboard size={20} /> Dashboard
           </NavLink>
 
-          <NavLink to={ADMIN_ROUTES.PRODUCTS} className={({ isActive }) => (isActive ? "active" : "")}>
+          {/* <NavLink to={ADMIN_ROUTES.PRODUCTS} className={({ isActive }) => (isActive ? "active" : "")}>
             <Package size={20} /> Products
           </NavLink>
 
           <NavLink to={ADMIN_ROUTES.ORDERS} className={({ isActive }) => (isActive ? "active" : "")}>
             <ShoppingCart size={20} /> Orders
-          </NavLink>
+          </NavLink> */}
 
-          <NavLink to={ADMIN_ROUTES.USERS} className={({ isActive }) => (isActive ? "active" : "")}>
-            <Users size={20} /> Users
-          </NavLink>
 
-          <NavLink to={ADMIN_ROUTES.SETTINGS} className={({ isActive }) => (isActive ? "active" : "")}>
-            <Settings size={20} /> Settings
-          </NavLink>
+      
+
+
+
+
         </nav>
 
         <div className="sidebar-footer">
