@@ -510,7 +510,7 @@
 
 import React, { useState, useEffect } from "react";
 import { MESSAGES, CURRENCY, ROUTES, API_ROUTES } from "../utils/config";
-import { authFetch } from "../utils/authFetch"; 
+import { authFetch } from "../utils/authFetch";
 import "./MyOrders.css";
 
 function MyOrders() {
@@ -577,9 +577,11 @@ function MyOrders() {
       <p className="orders-count">
         {MESSAGES.ordersPlaced} <b>{totalOrders}</b>
       </p>
-
       {orders.length === 0 ? (
-        <p className="no-orders">{MESSAGES.noOrders}</p>
+        <div className="no-orders">
+          <h3>You have 0 orders</h3>
+          <p>Looks like you haven’t placed any orders yet.</p>
+        </div>
       ) : (
         orders.map((order, index) => (
           <div key={order._id} className="order-card">
