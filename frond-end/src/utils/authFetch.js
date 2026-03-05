@@ -1,7 +1,8 @@
 // utils/authFetch.js
 import { refreshAccessToken } from "./refreshToken"; // adjust path if needed
 
-const BASE_URL = "http://localhost:5000";
+// const BASE_URL = "http://localhost:5000";
+import { BASE_URL} from "./config";
 
 export const authFetch = async (endpoint, options = {}) => {
   let token = localStorage.getItem("accessToken");
