@@ -287,6 +287,7 @@ import { PLACEHOLDER_IMAGE } from "../utils/productImage";
 import "./ProductDetails.css";
 
 const BASE_URL = import.meta.env.VITE_API_URL;
+
 const ProductDetails = () => {
   const { id } = useParams();
 
