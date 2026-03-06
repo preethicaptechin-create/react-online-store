@@ -431,10 +431,16 @@ const ProductDetails = () => {
           </button>
         </div>
 
+        {/* <div className="details-info">
+          <h2>{product.name}</h2>
+          <p className="price">₹{product.price}</p>
+          <p>Category: {product.category}</p> */}
         <div className="details-info">
           <h2>{product.name}</h2>
           <p className="price">₹{product.price}</p>
           <p>Category: {product.category}</p>
+          <p className="description">{product.description}</p>  {/* ← new description */}
+
 
           {needsSize && (
             <div className="size-selector">

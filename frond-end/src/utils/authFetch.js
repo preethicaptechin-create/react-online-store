@@ -7,8 +7,12 @@ import { BASE_URL} from "./config";
 export const authFetch = async (endpoint, options = {}) => {
   let token = localStorage.getItem("accessToken");
 
+  // If no access token, try refresh first (user may have valid refresh token)
   if (!token) {
-    throw new Error("No access token available");
+    token = await refreshAccessToken();
+    if (!token) {
+      throw new Error("No access token available. Please log in again.");
+    }
   }
 
   const defaultHeaders = {

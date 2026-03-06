@@ -169,31 +169,29 @@ const Women = () => {
   const [wishlist, setWishlist] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // ✅ Fetch products from backend
-  useEffect(() => {
-
+  const fetchProducts = () => {
     fetch(`${BASE_URL}/api/products`)
-      .then(res => res.json())
-      .then(data => {
-
+      .then((res) => res.json())
+      .then((data) => {
         if (Array.isArray(data.data)) {
           setProducts(data.data);
         } else {
-          console.error("API did not return array:", data);
           setProducts([]);
         }
-
         setLoading(false);
       })
-      .catch(err => {
-        console.error("Fetch error:", err);
-        setLoading(false);
-      });
+      .catch(() => setLoading(false));
+  };
 
-    const storedWishlist =
-      JSON.parse(localStorage.getItem("wishlist")) || [];
-    setWishlist(storedWishlist);
+  useEffect(() => {
+    fetchProducts();
+    setWishlist(JSON.parse(localStorage.getItem("wishlist")) || []);
+  }, []);
 
+  useEffect(() => {
+    const onRefresh = () => fetchProducts();
+    window.addEventListener("productsUpdated", onRefresh);
+    return () => window.removeEventListener("productsUpdated", onRefresh);
   }, []);
   const showToast = (message, type = "success") => {
     setToast(null);

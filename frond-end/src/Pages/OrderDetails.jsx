@@ -1470,7 +1470,11 @@ const OrderDetails = () => {
 
       if (res.status === 401) {
         token = await refreshAccessToken();
-        if (!token) return;
+        if (!token) {
+          showToast("Session expired. Please log in again to place order.", "error");
+          setTimeout(() => navigate(ROUTES.login), 1500);
+          return;
+        }
 
         res = await fetch(`${BASE_URL}/api/orders`, {
           method: "POST",

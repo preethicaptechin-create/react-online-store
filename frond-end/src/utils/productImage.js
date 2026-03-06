@@ -4,7 +4,7 @@
  * and serves images at /uploads/filename
  */
 // const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
-const BASE_URL = import.meta.env.VITE_API_URL;
+const BASE_URL = import.meta.env.VITE_API_URL?.trim() || "http://localhost:5000";
 
 // Inline SVG placeholder (no network request, works offline, avoids ERR_NAME_NOT_RESOLVED)
 export const PLACEHOLDER_IMAGE =

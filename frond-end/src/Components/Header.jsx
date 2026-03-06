@@ -781,7 +781,7 @@ function Header() {
   }, []);
 
   // ✅ FETCH PRODUCTS FROM BACKEND
-  useEffect(() => {
+  const fetchProducts = () => {
     fetch(`${BASE_URL}/api/products`)
       .then((res) => res.json())
       .then((data) => {
@@ -789,10 +789,17 @@ function Header() {
         else if (Array.isArray(data.data)) setProducts(data.data);
         else setProducts([]);
       })
-      .catch((err) => {
-        console.error("Fetch error:", err);
-        setProducts([]);
-      });
+      .catch(() => setProducts([]));
+  };
+
+  useEffect(() => {
+    fetchProducts();
+  }, []);
+
+  useEffect(() => {
+    const onRefresh = () => fetchProducts();
+    window.addEventListener("productsUpdated", onRefresh);
+    return () => window.removeEventListener("productsUpdated", onRefresh);
   }, []);
 
 

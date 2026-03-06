@@ -505,6 +505,16 @@ export const MESSAGES = {
     "Your order is being processed. You will receive updates shortly.",
   loadingOrder: "Loading order details...",
   orderNotAvailable: "Order not available",
+
+  // Auth / Session
+  sessionExpired: "Session expired. Please log in again.",
+  loginLinkText: "Log in again",
+  loadingOrders: "Loading your orders...",
+  myOrders: "My Orders",
+  ordersPlaced: "Orders placed:",
+  noOrders: "No orders yet.",
+  order: "Order",
+  pending: "Pending",
 };
 
 // =======================

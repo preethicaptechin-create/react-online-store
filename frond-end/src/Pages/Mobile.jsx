@@ -420,19 +420,25 @@ const Mobile = () => {
   const [toast, setToast] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
+  const fetchProducts = () => {
     fetch(`${BASE_URL}/api/products`)
       .then((res) => res.json())
       .then((data) => {
         setProducts(Array.isArray(data.data) ? data.data : []);
         setLoading(false);
       })
-      .catch((err) => {
-        console.error("Fetch error:", err);
-        setLoading(false);
-      });
+      .catch(() => setLoading(false));
+  };
 
+  useEffect(() => {
+    fetchProducts();
     setWishlist(JSON.parse(localStorage.getItem("wishlist")) || []);
+  }, []);
+
+  useEffect(() => {
+    const onRefresh = () => fetchProducts();
+    window.addEventListener("productsUpdated", onRefresh);
+    return () => window.removeEventListener("productsUpdated", onRefresh);
   }, []);
 
   const showToast = (message, type = "success") => {

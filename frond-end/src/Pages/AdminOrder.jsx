@@ -900,6 +900,213 @@
 
 
 
+// import React, { useEffect, useState } from "react";
+// import axios from "axios";
+// import { useNavigate } from "react-router-dom";
+
+// // ✅ Import config
+// import { BASE_URL, CURRENCY } from "../utils/config";
+
+// const AdminOrders = () => {
+//   const [orders, setOrders] = useState([]);
+//   const [loading, setLoading] = useState(true);
+//   const [error, setError] = useState(null);
+
+//   const navigate = useNavigate();
+//   const token = localStorage.getItem("adminToken");
+//   const refreshToken = localStorage.getItem("refreshToken");
+
+//   // =========================
+//   // Refresh access token
+//   // =========================
+//   const refreshAccessToken = async () => {
+//     if (!refreshToken) return null;
+
+//     try {
+//       const { data } = await axios.post(
+//         `${BASE_URL}/api/admin/refresh-token`,
+//         { token: refreshToken }
+//       );
+
+//       localStorage.setItem("adminToken", data.accessToken);
+//       return data.accessToken;
+//     } catch (err) {
+//       console.error("Refresh token failed:", err);
+//       localStorage.removeItem("adminToken");
+//       localStorage.removeItem("refreshToken");
+//       navigate("/admin-login");
+//       return null;
+//     }
+//   };
+
+//   // =========================
+//   // Fetch orders
+//   // =========================
+//   const fetchOrders = async (currentToken) => {
+//     if (!currentToken) {
+//       setError("Admin login required. Redirecting...");
+//       setTimeout(() => navigate("/admin-login"), 2000);
+//       setLoading(false);
+//       return;
+//     }
+
+//     setLoading(true);
+//     setError(null);
+
+//     try {
+//       const { data } = await axios.get(
+//         `${BASE_URL}/api/admin/orders`,
+//         {
+//           headers: { Authorization: `Bearer ${currentToken}` },
+//         }
+//       );
+
+//       setOrders(data.data || data.orders || []);
+//     } catch (err) {
+//       console.error("Failed to fetch orders:", err);
+
+//       if (err.response?.status === 401 || err.response?.data?.expired) {
+//         const newToken = await refreshAccessToken();
+//         if (newToken) {
+//           fetchOrders(newToken);
+//           return;
+//         }
+//         setError("Session expired. Redirecting...");
+//         setTimeout(() => navigate("/admin-login"), 2000);
+//       } else {
+//         setError(err.response?.data?.message || "Failed to load orders.");
+//       }
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
+
+//   useEffect(() => {
+//     fetchOrders(token);
+//   }, [token, navigate]);
+
+//   // =========================
+//   // Update order status
+//   // =========================
+//   const handleStatusChange = async (orderId, newStatus) => {
+//     let currentToken = localStorage.getItem("adminToken");
+//     if (!currentToken) {
+//       alert("Admin authentication required.");
+//       return;
+//     }
+
+//     try {
+//       const { data } = await axios.put(
+//         `${BASE_URL}/api/admin/orders/${orderId}/status`,
+//         { status: newStatus },
+//         { headers: { Authorization: `Bearer ${currentToken}` } }
+//       );
+
+//       const updatedOrder = data.data || data;
+//       setOrders((prev) =>
+//         prev.map((o) => (o._id === orderId ? updatedOrder : o))
+//       );
+
+//       alert("Order status updated successfully!");
+//     } catch (err) {
+//       console.error("Status update failed:", err);
+
+//       if (err.response?.status === 401 || err.response?.data?.expired) {
+//         const newToken = await refreshAccessToken();
+//         if (newToken) {
+//           handleStatusChange(orderId, newStatus);
+//           return;
+//         }
+//       }
+
+//       alert(err.response?.data?.message || "Failed to update order status.");
+//     }
+//   };
+
+//   return (
+//     <div style={{ padding: "20px", maxWidth: "1200px", margin: "0 auto" }}>
+//       <h1>Admin Orders Management</h1>
+
+//       {loading && (
+//         <p style={{ textAlign: "center", padding: "40px" }}>
+//           Loading orders...
+//         </p>
+//       )}
+
+//       {error && (
+//         <p style={{ color: "red", fontWeight: "bold", marginBottom: "20px" }}>
+//           {error}
+//         </p>
+//       )}
+
+//       {!loading && !error && (
+//         <>
+//           {orders.length === 0 ? (
+//             <p style={{ textAlign: "center", padding: "40px" }}>
+//               No orders found in the system.
+//             </p>
+//           ) : (
+//             <table
+//               style={{
+//                 width: "100%",
+//                 borderCollapse: "collapse",
+//                 marginTop: "20px",
+//               }}
+//             >
+//               <thead>
+//                 <tr style={{ background: "#f8f9fa" }}>
+//                   <th>Order ID</th>
+//                   <th>Customer</th>
+//                   <th>Total</th>
+//                   <th>Status</th>
+//                   <th>Actions</th>
+//                 </tr>
+//               </thead>
+//               <tbody>
+//                 {orders.map((order) => (
+//                   <tr key={order._id}>
+//                     <td>{order._id.slice(-8).toUpperCase()}</td>
+//                     <td>
+//                       {order.user?.name ||
+//                         `${order.firstName || ""} ${order.lastName || ""}`.trim() ||
+//                         "Guest"}
+//                       {order.user?.email && (
+//                         <>
+//                           <br />
+//                           <small>{order.user.email}</small>
+//                         </>
+//                       )}
+//                     </td>
+//                     <td>
+//                       {CURRENCY}
+//                       {(order.totalAmount || order.total || 0).toFixed(2)}
+//                     </td>
+//                     <td>{order.status || "Pending"}</td>
+//                     <td>
+//                       <select
+//                         value={order.status || "Processing"}
+//                         onChange={(e) =>
+//                           handleStatusChange(order._id, e.target.value)
+//                         }
+//                       >
+//                         <option value="Processing">Processing</option>
+//                         <option value="Shipped">Shipped</option>
+//                         <option value="Delivered">Delivered</option>
+//                         <option value="Cancelled">Cancelled</option>
+//                       </select>
+//                     </td>
+//                   </tr>
+//                 ))}
+//               </tbody>
+//             </table>
+//           )}
+//         </>
+//       )}
+//     </div>
+//   );
+// };
+
+// export default AdminOrders;
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
@@ -912,9 +1119,18 @@ const AdminOrders = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  const [currentPage, setCurrentPage] = useState(1);
+  const ordersPerPage = 5;
+
   const navigate = useNavigate();
   const token = localStorage.getItem("adminToken");
   const refreshToken = localStorage.getItem("refreshToken");
+
+  // ✅ Pagination logic
+  const indexOfLastOrder = currentPage * ordersPerPage;
+  const indexOfFirstOrder = indexOfLastOrder - ordersPerPage;
+  const currentOrders = orders.slice(indexOfFirstOrder, indexOfLastOrder);
+  const totalPages = Math.ceil(orders.length / ordersPerPage);
 
   // =========================
   // Refresh access token
@@ -954,12 +1170,9 @@ const AdminOrders = () => {
     setError(null);
 
     try {
-      const { data } = await axios.get(
-        `${BASE_URL}/api/admin/orders`,
-        {
-          headers: { Authorization: `Bearer ${currentToken}` },
-        }
-      );
+      const { data } = await axios.get(`${BASE_URL}/api/admin/orders`, {
+        headers: { Authorization: `Bearer ${currentToken}` },
+      });
 
       setOrders(data.data || data.orders || []);
     } catch (err) {
@@ -1046,59 +1259,82 @@ const AdminOrders = () => {
               No orders found in the system.
             </p>
           ) : (
-            <table
-              style={{
-                width: "100%",
-                borderCollapse: "collapse",
-                marginTop: "20px",
-              }}
-            >
-              <thead>
-                <tr style={{ background: "#f8f9fa" }}>
-                  <th>Order ID</th>
-                  <th>Customer</th>
-                  <th>Total</th>
-                  <th>Status</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {orders.map((order) => (
-                  <tr key={order._id}>
-                    <td>{order._id.slice(-8).toUpperCase()}</td>
-                    <td>
-                      {order.user?.name ||
-                        `${order.firstName || ""} ${order.lastName || ""}`.trim() ||
-                        "Guest"}
-                      {order.user?.email && (
-                        <>
-                          <br />
-                          <small>{order.user.email}</small>
-                        </>
-                      )}
-                    </td>
-                    <td>
-                      {CURRENCY}
-                      {(order.totalAmount || order.total || 0).toFixed(2)}
-                    </td>
-                    <td>{order.status || "Pending"}</td>
-                    <td>
-                      <select
-                        value={order.status || "Processing"}
-                        onChange={(e) =>
-                          handleStatusChange(order._id, e.target.value)
-                        }
-                      >
-                        <option value="Processing">Processing</option>
-                        <option value="Shipped">Shipped</option>
-                        <option value="Delivered">Delivered</option>
-                        <option value="Cancelled">Cancelled</option>
-                      </select>
-                    </td>
+            <>
+              <table
+                style={{
+                  width: "100%",
+                  borderCollapse: "collapse",
+                  marginTop: "20px",
+                }}
+              >
+                <thead>
+                  <tr style={{ background: "#f8f9fa" }}>
+                    <th>Order ID</th>
+                    <th>Customer</th>
+                    <th>Total</th>
+                    <th>Status</th>
+                    <th>Actions</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {currentOrders.map((order) => (
+                    <tr key={order._id}>
+                      <td>{order._id.slice(-8).toUpperCase()}</td>
+                      <td>
+                        {order.user?.name ||
+                          `${order.firstName || ""} ${order.lastName || ""}`.trim() ||
+                          "Guest"}
+                        {order.user?.email && (
+                          <>
+                            <br />
+                            <small>{order.user.email}</small>
+                          </>
+                        )}
+                      </td>
+                      <td>
+                        {CURRENCY}
+                        {(order.totalAmount || order.total || 0).toFixed(2)}
+                      </td>
+                      <td>{order.status || "Pending"}</td>
+                      <td>
+                        <select
+                          value={order.status || "Processing"}
+                          onChange={(e) =>
+                            handleStatusChange(order._id, e.target.value)
+                          }
+                        >
+                          <option value="Processing">Processing</option>
+                          <option value="Shipped">Shipped</option>
+                          <option value="Delivered">Delivered</option>
+                          <option value="Cancelled">Cancelled</option>
+                        </select>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+
+              {/* Pagination */}
+              <div style={{ marginTop: "20px", display: "flex", gap: "15px", alignItems: "center" }}>
+                <button
+                  disabled={currentPage === 1}
+                  onClick={() => setCurrentPage(currentPage - 1)}
+                >
+                  Previous
+                </button>
+
+                <span>
+                  Page {currentPage} of {totalPages}
+                </span>
+
+                <button
+                  disabled={currentPage === totalPages}
+                  onClick={() => setCurrentPage(currentPage + 1)}
+                >
+                  Next
+                </button>
+              </div>
+            </>
           )}
         </>
       )}

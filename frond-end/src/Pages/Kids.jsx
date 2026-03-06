@@ -816,28 +816,31 @@ const Kids = () => {
   const [wishlist, setWishlist] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
+  const fetchProducts = () => {
     fetch(`${BASE_URL}/api/products`)
       .then((res) => res.json())
       .then((data) => {
-        console.log("Kids API Response:", data);
-
-        if (data.success) {
+        if (data?.success && Array.isArray(data.data)) {
+          setProducts(data.data);
+        } else if (Array.isArray(data?.data)) {
           setProducts(data.data);
         } else {
           setProducts([]);
         }
-
         setLoading(false);
       })
-      .catch((err) => {
-        console.error("Fetch error:", err);
-        setLoading(false);
-      });
+      .catch(() => setLoading(false));
+  };
 
-    const storedWishlist =
-      JSON.parse(localStorage.getItem("wishlist")) || [];
-    setWishlist(storedWishlist);
+  useEffect(() => {
+    fetchProducts();
+    setWishlist(JSON.parse(localStorage.getItem("wishlist")) || []);
+  }, []);
+
+  useEffect(() => {
+    const onRefresh = () => fetchProducts();
+    window.addEventListener("productsUpdated", onRefresh);
+    return () => window.removeEventListener("productsUpdated", onRefresh);
   }, []);
 
   const showToast = (message, type = "success") => {

@@ -97,7 +97,7 @@
 //   }
 // };
 
-const BASE_URL = import.meta.env.VITE_API_URL;
+const BASE_URL = import.meta.env.VITE_API_URL?.trim() || "http://localhost:5000";
 
 
 export const refreshAccessToken = async () => {
@@ -106,7 +106,9 @@ export const refreshAccessToken = async () => {
   // Early exit — most common failure reason
   if (!refreshToken) {
     console.warn("No refresh token found in localStorage");
-    return null; // Let caller decide what to do (usually redirect to login)
+    localStorage.removeItem("user");
+    window.dispatchEvent(new Event("userUpdated"));
+    return null;
   }
 
   try {
@@ -134,8 +136,8 @@ export const refreshAccessToken = async () => {
       if (res.status === 401 || res.status === 403) {
         localStorage.removeItem("accessToken");
         localStorage.removeItem("refreshToken");
-        // Do NOT clear everything — keep theme, cart, etc. if you have them
-        // localStorage.clear();  ← usually too aggressive
+        localStorage.removeItem("user");
+        window.dispatchEvent(new Event("userUpdated")); // so Header shows "Login" instead of old name
       }
 
       return null; // Signal failure → caller should redirect to login

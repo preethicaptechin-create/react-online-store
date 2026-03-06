@@ -400,7 +400,10 @@ exports.getSingleProduct = async (req, res) => {
       return res.status(404).json({ success: false, message: "Product not found" });
     res.status(200).json({ success: true, data: product });
   } catch (err) {
-    console.error("Error fetching product:", err);
+    // Skip log in test (invalid-id is expected)
+    if (process.env.NODE_ENV !== "test") {
+      console.error("Error fetching product:", err);
+    }
 
     // Handle invalid ObjectId
     if (err.name === "CastError") {
