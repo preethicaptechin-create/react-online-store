@@ -1251,6 +1251,714 @@
 
 
 
+// import React, { useEffect, useState } from "react";
+// import axios from "axios";
+// import "./AdminProducts.css";
+
+// // ✅ Import config
+// import { BASE_URL, CURRENCY } from "../utils/config";
+
+// function AdminProducts({ token }) {
+//   const [products, setProducts] = useState([]);
+//   const [form, setForm] = useState({
+//     name: "",
+//     price: "",
+//     category: "",
+//     description: "",
+//   });
+//   const [file, setFile] = useState(null);
+//   const [editId, setEditId] = useState(null);
+//   const [loadingAdd, setLoadingAdd] = useState(false);
+//   const [loadingProducts, setLoadingProducts] = useState(false);
+//   const [error, setError] = useState(null);
+
+
+//   // =========================
+//   // Fetch products
+//   // =========================
+//   useEffect(() => {
+//     const fetchProducts = async () => {
+//       setLoadingProducts(true);
+//       try {
+//         const res = await axios.get(`${BASE_URL}/api/products`, {
+//           headers: { Authorization: `Bearer ${token}` },
+//         });
+//         setProducts(res.data?.data || []);
+//       } catch {
+//         setError("Failed to load products");
+//       } finally {
+//         setLoadingProducts(false);
+//       }
+//     };
+
+//     fetchProducts();
+//   }, [token]);
+
+//   // =========================
+//   // Add / Update product
+//   // =========================
+//   const handleSubmit = async (e) => {
+//     e.preventDefault();
+//     setLoadingAdd(true);
+
+//     try {
+//       const formData = new FormData();
+//       Object.entries(form).forEach(([key, value]) =>
+//         formData.append(key, value)
+//       );
+//       if (file) formData.append("image", file);
+
+//       if (editId) {
+//         const res = await axios.put(
+//           `${BASE_URL}/api/products/${editId}`,
+//           formData,
+//           { headers: { Authorization: `Bearer ${token}` } }
+//         );
+
+//         setProducts((prev) =>
+//           prev.map((p) => (p._id === editId ? res.data.data : p))
+//         );
+//         setEditId(null);
+//       } else {
+//         const res = await axios.post(
+//           `${BASE_URL}/api/products`,
+//           formData,
+//           { headers: { Authorization: `Bearer ${token}` } }
+//         );
+//         setProducts((prev) => [res.data.data, ...prev]);
+//       }
+
+//       setForm({ name: "", price: "", category: "", description: "" });
+//       setFile(null);
+//     } catch {
+//       alert("Save failed");
+//     } finally {
+//       setLoadingAdd(false);
+//     }
+//   };
+
+//   // =========================
+//   // Edit product
+//   // =========================
+//   const editProduct = (product) => {
+//     setEditId(product._id);
+//     setForm({
+//       name: product.name,
+//       price: product.price,
+//       category: product.category || "",
+//       description: product.description || "",
+//     });
+//     setFile(null);
+//   };
+
+//   // =========================
+//   // Delete product
+//   // =========================
+//   const deleteProduct = async (id) => {
+//     if (!window.confirm("Delete this product?")) return;
+
+//     try {
+//       await axios.delete(`${BASE_URL}/api/products/${id}`, {
+//         headers: { Authorization: `Bearer ${token}` },
+//       });
+//       setProducts((prev) => prev.filter((p) => p._id !== id));
+//     } catch {
+//       alert("Delete failed");
+//     }
+//   };
+
+//   return (
+//     <div className="admin-products">
+//       <h2>Admin Products</h2>
+
+//       {error && <p className="error-message">{error}</p>}
+
+//       {/* Form */}
+//       <form onSubmit={handleSubmit} className="add-product-form">
+//         <input
+//           type="text"
+//           placeholder="Product Name *"
+//           value={form.name}
+//           onChange={(e) => setForm({ ...form, name: e.target.value })}
+//           required
+//         />
+//         <input
+//           type="number"
+//           placeholder={`Price (${CURRENCY}) *`}
+//           value={form.price}
+//           onChange={(e) => setForm({ ...form, price: e.target.value })}
+//           required
+//         />
+//         <input
+//           type="text"
+//           placeholder="Category"
+//           value={form.category}
+//           onChange={(e) => setForm({ ...form, category: e.target.value })}
+//         />
+//         <textarea
+//           placeholder="Description"
+//           value={form.description}
+//           onChange={(e) =>
+//             setForm({ ...form, description: e.target.value })
+//           }
+//         />
+//         <input
+//           type="file"
+//           accept="image/*"
+//           onChange={(e) => setFile(e.target.files[0])}
+//         />
+//         <button type="submit" disabled={loadingAdd}>
+//           {editId ? "Update Product" : "Add Product"}
+//         </button>
+//       </form>
+
+//       <hr />
+
+//       {/* Table */}
+//       {loadingProducts ? (
+//         <p>Loading products...</p>
+//       ) : (
+//         <table className="product-table">
+//           <thead>
+//             <tr>
+//               <th>Name</th>
+//               <th>Category</th>
+//               <th>Image</th>
+//               <th>Amount</th>
+//               <th>Actions</th>
+//             </tr>
+//           </thead>
+//           <tbody>
+//             {products.map((p) => (
+//               <tr key={p._id}>
+//                 <td>{p.name}</td>
+//                 <td>{p.category || "-"}</td>
+//                 <td>
+//                   <img
+//                     src={
+//                       p.image
+//                         ? `${BASE_URL}/uploads/${p.image}`
+//                         : ""
+//                     }
+//                     width="60"
+//                     alt={p.name}
+//                   />
+//                 </td>
+//                 <td>
+//                   {CURRENCY}
+//                   {p.price}
+//                 </td>
+//                 <td>
+//                   <button onClick={() => editProduct(p)}>Edit</button>
+//                   <button onClick={() => deleteProduct(p._id)}>
+//                     Delete
+//                   </button>
+//                 </td>
+//               </tr>
+//             ))}
+//           </tbody>
+//         </table>
+//       )}
+//     </div>
+//   );
+// }
+
+// export default AdminProducts;
+
+
+
+
+
+// import React, { useEffect, useState } from "react";
+// import axios from "axios";
+// import "./AdminProducts.css";
+
+// // ✅ Import config
+// import { BASE_URL, CURRENCY } from "../utils/config";
+
+// function AdminProducts({ token }) {
+//   const [products, setProducts] = useState([]);
+//   const [form, setForm] = useState({
+//     name: "",
+//     price: "",
+//     category: "",
+//     description: "",
+//   });
+//   const [file, setFile] = useState(null);
+//   const [editId, setEditId] = useState(null);
+//   const [loadingAdd, setLoadingAdd] = useState(false);
+//   const [loadingProducts, setLoadingProducts] = useState(false);
+//   const [error, setError] = useState(null);
+//   const [currentPage, setCurrentPage] = useState(1);
+//   const productsPerPage = 5;
+
+//   // ✅ Pagination logic (moved here)
+//   const indexOfLastProduct = currentPage * productsPerPage;
+//   const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
+//   const currentProducts = products.slice(indexOfFirstProduct, indexOfLastProduct);
+//   const totalPages = Math.ceil(products.length / productsPerPage);
+
+//   // =========================
+//   // Fetch products
+//   // =========================
+//   useEffect(() => {
+//     const fetchProducts = async () => {
+//       setLoadingProducts(true);
+//       try {
+//         const res = await axios.get(`${BASE_URL}/api/products`, {
+//           headers: { Authorization: `Bearer ${token}` },
+//         });
+//         setProducts(res.data?.data || []);
+//       } catch {
+//         setError("Failed to load products");
+//       } finally {
+//         setLoadingProducts(false);
+//       }
+//     };
+
+//     fetchProducts();
+//   }, [token]);
+
+//   // =========================
+//   // Add / Update product
+//   // =========================
+//   const handleSubmit = async (e) => {
+//     e.preventDefault();
+//     setLoadingAdd(true);
+
+//     try {
+//       const formData = new FormData();
+//       Object.entries(form).forEach(([key, value]) =>
+//         formData.append(key, value)
+//       );
+//       if (file) formData.append("image", file);
+
+//       if (editId) {
+//         const res = await axios.put(
+//           `${BASE_URL}/api/products/${editId}`,
+//           formData,
+//           { headers: { Authorization: `Bearer ${token}` } }
+//         );
+
+//         setProducts((prev) =>
+//           prev.map((p) => (p._id === editId ? res.data.data : p))
+//         );
+//         setEditId(null);
+//       } else {
+//         const res = await axios.post(
+//           `${BASE_URL}/api/products`,
+//           formData,
+//           { headers: { Authorization: `Bearer ${token}` } }
+//         );
+//         setProducts((prev) => [res.data.data, ...prev]);
+//       }
+
+
+//       window.dispatchEvent(new Event("productsUpdated"));
+//       setForm({ name: "", price: "", category: "", description: "" });
+//       setFile(null);
+//     } catch {
+//       alert("Save failed");
+//     } finally {
+//       setLoadingAdd(false);
+//     }
+//   };
+
+//   // =========================
+//   // Edit product
+//   // =========================
+//   const editProduct = (product) => {
+//     setEditId(product._id);
+//     setForm({
+//       name: product.name,
+//       price: product.price,
+//       category: product.category || "",
+//       description: product.description || "",
+//     });
+//     setFile(null);
+//   };
+
+//   // =========================
+//   // Delete product
+//   // =========================
+//   const deleteProduct = async (id) => {
+//     if (!window.confirm("Delete this product?")) return;
+
+//     try {
+//       await axios.delete(`${BASE_URL}/api/products/${id}`, {
+//         headers: { Authorization: `Bearer ${token}` },
+//       });
+//       setProducts((prev) => prev.filter((p) => p._id !== id));
+//       window.dispatchEvent(new Event("productsUpdated"));
+//     } catch {
+//       alert("Delete failed");
+//     }
+//   };
+
+//   return (
+//     <div className="admin-products">
+//       <h2>Admin Products</h2>
+
+//       {error && <p className="error-message">{error}</p>}
+
+//       {/* Form */}
+//       <form onSubmit={handleSubmit} className="add-product-form">
+//         <input
+//           type="text"
+//           placeholder="Product Name *"
+//           value={form.name}
+//           onChange={(e) => setForm({ ...form, name: e.target.value })}
+//           required
+//         />
+//         <input
+//           type="number"
+//           placeholder={`Price (${CURRENCY}) *`}
+//           value={form.price}
+//           onChange={(e) => setForm({ ...form, price: e.target.value })}
+//           required
+//         />
+//         <input
+//           type="text"
+//           placeholder="Category"
+//           value={form.category}
+//           onChange={(e) => setForm({ ...form, category: e.target.value })}
+//         />
+//         <textarea
+//           placeholder="Description"
+//           value={form.description}
+//           onChange={(e) =>
+//             setForm({ ...form, description: e.target.value })
+//           }
+//         />
+//         <input
+//           type="file"
+//           accept="image/*"
+//           onChange={(e) => setFile(e.target.files[0])}
+//         />
+//         <button type="submit" disabled={loadingAdd}>
+//           {editId ? "Update Product" : "Add Product"}
+//         </button>
+//       </form>
+
+//       <hr />
+
+//       {/* Table */}
+//       {loadingProducts ? (
+//         <p>Loading products...</p>
+//       ) : (
+//         <table className="product-table">
+//           <thead>
+//             <tr>
+//               <th>Name</th>
+//               <th>Category</th>
+//               <th>Image</th>
+//               <th>Amount</th>
+//               <th>Actions</th>
+//             </tr>
+//           </thead>
+//           <tbody>
+//             {currentProducts.map((p) => (
+//               <tr key={p._id}>
+//                 <td>{p.name}</td>
+//                 <td>{p.category || "-"}</td>
+//                 <td>
+//                   <img
+//                     src={p.image ? `${BASE_URL}/uploads/${p.image}` : ""}
+//                     width="60"
+//                     alt={p.name}
+//                   />
+//                 </td>
+//                 <td>
+//                   {CURRENCY}
+//                   {p.price}
+//                 </td>
+//                 <td>
+//                   <button onClick={() => editProduct(p)}>Edit</button>
+//                   <button onClick={() => deleteProduct(p._id)}>
+//                     Delete
+//                   </button>
+//                 </td>
+//               </tr>
+//             ))}
+//           </tbody>
+//         </table>
+//       )}
+
+//       <div className="pagination">
+//         <button
+//           disabled={currentPage === 1}
+//           onClick={() => setCurrentPage(currentPage - 1)}
+//         >
+//           Previous
+//         </button>
+
+//         <span>
+//           Page {currentPage} of {totalPages}
+//         </span>
+
+//         <button
+//           disabled={currentPage === totalPages}
+//           onClick={() => setCurrentPage(currentPage + 1)}
+//         >
+//           Next
+//         </button>
+//       </div>
+//     </div>
+//   );
+// }
+
+// export default AdminProducts;
+
+
+
+
+// import React, { useEffect, useState } from "react";
+// import axios from "axios";
+// import "./AdminProducts.css";
+
+// // ✅ Import config
+// import { BASE_URL, CURRENCY } from "../utils/config";
+
+// function AdminProducts({ token }) {
+//   const [products, setProducts] = useState([]);
+//   const [form, setForm] = useState({
+//     name: "",
+//     price: "",
+//     category: "",
+//     description: "",
+//   });
+//   const [file, setFile] = useState(null);
+//   const [editId, setEditId] = useState(null);
+//   const [loadingAdd, setLoadingAdd] = useState(false);
+//   const [loadingProducts, setLoadingProducts] = useState(false);
+//   const [error, setError] = useState(null);
+//   const [currentPage, setCurrentPage] = useState(1);
+//   const productsPerPage = 5;
+
+//   // ✅ Pagination logic (moved here)
+//   const indexOfLastProduct = currentPage * productsPerPage;
+//   const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
+//   const currentProducts = products.slice(indexOfFirstProduct, indexOfLastProduct);
+//   const totalPages = Math.ceil(products.length / productsPerPage);
+
+//   // =========================
+//   // Fetch products
+//   // =========================
+//   useEffect(() => {
+//     const fetchProducts = async () => {
+//       setLoadingProducts(true);
+//       try {
+//         const res = await axios.get(`${BASE_URL}/api/products`, {
+//           headers: { Authorization: `Bearer ${token}` },
+//         });
+//         setProducts(res.data?.data || []);
+//       } catch {
+//         setError("Failed to load products");
+//       } finally {
+//         setLoadingProducts(false);
+//       }
+//     };
+
+//     fetchProducts();
+//   }, [token]);
+
+//   // =========================
+//   // Add / Update product
+//   // =========================
+//   const handleSubmit = async (e) => {
+//     e.preventDefault();
+//     setLoadingAdd(true);
+
+//     try {
+//       const formData = new FormData();
+//       Object.entries(form).forEach(([key, value]) =>
+//         formData.append(key, value)
+//       );
+//       if (file) formData.append("image", file);
+
+//       if (editId) {
+//         const res = await axios.put(
+//           `${BASE_URL}/api/products/${editId}`,
+//           formData,
+//           { headers: { Authorization: `Bearer ${token}` } }
+//         );
+
+//         setProducts((prev) =>
+//           prev.map((p) => (p._id === editId ? res.data.data : p))
+//         );
+//         setEditId(null);
+
+//         // ✅ Dispatch event with updated product
+//         window.dispatchEvent(new CustomEvent("productsUpdated", { detail: res.data.data }));
+//       } else {
+//         const res = await axios.post(
+//           `${BASE_URL}/api/products`,
+//           formData,
+//           { headers: { Authorization: `Bearer ${token}` } }
+//         );
+
+//         setProducts((prev) => [res.data.data, ...prev]);
+
+//         // ✅ Dispatch event with new product
+//         window.dispatchEvent(new CustomEvent("productsUpdated", { detail: res.data.data }));
+//       }
+//       window.dispatchEvent(new Event("productsUpdated"));
+//       setForm({ name: "", price: "", category: "", description: "" });
+//       setFile(null);
+//     } catch {
+//       alert("Save failed");
+//     } finally {
+//       setLoadingAdd(false);
+//     }
+//   };
+
+//   // =========================
+//   // Edit product
+//   // =========================
+//   const editProduct = (product) => {
+//     setEditId(product._id);
+//     setForm({
+//       name: product.name,
+//       price: product.price,
+//       category: product.category || "",
+//       description: product.description || "",
+//     });
+//     setFile(null);
+//   };
+
+//   // =========================
+//   // Delete product
+//   // =========================
+//   const deleteProduct = async (id) => {
+//     if (!window.confirm("Delete this product?")) return;
+
+//     try {
+//       await axios.delete(`${BASE_URL}/api/products/${id}`, {
+//         headers: { Authorization: `Bearer ${token}` },
+//       });
+//       setProducts((prev) => prev.filter((p) => p._id !== id));
+//       window.dispatchEvent(new Event("productsUpdated"));
+//     } catch {
+//       alert("Delete failed");
+//     }
+//   };
+
+//   return (
+//     <div className="admin-products">
+//       <h2>Admin Products</h2>
+
+//       {error && <p className="error-message">{error}</p>}
+
+//       {/* Form */}
+//       <form onSubmit={handleSubmit} className="add-product-form">
+//         <input
+//           type="text"
+//           placeholder="Product Name *"
+//           value={form.name}
+//           onChange={(e) => setForm({ ...form, name: e.target.value })}
+//           required
+//         />
+//         <input
+//           type="number"
+//           placeholder={`Price (${CURRENCY}) *`}
+//           value={form.price}
+//           onChange={(e) => setForm({ ...form, price: e.target.value })}
+//           required
+//         />
+//         <input
+//           type="text"
+//           placeholder="Category"
+//           value={form.category}
+//           onChange={(e) => setForm({ ...form, category: e.target.value })}
+//         />
+//         <textarea
+//           placeholder="Description"
+//           value={form.description}
+//           onChange={(e) =>
+//             setForm({ ...form, description: e.target.value })
+//           }
+//         />
+//         <input
+//           type="file"
+//           accept="image/*"
+//           onChange={(e) => setFile(e.target.files[0])}
+//         />
+//         <button type="submit" disabled={loadingAdd}>
+//           {editId ? "Update Product" : "Add Product"}
+//         </button>
+//       </form>
+
+//       <hr />
+
+//       {/* Table */}
+//       {loadingProducts ? (
+//         <p>Loading products...</p>
+//       ) : (
+//         <table className="product-table">
+//           <thead>
+//             <tr>
+//               <th>Name</th>
+//               <th>Category</th>
+//               <th>Image</th>
+//               <th>Amount</th>
+//               <th>Actions</th>
+//             </tr>
+//           </thead>
+//           <tbody>
+//             {currentProducts.map((p) => (
+//               <tr key={p._id}>
+//                 <td>{p.name}</td>
+//                 <td>{p.category || "-"}</td>
+//                 <td>
+//                   <img
+//                     src={p.image ? `${BASE_URL}/uploads/${p.image}` : ""}
+//                     width="60"
+//                     alt={p.name}
+//                   />
+//                 </td>
+//                 <td>
+//                   {CURRENCY}
+//                   {p.price}
+//                 </td>
+//                 <td>
+//                   <button onClick={() => editProduct(p)}>Edit</button>
+//                   <button onClick={() => deleteProduct(p._id)}>
+//                     Delete
+//                   </button>
+//                 </td>
+//               </tr>
+//             ))}
+//           </tbody>
+//         </table>
+//       )}
+
+//       <div className="pagination">
+//         <button
+//           disabled={currentPage === 1}
+//           onClick={() => setCurrentPage(currentPage - 1)}
+//         >
+//           Previous
+//         </button>
+
+//         <span>
+//           Page {currentPage} of {totalPages}
+//         </span>
+
+//         <button
+//           disabled={currentPage === totalPages}
+//           onClick={() => setCurrentPage(currentPage + 1)}
+//         >
+//           Next
+//         </button>
+//       </div>
+//     </div>
+//   );
+// }
+
+// export default AdminProducts;
+
+
+
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import "./AdminProducts.css";
@@ -1271,6 +1979,14 @@ function AdminProducts({ token }) {
   const [loadingAdd, setLoadingAdd] = useState(false);
   const [loadingProducts, setLoadingProducts] = useState(false);
   const [error, setError] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const productsPerPage = 5;
+
+  // ✅ Pagination logic (moved here)
+  const indexOfLastProduct = currentPage * productsPerPage;
+  const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
+  const currentProducts = products.slice(indexOfFirstProduct, indexOfLastProduct);
+  const totalPages = Math.ceil(products.length / productsPerPage);
 
   // =========================
   // Fetch products
@@ -1318,15 +2034,22 @@ function AdminProducts({ token }) {
           prev.map((p) => (p._id === editId ? res.data.data : p))
         );
         setEditId(null);
+
+        // ✅ Dispatch event with updated product
+        window.dispatchEvent(new CustomEvent("productsUpdated", { detail: res.data.data }));
       } else {
         const res = await axios.post(
           `${BASE_URL}/api/products`,
           formData,
           { headers: { Authorization: `Bearer ${token}` } }
         );
-        setProducts((prev) => [res.data.data, ...prev]);
-      }
 
+        setProducts((prev) => [res.data.data, ...prev]);
+
+        // ✅ Dispatch event with new product
+        window.dispatchEvent(new CustomEvent("productsUpdated", { detail: res.data.data }));
+      }
+      window.dispatchEvent(new Event("productsUpdated"));
       setForm({ name: "", price: "", category: "", description: "" });
       setFile(null);
     } catch {
@@ -1354,6 +2077,11 @@ function AdminProducts({ token }) {
   // Delete product
   // =========================
   const deleteProduct = async (id) => {
+    if (!token) {
+      alert("You are not logged in. Please login as admin.");
+      return;
+    }
+
     if (!window.confirm("Delete this product?")) return;
 
     try {
@@ -1361,7 +2089,9 @@ function AdminProducts({ token }) {
         headers: { Authorization: `Bearer ${token}` },
       });
       setProducts((prev) => prev.filter((p) => p._id !== id));
-    } catch {
+      window.dispatchEvent(new Event("productsUpdated"));
+    } catch (err) {
+      console.error("Delete failed:", err.response?.data || err.message);
       alert("Delete failed");
     }
   };
@@ -1428,17 +2158,13 @@ function AdminProducts({ token }) {
             </tr>
           </thead>
           <tbody>
-            {products.map((p) => (
+            {currentProducts.map((p) => (
               <tr key={p._id}>
                 <td>{p.name}</td>
                 <td>{p.category || "-"}</td>
                 <td>
                   <img
-                    src={
-                      p.image
-                        ? `${BASE_URL}/uploads/${p.image}`
-                        : ""
-                    }
+                    src={p.image ? `${BASE_URL}/uploads/${p.image}` : ""}
                     width="60"
                     alt={p.name}
                   />
@@ -1458,6 +2184,26 @@ function AdminProducts({ token }) {
           </tbody>
         </table>
       )}
+
+      <div className="pagination">
+        <button
+          disabled={currentPage === 1}
+          onClick={() => setCurrentPage(currentPage - 1)}
+        >
+          Previous
+        </button>
+
+        <span>
+          Page {currentPage} of {totalPages}
+        </span>
+
+        <button
+          disabled={currentPage === totalPages}
+          onClick={() => setCurrentPage(currentPage + 1)}
+        >
+          Next
+        </button>
+      </div>
     </div>
   );
 }

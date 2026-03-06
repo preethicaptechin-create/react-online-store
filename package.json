@@ -1,0 +1,14 @@
+{
+  "name": "react-online-store",
+  "private": true,
+  "scripts": {
+    "test": "npm run test:backend && npm run test:frontend",
+    "test:backend": "cd back-end && npm test",
+    "test:frontend": "cd frond-end && npm test",
+    "test:e2e": "playwright test",
+    "test:integration": "playwright test"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.49.0"
+  }
+}

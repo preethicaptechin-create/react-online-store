@@ -856,30 +856,28 @@ const Beauty = () => {
   const [toast, setToast] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  const fetchProducts = async () => {
+    try {
+      const res = await fetch(`${BASE_URL}/api/products`);
+      const data = await res.json();
+      setProducts(Array.isArray(data.data) ? data.data : []);
+    } catch (err) {
+      console.error("Failed to fetch products:", err);
+      setProducts([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const res = await fetch(`${BASE_URL}/api/products`);
-        const data = await res.json();
-
-        if (Array.isArray(data.data)) {
-          setProducts(data.data);
-        } else {
-          setProducts([]);
-        }
-      } catch (err) {
-        console.error("Failed to fetch products:", err);
-        setProducts([]);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchProducts();
+    setWishlist(JSON.parse(localStorage.getItem("wishlist")) || []);
+  }, []);
 
-    const storedWishlist =
-      JSON.parse(localStorage.getItem("wishlist")) || [];
-    setWishlist(storedWishlist);
+  useEffect(() => {
+    const onRefresh = () => fetchProducts();
+    window.addEventListener("productsUpdated", onRefresh);
+    return () => window.removeEventListener("productsUpdated", onRefresh);
   }, []);
 
   const showToast = (message, type = "success") => {

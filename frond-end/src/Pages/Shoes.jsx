@@ -571,38 +571,34 @@ const Shoes = () => {
   const [wishlist, setWishlist] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // ✅ Fetch products properly
-  useEffect(() => {
-
-    const fetchProducts = async () => {
-      try {
-        const res = await fetch(`${BASE_URL}/api/products`);
-        const data = await res.json();
-
-        console.log("Shoes API Response:", data);
-
-        // 🔥 VERY IMPORTANT FIX
-        if (Array.isArray(data.data)) {
-          setProducts(data.data);
-        } else if (Array.isArray(data)) {
-          setProducts(data);
-        } else {
-          setProducts([]);
-        }
-
-        setLoading(false);
-      } catch (err) {
-        console.error("Fetch error:", err);
-        setLoading(false);
+  const fetchProducts = async () => {
+    try {
+      const res = await fetch(`${BASE_URL}/api/products`);
+      const data = await res.json();
+      if (Array.isArray(data.data)) {
+        setProducts(data.data);
+      } else if (Array.isArray(data)) {
+        setProducts(data);
+      } else {
+        setProducts([]);
       }
-    };
+    } catch (err) {
+      console.error("Fetch error:", err);
+      setProducts([]);
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  useEffect(() => {
     fetchProducts();
+    setWishlist(JSON.parse(localStorage.getItem("wishlist")) || []);
+  }, []);
 
-    const storedWishlist =
-      JSON.parse(localStorage.getItem("wishlist")) || [];
-    setWishlist(storedWishlist);
-
+  useEffect(() => {
+    const onRefresh = () => fetchProducts();
+    window.addEventListener("productsUpdated", onRefresh);
+    return () => window.removeEventListener("productsUpdated", onRefresh);
   }, []);
 
   const showToast = (message, type = "success") => {

@@ -509,6 +509,7 @@
 
 
 import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import { MESSAGES, CURRENCY, ROUTES, API_ROUTES } from "../utils/config";
 import { authFetch } from "../utils/authFetch";
 import "./MyOrders.css";
@@ -533,12 +534,14 @@ function MyOrders() {
       } catch (err) {
         console.error("Failed to load orders:", err);
 
-        // ✅ Handle session expiration
+        // ✅ Handle session expiration / no token
         if (
           err.response?.status === 401 ||
-          err.message?.includes("Unauthorized")
+          err.message?.includes("Unauthorized") ||
+          err.message?.includes("No access token") ||
+          err.message?.includes("Session expired")
         ) {
-          setError(MESSAGES.sessionExpired);
+          setError(MESSAGES.sessionExpired || "Session expired. Please log in again.");
         } else {
           setError(err.message || MESSAGES.somethingWentWrong);
         }
@@ -561,9 +564,9 @@ function MyOrders() {
     return (
       <div className="orders-error">
         <p>{error}</p>
-        {error === MESSAGES.sessionExpired && (
+        {(error === MESSAGES.sessionExpired || error?.includes("log in") || error?.includes("No access token")) && (
           <p>
-            Please <a href={ROUTES.login}>{MESSAGES.loginLinkText}</a>.
+            Please <Link to={ROUTES.login}>{MESSAGES.loginLinkText}</Link>.
           </p>
         )}
       </div>
