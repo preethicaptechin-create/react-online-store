@@ -630,7 +630,7 @@ import Footer from "./Components/Footer";
 
 // Public Pages
 import Home from "./Pages/Home";
-import ProductList from "./Pages/Productlist";
+import ProductList from "./Pages/ProductList";
 import Login from "./Pages/Login";
 import Register from "./Pages/Register";
 import Men from "./Pages/Men";
