@@ -67,15 +67,32 @@ Admin-only routes protection
 
 Setup Instructions
 
-1. Frontend Setup
-cd Frond-end
-npm install
-npm run dev   
-2. Backend Setup
-cd back-end
-npm install
-node server.js   
+### Option A: Run with Docker (recommended)
 
+1. From the project root, run:
+   ```bash
+   docker compose up --build
+   ```
+2. Open the app: **http://localhost:3000** (frontend), API: **http://localhost:5000**
+3. MongoDB runs in a container; the API connects to it and **GET /api/products** returns all products from the database.
+
+To use your own secrets (e.g. JWT), create a `.env` in the project root and set `JWT_SECRET`, `JWT_REFRESH_SECRET`. Optional: create `back-end/.env` from `back-end/.env.example` for local overrides.
+
+### Option B: Run locally
+
+1. Frontend Setup
+   ```bash
+   cd frond-end
+   npm install
+   npm run dev
+   ```
+2. Backend Setup
+   ```bash
+   cd back-end
+   cp .env.example .env   # then edit .env with MONGO_URI (e.g. mongodb://127.0.0.1:27017/onlinestore)
+   npm install
+   npm start
+   ```
 
 Use Postman or your frontend to test endpoints like:
 

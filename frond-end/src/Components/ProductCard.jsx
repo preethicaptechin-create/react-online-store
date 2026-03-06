@@ -983,7 +983,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { PLACEHOLDER_IMAGE } from "../utils/productImage";
 import { BASE_URL } from "../utils/config"; // ✅ use config
-import "./Productcard.css";
+import "./ProductCard.css";
 
 function ProductCard({ product, sizeOptions }) {
   const [size, setSize] = useState(null);
