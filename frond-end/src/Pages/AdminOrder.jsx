@@ -1111,6 +1111,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
+
 // ✅ Import config
 import { BASE_URL, CURRENCY } from "../utils/config";
 
@@ -1135,22 +1136,51 @@ const AdminOrders = () => {
   // =========================
   // Refresh access token
   // =========================
+  // const refreshAccessToken = async () => {
+  //   if (!refreshToken) return null;
+
+  //   try {
+  //     const { data } = await axios.post(
+  //       `${BASE_URL}/api/admin/refresh-token`,
+  //       { token: refreshToken }
+  //     );
+
+  //     localStorage.setItem("adminToken", data.accessToken);
+  //     return data.accessToken;
+  //   } catch (err) {
+  //     console.error("Refresh token failed:", err);
+  //     localStorage.removeItem("adminToken");
+  //     localStorage.removeItem("refreshToken");
+  //     navigate("/admin-login");
+  //     return null;
+  //   }
+  // };
   const refreshAccessToken = async () => {
+
+    const refreshToken = localStorage.getItem("refreshToken");
+
     if (!refreshToken) return null;
 
     try {
+
       const { data } = await axios.post(
-        `${BASE_URL}/api/admin/refresh-token`,
-        { token: refreshToken }
+        `${BASE_URL}/api/admin/refresh`,
+        { refreshToken }
       );
 
-      localStorage.setItem("adminToken", data.accessToken);
+      localStorage.setItem("accessToken", data.accessToken);
+
       return data.accessToken;
+
     } catch (err) {
+
       console.error("Refresh token failed:", err);
-      localStorage.removeItem("adminToken");
+
+      localStorage.removeItem("accessToken");
       localStorage.removeItem("refreshToken");
+
       navigate("/admin-login");
+
       return null;
     }
   };

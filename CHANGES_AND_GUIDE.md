@@ -378,3 +378,273 @@ react-online-store/
 ---
 
 *Document created for freshers. Keep this file updated when you make more changes.*
+
+- - - - - - - - - --  ------ -------- --------------- - - - -   ------------ ---------
+9/3/2026
+
+
+
+# React Online Store (MERN Stack)
+
+A full-stack **E-commerce web application** built using the **MERN Stack (MongoDB, Express.js, React, Node.js)**.
+The application allows users to browse products, place orders, and manage products through an admin panel.
+
+This project demonstrates **full-stack development, REST API design, authentication, testing, and Docker containerization**.
+
+---
+
+# Features
+
+### User Features
+
+* View product listings
+* View product details
+* Add products to cart
+* Place orders
+* View order history
+
+### Admin Features
+
+* Admin authentication
+* Add new products
+* Update product details
+* Delete products
+* Manage order status
+
+### Technical Features
+
+* RESTful API architecture
+* JWT authentication
+* MongoDB database integration
+* Docker containerized environment
+* Automated testing (Backend, Frontend, E2E)
+
+---
+
+# Tech Stack
+
+**Frontend**
+
+* React
+* Vite
+* CSS
+
+**Backend**
+
+* Node.js
+* Express.js
+* JWT Authentication
+
+**Database**
+
+* MongoDB
+
+**Testing**
+
+* Jest
+* Supertest
+* Vitest
+* React Testing Library
+* Playwright
+
+**DevOps**
+
+* Docker
+* Docker Compose
+
+---
+
+# Project Structure
+
+```
+react-online-store/
+│
+├── back-end/
+│   ├── controllers
+│   ├── models
+│   ├── routes
+│   ├── middleware
+│   ├── scripts
+│   ├── tests
+│   └── server.js
+│
+├── frond-end/
+│   ├── src
+│   │   ├── Components
+│   │   ├── pages
+│   │   ├── services
+│   │   └── utils
+│
+├── e2e/
+│   ├── app.spec.js
+│   └── api.spec.js
+│
+├── docker-compose.yml
+└── README.md
+```
+
+---
+
+# Running the Project with Docker
+
+### 1. Clone the Repository
+
+```
+git clone <repository-url>
+cd react-online-store
+```
+
+### 2. Start the Application
+
+Run the following command from the project root:
+
+```
+docker compose up -d
+```
+
+This will start:
+
+* MongoDB container
+* Backend server
+* Frontend application
+
+---
+
+# Application URLs
+
+Frontend
+
+```
+http://localhost:3001
+```
+
+Backend API
+
+```
+http://localhost:5000
+```
+
+---
+
+# Admin Login
+
+Create admin user inside Docker container:
+
+```
+docker compose exec back-end node scripts/CreateAdmin.js
+```
+
+Default credentials:
+
+Username
+
+```
+preethi
+```
+
+Password
+
+```
+admin123
+```
+
+---
+
+# Database Access
+
+MongoDB runs inside Docker.
+
+You can view the database using **MongoDB Compass**.
+
+Connection URL
+
+```
+mongodb://127.0.0.1:27018
+```
+
+Collections include:
+
+* users
+* products
+* orders
+
+---
+
+# Running Tests
+
+### Backend Tests
+
+```
+cd back-end
+npm test
+```
+
+### Frontend Tests
+
+```
+cd frond-end
+npm test
+```
+
+### End-to-End Tests
+
+Make sure the application is running.
+
+```
+npm run test:e2e
+```
+
+---
+
+# Useful Docker Commands
+
+Check running containers
+
+```
+docker compose ps
+```
+
+View backend logs
+
+```
+docker compose logs back-end
+```
+
+Restart containers
+
+```
+docker compose restart
+```
+
+Stop containers
+
+```
+docker compose down
+```
+
+---
+
+# Learning Outcomes
+
+Through this project I gained experience in:
+
+* Building full-stack MERN applications
+* Designing REST APIs
+* Implementing authentication with JWT
+* Writing automated tests
+* Using Docker for containerized development
+* Managing MongoDB databases
+
+---
+
+# Future Improvements
+
+* Payment gateway integration
+* Product search and filtering
+* User profile management
+* Deployment to cloud platforms
+
+---
+
+
+
