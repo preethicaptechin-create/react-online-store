@@ -661,14 +661,31 @@ const AdminLogin = ({ onLogin }) => {
         }
       );
 
-      const { token } = res.data;
-      if (!token) throw new Error("No token received");
+      // const { token } = res.data;
+      // if (!token) throw new Error("No token received");
 
-      // Save token
-      localStorage.setItem("adminToken", token);
+      // // Save token
+      // localStorage.setItem("adminToken", token);
+
+      // // Notify parent
+      // onLogin?.(token);
+
+      // // Redirect
+      // navigate(ROUTES.adminDashboard || "/admin/dashboard");
+
+      // alert("Login successful!");
+      const { accessToken, refreshToken } = res.data;
+
+      if (!accessToken || !refreshToken) {
+        throw new Error("Tokens not received");
+      }
+
+      // Save tokens
+      localStorage.setItem("accessToken", accessToken);
+      localStorage.setItem("refreshToken", refreshToken);
 
       // Notify parent
-      onLogin?.(token);
+      onLogin?.(accessToken);
 
       // Redirect
       navigate(ROUTES.adminDashboard || "/admin/dashboard");
